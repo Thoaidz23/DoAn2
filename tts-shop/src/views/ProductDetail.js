@@ -1,14 +1,15 @@
 import React from "react";
 import "../styles/ProductDetail.scss"; 
 import logo from "../views/logo.svg"
+import Primg from "../assets/img/img1.png"
 
 function ProductDetail() {
   return (
     <div className="product-detail">
       {/* Bên trái - Ảnh, Tên, Mô tả */}
       <div className="product-left">
-        <h1 className="product-title">Tên Sản Phẩm</h1>
-        <img src ={logo} className ="App-logo" alt ="logo" />
+        <h1 className="product-title">Xiaomi Redmi Note 14 6GB 128GB </h1>
+        <img src ={Primg}/> 
         <p className="product-description">Đây là mô tả chi tiết về sản phẩm...</p>
       </div>
 
