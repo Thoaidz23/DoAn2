@@ -1,10 +1,11 @@
 import React from "react";
 import "../styles/ProductDetail.scss"; 
-import logo from "../views/logo.svg"
+import Layout from "../component/Layout.js"
 import Primg from "../assets/img/img1.png"
 
 function ProductDetail() {
   return (
+    <Layout>
     <div className="product-detail">
       {/* Bên trái - Ảnh, Tên, Mô tả */}
       <div className="product-left">
@@ -26,6 +27,7 @@ function ProductDetail() {
         </ul>
       </div>
     </div>
+    </Layout>
   );
 };
 
