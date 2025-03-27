@@ -2,9 +2,12 @@ import React from "react";
 import "../styles/ProductDetail.scss"; 
 import Layout from "../component/Layout.js"
 import Primg from "../assets/img/img1.png"
-
+import Navbar from "../component/NavBar.js";
 function ProductDetail() {
   return (
+    <div>
+      <Navbar /> 
+ 
     <Layout>
     <div className="product-detail">
       {/* Bên trái - Ảnh, Tên, Mô tả */}
@@ -28,6 +31,7 @@ function ProductDetail() {
       </div>
     </div>
     </Layout>
+    </div>
   );
 };
 
