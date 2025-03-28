@@ -1,0 +1,14 @@
+.custom-input {
+    border: none;
+    border-bottom: 2px solid gray !important; /* Chỉ có viền dưới */
+    background-color: white !important; /* Nền trắng */
+    border-radius: 0 !important; /* Loại bỏ bo góc */
+    box-shadow: none !important; /* Không có box-shadow */
+    padding: 10px 0;
+  }
+  
+  .custom-input:focus {
+    border-bottom: 2px solid #007bff !important; /* Viền dưới đổi màu khi focus */
+    outline: none !important;
+  }
+
