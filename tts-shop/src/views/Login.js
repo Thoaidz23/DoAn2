@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, FloatingLabel, Container, Button } from "react-bootstrap";
 import { Eye, EyeSlash } from "react-bootstrap-icons"; 
 import Navbar from "../component/NavBar";
-
+// ggggg
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
