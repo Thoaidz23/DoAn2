@@ -1,0 +1,45 @@
+.container {  
+  position: relative; /* Giúp sidebar nằm trong container */
+}
+
+.menu-bar {
+  margin-top: 10px;
+  border-radius: 10px;
+  background-color: white !important;
+  position: absolute; /* Giữ sidebar bên trong container */
+  top: 0;
+  left: 0;
+  width: 250px;
+  background-color: #333;
+  padding-top: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  height: auto; /* Để sidebar có chiều cao bằng với tổng số mục */
+}
+.menubar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menubar-nav .menu-item {
+  padding: 3px 0; /* Xóa padding-left để menu sát lề trái */
+}
+.menubar-nav .nav-link svg {
+  margin-right: 5px; /* Tạo khoảng cách giữa icon và chữ */
+}
+
+.menubar-nav .nav-link {
+  color: rgb(59, 58, 58);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 15px; /* Giữ khoảng cách bên trong cho đẹp */
+}
+
+.menubar-nav .nav-link:hover {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  color: red
+}
