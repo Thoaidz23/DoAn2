@@ -16,7 +16,7 @@ const Login = () => {
         <FloatingLabel controlId="floatingEmail" label="Email" className="mb-3">
           <Form.Control
             type="email"
-            placeholder=" "
+            placeholder=" " 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="custom-input"
