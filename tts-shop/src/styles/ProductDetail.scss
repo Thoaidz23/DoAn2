@@ -43,4 +43,19 @@
     background-color: #28a745;
     color: white;
   }
+  .thumbnail-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+  .thumbnail-container img {
+    flex-shrink: 0;
+    width: 80px; /* Điều chỉnh kích thước phù hợp */
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
 }
