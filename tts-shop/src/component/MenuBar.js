@@ -9,6 +9,7 @@ function MenuBar() {
   return (
     <div className="container">
       <div className="menu-bar">
+        <h3 className="menu-title">Danh mục</h3>
         <ul className="menubar-nav">
           <li className="menu-item">
             <Link className="nav-link" to="/dien-thoai">
