@@ -1,9 +1,137 @@
-.container-content {
-  margin-top: 70px;
-  margin-left: 25%;
+.container {
+  display: flex;
+  margin: auto; /* Căn giữa container */
+  gap: 2% !important; /* Khoảng cách giữa MenuBar và Banner */
+  flex-wrap: wrap; /* Cho phép phần tử xuống dòng khi không đủ không gian */
+}
+.menu-wrapper {
+  margin-top: 6%; // Khoảng cách giữa Navbar và MenuBar
+  
 }
 
-  .menu-wrapper {
-    margin-top: 70px; // Để tránh bị Navbar che
-  }
+
+.menu-wrapper {
   
+  flex-basis: 20%;
+  flex-shrink: 0;
+}
+
+.content {
+  flex-basis: 78%;
+  margin-top: 7%;
+}
+
+
+.banner {
+  width: 100%;
+  display: flex;
+  top: 0;
+}
+/*----------------thanh 3 cham-------------*/
+.carousel-indicators [data-bs-target] {
+  background-color: rgb(12, 111, 100) !important;
+}
+
+.carousel-indicators {
+  margin: 0px 10px 0px 10px;
+  padding: 5px 0px; 
+  position: absolute; /* Đảm bảo rằng thanh chỉ báo luôn cố định */
+  bottom: 10px; /* Đặt thanh chỉ báo ở dưới cùng của carousel */
+  left: 50%; /* Căn giữa */
+  transform: translateX(-50%); /* Căn giữa chính xác */
+  z-index: 10; /* Đảm bảo thanh chỉ báo ở trên các phần tử khác */
+}
+
+/* Di chuyển nút điều hướng sát lề */
+.carousel-control-prev,
+.carousel-control-next {
+  width: auto;
+  padding: 10px;
+  position: absolute; /* Đảm bảo rằng các nút điều hướng có vị trí tuyệt đối */
+  top: 50%; /* Căn giữa theo chiều dọc */
+  transform: translateY(-50%); /* Căn giữa hoàn hảo theo chiều dọc */
+  z-index: 20; /* Đảm bảo các nút điều hướng luôn ở trên */
+}
+
+/* Nút trái ra sát lề trái */
+.carousel-control-prev {
+  left: 10px; /* Đặt nút trái sát lề trái */
+}
+
+/* Nút phải ra sát lề phải */
+.carousel-control-next {
+  right: 10px; /* Đặt nút phải sát lề phải */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-image: none; /* Xoá ảnh mũi tên mặc định */
+  background-color: transparent; /* Nền trong suốt */
+  color: black; /* Mũi tên màu đen */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-control-prev-icon::after,
+.carousel-control-next-icon::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: solid black;
+  border-width: 2px 2px 0 0;
+  transform: rotate(-135deg);
+}
+
+.carousel-control-next-icon::after {
+  transform: rotate(45deg);
+}
+
+/* Hover effect */
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  background-color: #e0e0e0;
+  border-radius: 50%;
+}
+
+
+/* Tạo mũi tên bằng CSS */
+.carousel-control-prev-icon::after,
+.carousel-control-next-icon::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: solid black;
+  border-width: 2px 2px 0 0;
+  transform: rotate(-135deg);
+}
+
+/* Mũi tên phải */
+.carousel-control-next-icon::after {
+  transform: rotate(45deg);
+}
+
+/* Hover - nền chuyển sang xám */
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  background-color: #e0e0e0; /* Màu xám nhạt */
+  border-radius: 50%;
+}
+
+.banner-item {
+  width: 100%;
+  max-width: 930px; /* Giữ nguyên kích thước tối đa */
+  height: 100%;
+  max-height: 330px;
+  object-fit: cover;
+  border-radius: 10px; /* Bo tròn góc */
+  border: 2px solid #ddd; /* Viền màu xám nhạt */
+  padding: 10px; /* Tạo khoảng cách giữa ảnh và viền */
+  background-color: #fff; /* Tạo hiệu ứng viền nổi bật */
+}
+/*--------------product--------*/
+

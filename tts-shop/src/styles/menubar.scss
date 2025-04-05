@@ -1,8 +1,12 @@
 .container {  
   position: relative; /* Giúp sidebar nằm trong container */
 }
-
+.menu-title {
+  font-size: 15px !important;
+  text-align: center;
+}
 .menu-bar {
+  z-index: 1;
   margin-top: 10px;
   border-radius: 10px;
   background-color: white !important;
@@ -13,7 +17,7 @@
   background-color: #333;
   padding-top: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  height: auto; /* Để sidebar có chiều cao bằng với tổng số mục */
+   /* Để sidebar có chiều cao bằng với tổng số mục */
 }
 .menubar-nav {
   list-style: none;
@@ -41,5 +45,5 @@
 .menubar-nav .nav-link:hover {
   background-color: #f0f0f0;
   border-radius: 5px;
-  color: red
+  color: red;
 }
