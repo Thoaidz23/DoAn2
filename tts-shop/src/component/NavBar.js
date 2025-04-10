@@ -64,7 +64,7 @@ function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/cart" className="nav-link nav-item-custom px-3">
+                <Link to="/CartPage" className="nav-link nav-item-custom px-3">
                   <FaShoppingCart className="nav-icon" /> Giỏ hàng
                 </Link>
               </li>
