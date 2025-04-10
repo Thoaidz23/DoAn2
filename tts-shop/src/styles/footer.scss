@@ -1,0 +1,55 @@
+.container-footer{
+    max-width: 1200px;
+    width: 80%;
+    margin: auto; /* Căn giữa container */
+}
+.footer {
+    background-color: #ecf0f5;
+    padding: 40px 0;
+    color: #333;
+    
+  
+    h5 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: rgb(2, 112, 92);
+    }
+  
+    p {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: #555;
+    }
+  
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-left: -15px;
+      margin-right: -15px; // fix padding của col
+    }
+  
+    .footer-col {
+      width: 25%; // cố định 25% cho 4 cột
+      padding: 0 15px;
+      box-sizing: border-box;
+    }
+  
+    .social-icons a {
+      transition: transform 0.3s ease;
+    }
+  
+    .social-icons a:hover {
+      transform: scale(1.2);
+    }
+  
+    // Responsive: dưới 768px thì mỗi cột chiếm toàn bộ chiều ngang
+    @media (max-width: 767px) {
+      .footer-col {
+        width: 100%;
+        margin-bottom: 30px;
+      }
+    }
+  }
+  

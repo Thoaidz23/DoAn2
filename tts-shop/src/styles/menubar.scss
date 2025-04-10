@@ -1,13 +1,15 @@
 .container {  
   position: relative; /* Giúp sidebar nằm trong container */
 }
+
 .menu-title {
   font-size: 15px !important;
   text-align: center;
 }
+
 .menu-bar {
   z-index: 1;
-  margin-top: 10px;
+  margin-top: 14px;
   border-radius: 10px;
   background-color: white !important;
   position: absolute; /* Giữ sidebar bên trong container */
@@ -17,8 +19,8 @@
   background-color: #333;
   padding-top: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-   /* Để sidebar có chiều cao bằng với tổng số mục */
 }
+
 .menubar-nav {
   list-style: none;
   padding: 0;
@@ -28,22 +30,129 @@
 .menubar-nav .menu-item {
   padding: 3px 0; /* Xóa padding-left để menu sát lề trái */
 }
-.menubar-nav .nav-link svg {
-  margin-right: 5px; /* Tạo khoảng cách giữa icon và chữ */
-}
 
 .menubar-nav .nav-link {
   color: rgb(59, 58, 58);
   text-decoration: none;
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Đẩy icon mở rộng ra bên phải */
   font-size: 14px;
   font-weight: bold;
-  padding: 10px 15px; /* Giữ khoảng cách bên trong cho đẹp */
+  padding: 10px 15px;
+  width: 100%;
 }
 
 .menubar-nav .nav-link:hover {
   background-color: #f0f0f0;
   border-radius: 5px;
+  color: red;
+}
+
+.menubar-nav .nav-link svg {
+  margin-right: 5px;
+}
+
+/* Label và icon mở rộng */
+.menu-label {
+  margin-left: 5px;
+  flex-grow: 1;
+}
+
+.expand-icon {
+  color: #131212;
+  margin-left: auto;
+}
+.hover-panel {
+  position: absolute;
+  top: 0;
+  left: 250px;
+  width: 180px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1000;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.hover-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hover-panel li {
+  padding: 6px 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.hover-panel li:hover {
+  background-color: #f0f0f0;
+  color: red;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.hover-panel {
+  position: absolute;
+  top: 0;
+  left: 250px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px 20px;
+  z-index: 101;
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.3);
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.panel-columns {
+  display: flex;
+  gap: 40px;
+}
+
+.panel-column h6 {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.panel-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.panel-column li {
+  padding: 5px 0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.panel-column li:hover {
   color: red;
 }

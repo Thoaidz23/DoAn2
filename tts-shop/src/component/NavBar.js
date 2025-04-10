@@ -22,7 +22,7 @@ function Navbar() {
         <div className="container">
           {/* Logo */}
           <Link to="/" className="navbar-brand">
-            <img src={logo} alt="Shop Logo" width="150px" height="50px" />
+            <img src={logo} alt="Shop Logo" width="150px" height="60px" />
           </Link>
 
           {/* Thanh tìm kiếm với biểu tượng kính lúp */}
