@@ -7,6 +7,7 @@ import NewPassword from "./NewPassword";
 import ForgetPassword from "./ForgetPassword";
 import ProductDetail from "./ProductDetail"; // Đừng quên import nếu bạn có file này
 import "bootstrap-icons/font/bootstrap-icons.css";
+import CartPage from "./CartPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/CartPage" element={<CartPage />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
