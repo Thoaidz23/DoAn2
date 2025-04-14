@@ -1,0 +1,113 @@
+.container-detail_bar {
+    margin-top: -5%;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding-left: 5px;
+    padding-right: 5px;
+  
+    .container {
+      gap: 0 !important; 
+      display: flex;
+    }
+  
+    p {
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+  
+    .breadcrumb-icon {
+      margin-top: 5px;
+      margin-bottom: 5px;
+      padding: 0 10px;
+    }
+  }
+  .banner-product {
+    margin-top: 10px;
+    border-radius: 10px;
+  }
+
+  .banner-frame {
+    background-color: rgba(255, 255, 255);
+    padding: 10px; // Nếu bạn muốn tạo khoảng cách giữa viền đỏ và ảnh
+    border-radius: 10px;
+  }
+/* danh mục dien thoai*/   
+.product-one-content-title h2 {
+        font-size: 24px;
+        color: rgb(5, 96, 96);
+        margin-bottom: 15px;
+        
+}
+
+
+  .product-one-content {
+    margin-top: 10px;
+    background-color: whitesmoke;
+    padding: 12px;
+    border-radius: 8px;
+    padding: 0;
+  }
+  
+  .product-one-content-item-text li{
+    list-style: none;
+  }
+  .product-one-content-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+  
+  .product-one-content-item {
+    width: calc((100% - 4 * 10px) / 5); // 5 items mỗi hàng, 4 khoảng cách giữa
+    background-color: #ffffff;
+    padding: 30px 12px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+  
+    &:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  
+      img {
+        transform: scale(1.05);
+      }
+    }
+  
+    .product-one-content-item-text {
+      ul {
+        padding: 0;
+        margin-top: 10px;
+  
+        li {
+          list-style: none;
+          margin-bottom: 6px;
+  
+          &:nth-child(1) {
+            font-size: 14px;
+            font-weight: bold;
+  
+            &:hover {
+              color: rgb(0, 128, 255);
+            }
+          }
+  
+          &:nth-child(3) {
+            font-size: 20px;
+            font-weight: bold;
+            color: red;
+          }
+        }
+      }
+    }
+  }
+  
