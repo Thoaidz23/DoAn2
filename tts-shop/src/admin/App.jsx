@@ -1,36 +1,47 @@
-import { Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-import Sidebar from "./components/common/Sidebar";
-
-import OverviewPage from "./pages/OverviewPage";
-import ProductsPage from "./pages/ProductsPage";
-import UsersPage from "./pages/UsersPage";
-import SalesPage from "./pages/SalesPage";
-import OrdersPage from "./pages/OrdersPage";
-import AnalyticsPage from "./pages/AnalyticsPage";
-import SettingsPage from "./pages/SettingsPage";
+import '../admin/index.css';
+import Sidebar from "./components/Sidebar";
+import Dashboard from './pages/Dashboard';
+import Order from './pages/Order';
+import Banner from './pages/Banner';
+import Product from './pages/Product';
+import ProductCategory from './pages/ProductCategory';
+import BrandCategory from './pages/BrandCategory';
+import Post from './pages/Post';
+import PostCategory from './pages/PostCategory';
+import StaffAccount from './pages/StaffAccount';
+import CustomerAccount from './pages/CustomerAccount';
 
 function App() {
-	return (
-		<div className='flex h-screen bg-gray-900 text-gray-100 overflow-hidden'>
-			{/* BG */}
-			<div className='fixed inset-0 z-0'>
-				<div className='absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 opacity-80' />
-				<div className='absolute inset-0 backdrop-blur-sm' />
-			</div>
+  return (
+    <Router>
+      <div className="d-flex">
+        <Sidebar />
 
-			<Sidebar />
-			<Routes>
-				<Route path='/' element={<OverviewPage />} />
-				<Route path='/products' element={<ProductsPage />} />
-				<Route path='/users' element={<UsersPage />} />
-				<Route path='/sales' element={<SalesPage />} />
-				<Route path='/orders' element={<OrdersPage />} />
-				<Route path='/analytics' element={<AnalyticsPage />} />
-				<Route path='/settings' element={<SettingsPage />} />
-			</Routes>
-		</div>
-	);
+        <div
+  className="flex-grow-1 p-4 bg-dark text-white"
+  style={{ marginLeft: '16.6667%', minHeight: '100vh' }} // tương ứng col-2
+>
+  <Routes>
+    <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+    <Route path="/admin/dashboard" element={<Dashboard />} />
+    <Route path="/admin/order" element={<Order />} />
+    <Route path="/admin/banner" element={<Banner />} />
+    <Route path="/admin/product" element={<Product />} />
+    <Route path="/admin/productcategory" element={<ProductCategory />} />
+    <Route path="/admin/brandcategory" element={<BrandCategory />} />
+    <Route path="/admin/post" element={<Post />} />
+    <Route path="/admin/postcategory" element={<PostCategory />} />
+    <Route path="/admin/staffaccount" element={<StaffAccount />} />
+    <Route path="/admin/customeraccount" element={<CustomerAccount />} />
+    {/* Route khác sau này */}
+  </Routes>
+</div>
+
+      </div>
+    </Router>
+  );
 }
 
 export default App;
