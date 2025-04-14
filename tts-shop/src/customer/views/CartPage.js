@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import { Container, ListGroup, Image, Button, Form } from "react-bootstrap";
 import "../styles/CartPage.scss";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import NavBar from "../component/NavBar"
-import footer from "../component/Footer"
-import Footer from "../component/Footer";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([
@@ -67,16 +64,15 @@ const CartPage = () => {
   return (
     
       <>
-        <NavBar />
         {cartItems.length === 0 ? (
-          <div className="empty-cart text-center mt-5"> 
+          <div className="empty-cart text-center"> 
             <Image
               src={require("../assets/img/giohangtrong.png")}
               
               alt="Giỏ hàng trống"
               fluid
               className="empty-cart-img"
-            />
+            />  
             <h4 className="mt-3">Giỏ hàng của bạn đang trống</h4>
           </div>
         ) : (
@@ -134,7 +130,7 @@ const CartPage = () => {
             </div>
           </Container>
           
-        )} <Footer></Footer>
+        )} 
       </>
     );
 };

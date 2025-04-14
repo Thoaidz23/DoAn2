@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Form, FloatingLabel, Container, Button } from "react-bootstrap";
 import { Eye, EyeSlash } from "react-bootstrap-icons"; 
-import Navbar from "../component/NavBar";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -14,10 +13,9 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <Container className="d-flex justify-content-center vh-100 pt-5">
-      <Navbar />
+    <Container className="d-flex justify-content-center vh-100">
       <Form className="w-50">
-        <h2 className="text-center mb-5 mt-5 custom-container">Đăng Ký</h2>
+        <h2 className="text-center mb-5 custom-container">Đăng Ký</h2>
 
         {/* Name */}
         <FloatingLabel controlId="floatingName" label="Họ và tên" className="mb-3">

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Form, FloatingLabel, Container, Button } from "react-bootstrap";
-import Navbar from "../component/NavBar";
 import OtpModal from "../component/OtpModal";
 
 const ForgotPassword = () => {
@@ -14,8 +13,7 @@ const ForgotPassword = () => {
 
   return (
     <Container className="d-flex justify-content-center vh-100">
-      <Navbar />
-      <Form className="w-50 mt-5 pt-5">
+      <Form className="w-50">
         <h2 className="text-center mb-5 mt-5 custom-container">Quên mật khẩu</h2>
 
         {/* Email */}

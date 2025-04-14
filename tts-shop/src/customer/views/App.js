@@ -1,8 +1,9 @@
 import React, { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavBar from "../component/NavBar"
-import Footer from "../component/Footer"
-// Tự động import toàn bộ trang trong views (trừ App.js)
+import NavBar from "../component/NavBar";
+import Footer from "../component/Footer";
+
+// Tự động import toàn bộ component trong views (trừ App.js)
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);
 
 const routes = pages.keys().map((key) => {
@@ -21,12 +22,11 @@ const routes = pages.keys().map((key) => {
 function App() {
   return (
     <Router>
-      <Suspense fallback={<div>Đang tải trang...</div>}>
-        <NavBar></NavBar>
+      <NavBar />
+      <Suspense fallback={<div className="text-center mt-5">Đang tải trang...</div>}>
         <Routes>{routes}</Routes>
-        <Footer></Footer>
       </Suspense>
-
+      <Footer />
     </Router>
   );
 }
