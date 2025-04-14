@@ -24,7 +24,7 @@ function MenuBar() {
         "iPhone", "Samsung", "Xiaomi", "OPPO", "realme", "TECNO", "vivo", "Infinix",
         "Nokia", "Nubia", "Nothing Phone HOT and NEW", "Masstel", "Sony", "Itel", "Điện thoại phổ thông"
       ],
-      title2: "Mức giá điện thoại",
+      title2: "Giá điện thoại",
       items2: [
         "Dưới 2 triệu", "Từ 2 - 4 triệu", "Từ 4 - 7 triệu",
         "Từ 7 - 13 triệu", "Từ 13 - 20 triệu", "Trên 20 triệu"
@@ -58,7 +58,7 @@ function MenuBar() {
       items1: [
         "Đồng hồ thông minh", "Vòng đeo tay thông minh", "Đồng hồ định vị trẻ em", "Dây đeo"
       ],
-      title2: "Chọn theo thương hiệu",
+      title2: "Theo thương hiệu",
       items2: [
         "Apple Watch", "Samsung", "Xiaomi", "Huawei", "Coros", "Garmin",
         "Kieslect", "Amazfit", "Black Shark", "Mibro", "Masstel",
@@ -101,7 +101,7 @@ function MenuBar() {
   
 
   const menuItems = [
-    { to: "/dien-thoai", icon: <FaMobileAlt />, label: "Điện thoại", key: "dien-thoai" },
+    { to: "/product", icon: <FaMobileAlt />, label: "Điện thoại", key: "dien-thoai" },
     { to: "/pc", icon: <FaDesktop />, label: "PC", key: "pc" },
     { to: "/laptop", icon: <FaLaptop />, label: "Laptop", key: "laptop" },
     { to: "/tablet", icon: <FaTabletAlt />, label: "Tablet", key: "tablet" },

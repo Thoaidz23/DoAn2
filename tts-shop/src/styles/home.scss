@@ -212,6 +212,9 @@
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease ,visibility 0.3s ease,transform 0.3s ease;
 }
 
 .section-product-one-content-btn:hover {
@@ -244,6 +247,11 @@
   transform: translateY(-50%) scale(1.05);
 }
 
+/* Khi rê chuột vào khu vực sản phẩm thì hiện nút */
+.section-product-one-content:hover .section-product-one-content-btn {
+  opacity: 1;
+  visibility: visible;
+}
 /* Tùy chọn icon */
 .section-product-one-content-btn svg {
   font-size: 20px;
@@ -292,13 +300,17 @@
 }
 
 .see-all {
+  padding-right: 5px;
   position: absolute;
   display: flex;
   right: 0;
+  color: #000;
   margin-right: 15px;
   border: none;
   background: none;
+  text-decoration: none;
   cursor: pointer;
+  font-size: 18px;
   transition: all 0.3s ease;
 }
 
