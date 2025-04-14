@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUser, FaHistory } from "react-icons/fa"; // Import icons
-import "../styles/header.scss";
 import logo from "../assets/img/logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -59,7 +58,7 @@ function Navbar() {
           <div className="collapse navbar-collapse" id="navbarNavDropdown">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <Link to="/" className="nav-link nav-item-custom px-3">
+                <Link to="/PurchaseHistory" className="nav-link nav-item-custom px-3">
                   <FaHistory className="nav-icon" /> Lịch sử đơn hàng
                 </Link>
               </li>
