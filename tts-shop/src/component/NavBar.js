@@ -59,7 +59,7 @@ function Navbar() {
           <div className="collapse navbar-collapse" id="navbarNavDropdown">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <Link to="/" className="nav-link nav-item-custom px-3">
+                <Link to="/PurchaseHistory" className="nav-link nav-item-custom px-3">
                   <FaHistory className="nav-icon" /> Lịch sử đơn hàng
                 </Link>
               </li>

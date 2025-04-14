@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../component/NavBar";
 import MenuBar from "../component/MenuBar";
 import { Carousel } from "react-bootstrap";
@@ -257,7 +258,8 @@ function Home() {
         <div className="container">
   <div className="section-product-one-content-title-with-buttons">
     <h2>Bài viết</h2>
-    <button className="see-all">Xem tất cả</button>
+    <Link to="/Catalognews" className="see-all">Xem tất cả</Link>
+
   </div>
 
   <div className="news-wrapper" style={{ margin: '10px' }}>
