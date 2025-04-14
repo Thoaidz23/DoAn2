@@ -1,21 +1,15 @@
 import reportWebVitals from './reportWebVitals';
 import React from "react";
 import ReactDOM from "react-dom/client";
-// 🔽 Sửa chỗ này để chạy admin
-import AdminApp from "./admin/App";  
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./admin/index.css"; // nếu có file CSS riêng cho admin
-
-// import App from "./views/App";
-
+import App from "./customer/views/App";  // Gọi app trang quản trị
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
-    <AdminApp />  {/* Gọi App admin để hiển thị trang quản trị */}
+    <App />  {/* Hiển thị giao diện trang quản trị */}
   </React.StrictMode>
 );
 
-// Performance tracking (giữ nguyên)
+// Performance tracking
 reportWebVitals();

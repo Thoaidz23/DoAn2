@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Form, FloatingLabel, Container, Button } from "react-bootstrap";
 import { Eye, EyeSlash } from "react-bootstrap-icons"; 
-import Navbar from "../component/NavBar";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -10,8 +9,7 @@ const Login = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   return (
     <Container className="d-flex justify-content-center vh-100 ">
-        <Navbar></Navbar>
-      <Form className="w-50 mt-5">
+      <Form className="w-50">
       <h2 className="text-center mb-5 mt-5 custom-container">Tạo mật khẩu mới</h2>
         {/* Password */}
                 <div className="position-relative mb-3">

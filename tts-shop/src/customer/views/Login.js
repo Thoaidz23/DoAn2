@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import { Form, FloatingLabel, Container, Button } from "react-bootstrap";
 import { Eye, EyeSlash } from "react-bootstrap-icons"; 
-import Navbar from "../component/NavBar";
-// ggggg
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <Container className="d-flex justify-content-center vh-100 ">
-        <Navbar></Navbar>
-      <Form className="w-50 mt-5">
+    <Container className="d-flex justify-content-center vh-100 mt-5 ">
+
+      <Form className="w-50">
         {/* Email */}
-        <h2 className="text-center mb-5 mt-5 custom-container">Đăng Nhập</h2>
+        <h2 className="text-center mb-5 custom-container">Đăng Nhập</h2>
         <FloatingLabel controlId="floatingEmail" label="Email" className="mb-3">
           <Form.Control
             type="email"
@@ -54,7 +53,7 @@ const Login = () => {
           Đăng nhập
         </Button>
         <div className="d-flex justify-content-between mt-3 text-dark">
-                            <a href="#">Quên mật khẩu?</a>
+                            <a href="./ForgetPassword">Quên mật khẩu?</a>
                             <p>Bạn chưa có tài khoản <a href="./Register">Đăng ký ngay</a></p>
                         </div>
       </Form>

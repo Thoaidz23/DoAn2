@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "../component/NavBar";
 import MenuBar from "../component/MenuBar";
 import { Carousel } from "react-bootstrap";
 import "../styles/home.scss";
@@ -7,7 +6,6 @@ import "../styles/index.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import Footer from "../component/Footer";
 import banner1 from "../assets/img/xiaomi-14-web.jpg";
 import banner2 from "../assets/img/banner2.jpg";
 import banner3 from "../assets/img/banner3.jpg";
@@ -126,7 +124,6 @@ function Home() {
 
   return (
     <div>
-      <Navbar />
       <div className="container">
         <div className="menu-wrapper">
           <MenuBar />
@@ -285,7 +282,6 @@ function Home() {
 
       </div>
       <div className = "footer-spacing">
-      <Footer ></Footer>
       </div>
     </div>
   );

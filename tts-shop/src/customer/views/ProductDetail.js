@@ -13,7 +13,6 @@ import {
   Carousel,
 } from "react-bootstrap";
 import { CartPlus, BagCheck } from "react-bootstrap-icons";
-import Navbar from "../component/NavBar";
 import "../styles/ProductDetail.scss"; // <-- import SCSS
 import ProductOptionSelector from "../component/ProductOptionSelector.js";
 
@@ -143,7 +142,6 @@ const ProductDetail = () => {
   
   return (
     <>
-      <Navbar />
       <div className="product-detail">
         <Container fluid>
           <Row className="mt-4">
@@ -218,7 +216,7 @@ const ProductDetail = () => {
                 <Col xs={4}>
                   <Form.Group controlId="quantity">
                     <Form.Label>Số lượng</Form.Label>
-                    <Form.Control
+                    <Form.Control 
                       type="number"
                       min="1"
                       value={quantity}
