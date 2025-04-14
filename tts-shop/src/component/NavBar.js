@@ -22,7 +22,7 @@ function Navbar() {
         <div className="container">
           {/* Logo */}
           <Link to="/" className="navbar-brand">
-            <img src={logo} alt="Shop Logo" width="150px" height="50px" />
+            <img src={logo} alt="Shop Logo" width="150px" height="60px" />
           </Link>
 
           {/* Thanh tìm kiếm với biểu tượng kính lúp */}
@@ -64,7 +64,7 @@ function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/cart" className="nav-link nav-item-custom px-3">
+                <Link to="/CartPage" className="nav-link nav-item-custom px-3">
                   <FaShoppingCart className="nav-icon" /> Giỏ hàng
                 </Link>
               </li>

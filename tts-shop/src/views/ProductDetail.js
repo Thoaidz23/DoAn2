@@ -15,6 +15,7 @@ import {
 import { CartPlus, BagCheck } from "react-bootstrap-icons";
 import Navbar from "../component/NavBar";
 import "../styles/ProductDetail.scss"; // <-- import SCSS
+import ProductOptionSelector from "../component/ProductOptionSelector.js";
 
 // Import ảnh sản phẩm
 import img1 from "../assets/img/img1.png";
@@ -22,6 +23,10 @@ import img2 from "../assets/img/img2.webp";
 import img3 from "../assets/img/img3.webp";
 
 const ProductDetail = () => {
+  const [selectedColor, setSelectedColor] = useState("Đỏ");
+  const [selectedRAM, setSelectedRAM] = useState("4GB");
+  const [selectedStorage, setSelectedStorage] = useState("64GB")
+  
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [index, setIndex] = useState(0);
@@ -33,7 +38,7 @@ const ProductDetail = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
 
   const productImages = [img1, img2, img3,img1, img2, img3,img1, img2, img3,img1, img2, img3];
-
+ 
   const product = {
     id: 1,
     name: "Tai nghe không dây Sony WH-1000XM4",
@@ -56,10 +61,57 @@ const ProductDetail = () => {
   };
 
   const relatedArticles = [
-    { id: 1, title: "Hướng dẫn chọn tai nghe chống ồn tốt nhất", link: "#" },
-    { id: 2, title: "Đánh giá Sony WH-1000XM4: Có đáng mua không?", link: "#" },
-    { id: 3, title: "So sánh Sony WH-1000XM4 và Bose 700", link: "#" },
+    {
+      id: 1,
+      title: "Hướng dẫn chọn tai nghe chống ồn tốt nhất",
+      link: "#",
+      image: img1,
+    },
+    {
+      id: 2,
+      title: "Đánh giá Sony WH-1000XM4: Có đáng mua không?",
+      link: "#",
+      image: img2,
+    },
+    {
+      id: 3,
+      title: "So sánh Sony WH-1000XM4 và Bose 700",
+      link: "#",
+      image: img3,
+    },
+    {
+      id: 4,
+      title: "Hướng dẫn chọn tai nghe chống ồn tốt nhất",
+      link: "#",
+      image: img1,
+    },
+    {
+      id: 5,
+      title: "Hướng dẫn chọn tai nghe chống ồn tốt nhất",
+      link: "#",
+      image: img1,
+    },
+    {
+      id: 6,
+      title: "Hướng dẫn chọn tai nghe chống ồn tốt nhất",
+      link: "#",
+      image: img1,
+    },
+    {
+      id: 77,
+      title: "Hướng dẫn chọn tai nghe chống ồn tốt nhất",
+      link: "#",
+      image: img1,
+    },
+    {
+      id: 8,
+      title: "Hướng dẫn chọn tai nghe chống ồn tốt nhất",
+      link: "#",
+      image: img1,
+    },
+    
   ];
+  
 
   const handleAddToCart = () => {
     alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
@@ -67,6 +119,10 @@ const ProductDetail = () => {
   const handleBuyNow = () => {
     alert(`Bạn đã mua ${quantity} sản phẩm!`);
   };
+  const handleColorSelect = (color, idx) => {
+    setSelectedColor(color);
+  };
+  
 
   // Handlers drag-to-scroll
   const onMouseDown = (e) => {
@@ -84,7 +140,7 @@ const ProductDetail = () => {
     const walk = e.clientX - startX;
     slider.scrollLeft = scrollLeft - walk;
   };
-
+  
   return (
     <>
       <Navbar />
@@ -136,8 +192,29 @@ const ProductDetail = () => {
                   currency: "VND",
                 })}
               </h4>
-
-              <Row className="align-items-end mb-3">
+              <ProductOptionSelector
+                label="Chọn màu sắc:"
+                options={["Đỏ", "Xanh", "Vàng"]}
+                selected={selectedColor}
+                onSelect={setSelectedColor}
+              />
+                            
+              <ProductOptionSelector
+                label="Chọn RAM:"
+                options={["4GB", "8GB", "16GB"]}
+                selected={selectedRAM}
+                onSelect={setSelectedRAM}
+              />
+                            
+              <ProductOptionSelector
+                label="Chọn Bộ nhớ:"
+                options={["64GB", "128GB", "256GB"]}
+                selected={selectedStorage}
+                onSelect={setSelectedStorage}
+              />
+                            
+            
+              <Row className="align-items-end mb-3 quantity">
                 <Col xs={4}>
                   <Form.Group controlId="quantity">
                     <Form.Label>Số lượng</Form.Label>
@@ -167,7 +244,7 @@ const ProductDetail = () => {
           </Row>
 
           {/* Tabs mô tả và thông số */}
-          <Row className="mt-5">
+          <Row>
             <Col>
               <Tabs
                 activeKey={activeTab}
@@ -195,21 +272,40 @@ const ProductDetail = () => {
             </Col>
           </Row>
 
-          {/* Bài viết liên quan */}
-          <Row className="mt-5 mb-5">
+         <Row className="mt-5 mb-5 position-relative">
             <Col>
               <h4>Bài viết liên quan</h4>
-              <ListGroup>
-                {relatedArticles.map((article) => (
-                  <ListGroup.Item key={article.id}>
-                    <a href={article.link} className="text-decoration-none">
-                      {article.title}
-                    </a>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
+              <div className="position-relative">
+                <ListGroup className="position-relative">
+                  {relatedArticles.slice(0, 5).map((article, idx) => (
+                    <ListGroup.Item key={article.id} className="d-flex align-items-center">
+                      <Image
+                        src={article.image}
+                        alt={article.title}
+                        width={80}
+                        height={80}
+                        className="me-3 rounded"
+                      />
+                      <div>
+                        <a href={article.link} className="text-decoration-none fw-bold text-dark">
+                          {article.title}
+                        </a>
+                      </div>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+                
+                {/* Nút xem thêm đè lên item cuối cùng */}
+                <div className="see-more-btn">
+                  <a href="/bai-viet" className="btn custom-see-more">
+                    - Xem thêm bài viết -
+                  </a>
+                </div>
+              </div>
             </Col>
           </Row>
+
+              
         </Container>
       </div>
     </>
