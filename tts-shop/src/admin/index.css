@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  background-color: #1a202c;
+  font-family: sans-serif;
+}
+
+/* Sidebar */
+.nav-link.sidebar-button {
+  transition: background-color 0.2s ease;
+}
+.nav-link.sidebar-button:hover {
+  background-color: #3a3f44 !important; /* Màu xám nhạt nổi trên nền bg-dark */
+  cursor: pointer;
+}
+
+.nav-link.active-sidebar {
+  background-color: #3a3f44 !important; /* Nền xanh */
+  color: white !important;
+  font-weight: bold;
+  border-left: 4px solid white;
+}
