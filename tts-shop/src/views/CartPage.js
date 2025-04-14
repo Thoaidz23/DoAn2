@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Container, ListGroup, Image, Button, Form } from "react-bootstrap";
 import "../styles/CartPage.scss";
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import NavBar from "../component/NavBar"
+import footer from "../component/Footer"
+import Footer from "../component/Footer";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([
@@ -9,10 +13,31 @@ const CartPage = () => {
       name: "Tai nghe Sony WH-1000XM4",
       price: 5990000,
       quantity: 1,
-      image: require("../assets/img/img1.png"),
+      image: require("../assets/img/dt1.webp"),
     },
     {
       id: 2,
+      name: "Loa Bluetooth JBL Flip 5",
+      price: 1800000,
+      quantity: 2,
+      image: require("../assets/img/img2.webp"),
+    },
+    {
+      id: 3,
+      name: "Loa Bluetooth JBL Flip 5",
+      price: 1800000,
+      quantity: 2,
+      image: require("../assets/img/img2.webp"),
+    },
+    {
+      id: 4,
+      name: "Loa Bluetooth JBL Flip 5",
+      price: 1800000,
+      quantity: 2,
+      image: require("../assets/img/img2.webp"),
+    },
+    {
+      id: 5,
       name: "Loa Bluetooth JBL Flip 5",
       price: 1800000,
       quantity: 2,
@@ -40,66 +65,78 @@ const CartPage = () => {
   );
 
   return (
-    <Container className="custom-cart-container">
-      <h2 className="cart-title">Giỏ hàng</h2>
-
-      <ListGroup className="list-cart">
-        {cartItems.map((item) => (
-            <ListGroup.Item key={item.id} className="d-flex align-items-center position-relative cart-item">
+    
+      <>
+        <NavBar />
+        {cartItems.length === 0 ? (
+          <div className="empty-cart text-center mt-5"> 
             <Image
-              src={item.image}
-              alt={item.name}
-              width={80}
-              height={80}
-              className="me-3 rounded"
+              src={require("../assets/img/giohangtrong.png")}
+              
+              alt="Giỏ hàng trống"
+              fluid
+              className="empty-cart-img"
             />
-            <div className="flex-grow-1">
-              <h5 className="mb-1">{item.name}</h5>
-              <Form.Group controlId={`quantity-${item.id}`} className="mb-0 d-flex align-items-center gap-2">
-                <Form.Label className="mb-0">Số lượng:</Form.Label>
-                <Form.Control
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                  style={{ width: "70px" }}
-                />
-              </Form.Group>
+            <h4 className="mt-3">Giỏ hàng của bạn đang trống</h4>
+          </div>
+        ) : (
+          <Container className="custom-cart-container">
+            <h2 className="cart-title">Giỏ hàng</h2>
+            <ListGroup className="list-cart">
+              {cartItems.map((item) => (
+                <ListGroup.Item key={item.id} className="d-flex align-items-center position-relative cart-item">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    width={80}
+                    height={80}
+                    className="me-3 rounded"
+                  />
+                  <div className="flex-grow-1">
+                    <h5 className="mb-1">{item.name}</h5>
+                    <Form.Group controlId={`quantity-${item.id}`} className="mb-0 d-flex align-items-center gap-2">
+                      <Form.Label className="mb-0">Số lượng:</Form.Label>
+                      <Form.Control
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                        style={{ width: "70px" }}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="text-end">
+                    <strong className="text-danger">
+                      {(item.price * item.quantity).toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </strong>
+                  </div>
+                  <i className="bi bi-trash delete-icon" onClick={() => handleDelete(item.id)}></i>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+    
+            <div className="cart-total-bar">
+              <div className="d-flex justify-content-between align-items-center w-100">
+                <h5 className="mb-0">
+                  Tổng:{" "}
+                  <span className="text-danger">
+                    {total.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </span>
+                </h5>
+                <Button variant="success" size="lg">Thanh toán</Button>
+              </div>
             </div>
-            <div className="text-end">
-              <strong className="text-danger">
-                {item.price.toLocaleString("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                })}
-              </strong>
-            </div>
+          </Container>
           
-            {/* Icon xóa sản phẩm */}
-            <i className="bi bi-archive delete-icon" onClick={() => handleDelete(item.id)}></i>
-          </ListGroup.Item>
-                  
-        ))}
-      </ListGroup>
-
-      <div className="cart-total-bar">
-        <div className="d-flex justify-content-between align-items-center w-100">
-          <h5 className="mb-0">
-            Tổng:{" "}
-            <span className="text-danger">
-              {total.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })}
-            </span>
-          </h5>
-          <Button variant="success" size="lg">
-            Thanh toán
-          </Button>
-        </div>
-      </div>
-    </Container>
-  );
+        )} <Footer></Footer>
+      </>
+    );
 };
 
 export default CartPage;

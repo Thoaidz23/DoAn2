@@ -3,9 +3,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./views/App";  // Đường dẫn đúng đến App.js
 import "bootstrap/dist/css/bootstrap.min.css";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
+  
   <React.StrictMode>
     <App />  {/* Gọi App.js để hiển thị trang web */}
   </React.StrictMode>

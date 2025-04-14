@@ -218,7 +218,7 @@ const ProductDetail = () => {
                 <Col xs={4}>
                   <Form.Group controlId="quantity">
                     <Form.Label>Số lượng</Form.Label>
-                    <Form.Control
+                    <Form.Control 
                       type="number"
                       min="1"
                       value={quantity}

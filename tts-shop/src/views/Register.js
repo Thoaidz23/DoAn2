@@ -14,7 +14,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <Container className="d-flex justify-content-center vh-100">
+    <Container className="d-flex justify-content-center vh-100 pt-5">
       <Navbar />
       <Form className="w-50">
         <h2 className="text-center mb-5 mt-5 custom-container">Đăng Ký</h2>
