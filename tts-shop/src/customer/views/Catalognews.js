@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import "../styles/catalognews.scss";
-
-
 function Catalognews () {
 
   useEffect(() => {

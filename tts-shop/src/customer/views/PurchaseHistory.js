@@ -4,6 +4,7 @@ import "../styles/purchaseHistory.scss";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-datepicker/dist/react-datepicker.css";
+import AccountBar from "../component/AccountBar";
 
 function PurchaseHistory() {
   const [activeFilter, setActiveFilter] = useState("Tất cả");
@@ -22,27 +23,8 @@ function PurchaseHistory() {
     <div>
       <div className="PurchaseHistory_container">
         <div className="container">
-          <div className="sidebar">
-            <ul>
-              {[
-                { icon: "bi-person", label: "Tài khoản của bạn" },
-                { icon: "bi-receipt", label: "Lịch sử mua hàng" },
-                { icon: "bi-search", label: "Đổi mật khẩu" },
-                { icon: "bi bi-pencil-fill", label: "Cập nhật tài khoản" },      
-                { icon: "bi-box-arrow-right", label: "Thoát tài khoản" },
-                
-              ].map((item) => (
-                <li
-                  key={item.label}
-                  className={activeMenu === item.label ? "active" : ""}
-                  onClick={() => setActiveMenu(item.label)}
-                >
-                  <i className={`bi ${item.icon}`}></i> {item.label}
-                </li>
-              ))}
-            </ul>
-          </div>
-
+          {/* Truyền activeMenu và setActiveMenu vào AccountBar */}
+          <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
           <div className="purchase-history-content">
             <div className="user-info">
               <img src="/avatar.png" alt="Avatar" className="avatar" />
