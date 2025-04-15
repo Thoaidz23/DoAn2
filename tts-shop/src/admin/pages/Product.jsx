@@ -1,65 +1,76 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Row, Col, Card } from "react-bootstrap";
 import {
-    Box,
-    ShoppingCart,
-    AlertTriangle,
-    ShieldX,
-    Search,
-  } from "lucide-react";
-  
-
+  Box,
+  ShoppingCart,
+  AlertTriangle,
+  ShieldX,
+  Search,
+} from "lucide-react";
 
 const Product = () => {
+  const [products, setProducts] = useState([]);
+
+  // Gọi API từ backend khi component mount
+  useEffect(() => {
+    fetch("http://localhost:5000/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Lỗi khi fetch sản phẩm:", err));
+  }, []);
+
   return (
     <div>
       <h3 className="mb-4">Quản lý sản phẩm</h3>
 
       {/* Thống kê */}
       <Row className="mb-4">
-  <Col md={3}>
-    <Card bg="secondary" text="white" className="text-center">
-      <Card.Body>
-        <Box size={32} className="mb-2" />
-        <Card.Title>Tổng sản phẩm</Card.Title>
-        <Card.Text>200</Card.Text>
-      </Card.Body>
-    </Card>
-  </Col>
-  <Col md={3}>
-    <Card bg="secondary" text="white" className="text-center">
-      <Card.Body>
-        <ShoppingCart size={32} className="mb-2" />
-        <Card.Title>Bán hôm nay</Card.Title>
-        <Card.Text>15</Card.Text>
-      </Card.Body>
-    </Card>
-  </Col>
-  <Col md={3}>
-    <Card bg="secondary" text="white" className="text-center">
-      <Card.Body>
-        <AlertTriangle size={32} className="mb-2" />
-        <Card.Title>Sắp hết hàng</Card.Title>
-        <Card.Text>8</Card.Text>
-      </Card.Body>
-    </Card>
-  </Col>
-  <Col md={3}>
-    <Card bg="secondary" text="white" className="text-center">
-      <Card.Body>
-        <ShieldX size={32} className="mb-2" />
-        <Card.Title>Sản phẩm lỗi</Card.Title>
-        <Card.Text>2</Card.Text>
-      </Card.Body>
-    </Card>
-  </Col>
-</Row>
-
+        <Col md={3}>
+          <Card bg="secondary" text="white" className="text-center">
+            <Card.Body>
+              <Box size={32} className="mb-2" />
+              <Card.Title>Tổng sản phẩm</Card.Title>
+              <Card.Text>{products.length}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card bg="secondary" text="white" className="text-center">
+            <Card.Body>
+              <ShoppingCart size={32} className="mb-2" />
+              <Card.Title>Bán hôm nay</Card.Title>
+              <Card.Text>15</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card bg="secondary" text="white" className="text-center">
+            <Card.Body>
+              <AlertTriangle size={32} className="mb-2" />
+              <Card.Title>Sắp hết hàng</Card.Title>
+              <Card.Text>8</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card bg="secondary" text="white" className="text-center">
+            <Card.Body>
+              <ShieldX size={32} className="mb-2" />
+              <Card.Title>Sản phẩm lỗi</Card.Title>
+              <Card.Text>2</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
       {/* Tìm kiếm & Thêm sản phẩm */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Form className="d-flex w-50">
-          <Form.Control type="text" placeholder="Tìm sản phẩm..." className="me-2" />
+          <Form.Control
+            type="text"
+            placeholder="Tìm sản phẩm..."
+            className="me-2"
+          />
           <Button variant="secondary">
             <Search size={16} />
           </Button>
@@ -80,26 +91,35 @@ const Product = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="text-center align-middle">1</td>
-            <td className="text-center align-middle">
-              <img
-                src="https://cdn.tgdd.vn/Products/Images/42/329140/iphone-16-plus-xanh.png"
-                alt="Sản phẩm"
-                className="img-thumbnail"
-                style={{ width: "150px", height: "150px" }}
-              />
-            </td>
-            <td className="text-center align-middle">Iphone 15</td>
-            <td className="text-center align-middle">20</td>
-            <td className="text-center align-middle">25.000.000₫</td>
-            <td className="text-center align-middle">
-              <Button variant="info" size="sm" className="me-2">Xem</Button>
-              <Button variant="warning" size="sm" className="me-2">Sửa</Button>
-              <Button variant="danger" size="sm">Xóa</Button>
-            </td>
-          </tr>
-          {/* Thêm các dòng sản phẩm tại đây */}
+          {products.length > 0 ? (
+            products.map((product, index) => (
+              <tr key={product.id}>
+                <td className="text-center align-middle">{index + 1}</td>
+                <td className="text-center align-middle">
+                  <img
+                    src={product.hinhanh || "https://via.placeholder.com/150"}
+                    alt={product.ten_sanpham}
+                    className="img-thumbnail"
+                    style={{ width: "150px", height: "150px" }}
+                  />
+                </td>
+                <td className="text-center align-middle">{product.ten_sanpham}</td>
+                <td className="text-center align-middle">{product.soluong || 0}</td>
+                <td className="text-center align-middle">
+                  {product.giasp?.toLocaleString("vi-VN")}₫
+                </td>
+                <td className="text-center align-middle">
+                  <Button variant="info" size="sm" className="me-2">Xem</Button>
+                  <Button variant="warning" size="sm" className="me-2">Sửa</Button>
+                  <Button variant="danger" size="sm">Xóa</Button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6" className="text-center">Đang tải sản phẩm...</td>
+            </tr>
+          )}
         </tbody>
       </Table>
     </div>
