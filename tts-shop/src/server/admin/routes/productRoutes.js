@@ -1,13 +1,11 @@
-// routes/productRoutes.js
-
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/productController');
+const { getAllProducts, getProductById } = require('../controllers/productController');
 
-// Lấy danh sách sản phẩm
-router.get('/', productController.getProducts);
+// Lấy tất cả sản phẩm (danh sách)
+router.get('/', getAllProducts);
 
-// Thêm một sản phẩm mới
-router.post('/', productController.addProduct);
+// Lấy chi tiết sản phẩm theo ID
+router.get('/:id', getProductById);
 
 module.exports = router;

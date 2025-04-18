@@ -43,21 +43,21 @@ const StaffAccount = () => {
       <Table striped bordered hover responsive variant="dark">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Email</th>
-            <th>Họ tên</th>
-            <th>Số điện thoại</th>
-            <th>Hành động</th>
+            <th className="text-center align-middle">STT</th>
+            <th className="text-center align-middle">Email</th>
+            <th className="text-center align-middle">Họ tên</th>
+            <th className="text-center align-middle">Số điện thoại</th>
+            <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
           {staffs.map((staff, index) => (
             <tr key={staff.id}>
-              <td>{index + 1}</td>
-              <td>{staff.email}</td>
-              <td>{staff.name}</td>
-              <td>{staff.phone}</td>
-              <td>
+              <td className="text-center align-middle">{index + 1}</td>
+              <td className="text-center align-middle">{staff.email}</td>
+              <td className="text-center align-middle">{staff.name}</td>
+              <td className="text-center align-middle">{staff.phone}</td>
+              <td className="text-center align-middle">
                 <Button variant="warning" size="sm" className="me-2">
                   Sửa
                 </Button>

@@ -1,13 +1,16 @@
+import React, { useEffect, useState } from "react";
 import { Table, Button} from "react-bootstrap";
 
 const BrandCategory = () => {
-  // Dữ liệu tĩnh về các thương hiệu
-  const brands = [
-    { id: 1, name: "Apple", productCount: 50 },
-    { id: 2, name: "Samsung", productCount: 30 },
-    { id: 3, name: "Dell", productCount: 20 },
-    { id: 4, name: "Xiaomi", productCount: 40 },
-  ];
+  const [cagbrands, setCagbrands] = useState([]);
+
+  // Gọi API từ backend khi component mount
+    useEffect(() => {
+      fetch("http://localhost:5000/api/cagbrands")
+        .then((res) => res.json())
+        .then((data) => setCagbrands(data))
+        .catch((err) => console.error("Lỗi khi fetch danh mục thương hiệu:", err));
+    }, []);
 
 
   return (
@@ -22,28 +25,36 @@ const BrandCategory = () => {
       <Table striped bordered hover responsive variant="dark">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Tên thương hiệu</th>
-            <th>Số lượng sản phẩm</th>
-            <th>Hành động</th>
+            <th className="text-center align-middle">STT</th>
+            <th className="text-center align-middle">Tên thương hiệu</th>
+            <th className="text-center align-middle">Số lượng sản phẩm</th>
+            <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
-          {brands.map((brand, index) => (
-            <tr key={brand.id}>
-              <td>{index + 1}</td>
-              <td>{brand.name}</td>
-              <td>{brand.productCount}</td>
-              <td>
-                <Button variant="info" size="sm" className="me-2">
-                  Sửa
-                </Button>
-                <Button variant="danger" size="sm">
-                  Xóa
-                </Button>
+          {cagbrands.length > 0 ?
+            cagbrands.map((cagbrand, index) => (
+              <tr key={cagbrand.id_dmth}>
+                <td className="text-center align-middle">{index + 1}</td>
+                <td className="text-center align-middle">{cagbrand.ten_dmth}</td>
+                <td className="text-center align-middle">{cagbrand.productCount}</td>
+                <td className="text-center align-middle">
+                  <Button variant="info" size="sm" className="me-2">
+                    Sửa
+                  </Button>
+                  <Button variant="danger" size="sm">
+                    Xóa
+                  </Button>
+                </td>
+              </tr>
+          )
+        ) : (
+            <tr>
+              <td colSpan="4" className="text-center">
+                Không có danh mục nào
               </td>
             </tr>
-          ))}
+        )}
         </tbody>
       </Table>
     </div>

@@ -40,21 +40,21 @@ const CustomerAccount = () => {
       <Table striped bordered hover responsive variant="dark">
         <thead>
           <tr>
-            <th>STT</th>
-            <th>Email</th>
-            <th>Full Name</th>
-            <th>Phone</th>
-            <th>Actions</th>
+            <th className="text-center align-middle">STT</th>
+            <th className="text-center align-middle">Email</th>
+            <th className="text-center align-middle">Full Name</th>
+            <th className="text-center align-middle">Phone</th>
+            <th className="text-center align-middle">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredCustomers.map((customer, index) => (
             <tr key={customer.id}>
-              <td>{index + 1}</td>
-              <td>{customer.email}</td>
-              <td>{customer.name}</td>
-              <td>{customer.phone}</td>
-              <td>
+              <td className="text-center align-middle">{index + 1}</td>
+              <td className="text-center align-middle">{customer.email}</td>
+              <td className="text-center align-middle">{customer.name}</td>
+              <td className="text-center align-middle">{customer.phone}</td>
+              <td className="text-center align-middle">
                 <Button variant="warning" size="sm" className="me-2">
                   Sửa
                 </Button>
