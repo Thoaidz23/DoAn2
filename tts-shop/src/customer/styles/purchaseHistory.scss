@@ -2,7 +2,7 @@
 .PurchaseHistory_container {
     background-color: whitesmoke;
     padding: 20px;
-    height: 100vh;
+    height: auto;
     margin-top: -5%;
     
   
@@ -131,6 +131,7 @@
       margin-top: 40px;
       text-align: center;
       color: #999;
+      margin-bottom: 20%;
   
       img {
         max-width: 150px;
@@ -224,6 +225,78 @@
         }
       }
     }
+  }.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+    margin-bottom: 20%;
+    .order-item-v2 {
+      display: flex;
+      align-items: flex-start;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      padding: 16px;
+      gap: 20px;
+  
+      .product-image {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+      }
+  
+      .order-info {
+        flex: 1;
+  
+        h5 {
+          font-weight: bold;
+          margin-bottom: 6px;
+        }
+  
+        .order-meta {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-top: 6px;
+  
+          .order-status {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 14px;
+          }
+  
+          .đã-giao-hàng {
+            background-color: #e6ffe6;
+            color: green;
+          }
+  
+          .chờ-xác-nhận {
+            background-color: #ffffcc;
+            color: orange;
+          }
+  
+          .đang-chờ-huỷ {
+            background-color: #ffe6e6;
+            color: red;
+          }
+  
+          .price {
+            font-weight: bold;
+            color: red;
+          }
+        }
+      }
+  
+      .order-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+      }
+    }
   }
+  
   
   

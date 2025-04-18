@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../component/NavBar";
 import MenuBar from "../component/MenuBar";
 import { Carousel } from "react-bootstrap";
 import "../styles/home.scss";
