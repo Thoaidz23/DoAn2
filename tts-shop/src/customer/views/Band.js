@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-function Product() {
+function Band() {
   const products = [
     {
       id: 1,
@@ -79,7 +79,7 @@ function Product() {
         <div className="container">
           <p><i className="bi bi-house-door-fill"></i> Trang chủ</p>
           <i className="bi bi-chevron-right breadcrumb-icon"></i>
-          <p>Điện thoại</p>
+          <p>Apple</p>
         </div>
       </div>
 
@@ -87,7 +87,7 @@ function Product() {
         <div className="product-one-content">
           <div className="container">
             <div className="product-one-content-title">
-              <h2>Điện Thoại</h2>
+              <h2>Apple</h2>
             </div>
 
             <div className="product-one-content-items">
@@ -118,4 +118,4 @@ function Product() {
   );
 }
 
-export default Product;
+export default Band;

@@ -1,6 +1,19 @@
 .Catalognews_container {
     margin-top: -3.5%;
 }
+// Đảm bảo những thẻ Link không có gạch chân và màu chữ là đen
+.Catalognews_container a,
+.content-catalognews a,
+.container-allnews a {
+  text-decoration: none; // Xóa gạch chân
+  color: black;          // Màu chữ đen
+
+  &:hover {
+    text-decoration: none; // Đảm bảo hover cũng không có gạch chân
+    color: black;          // Giữ màu đen khi hover
+  }
+}
+
 .Catalognews_container .container h2 {
     display: inline-block;
     position: relative;
@@ -84,7 +97,7 @@
         align-items: flex-start;
   
         img {
-          width: 250px;
+          width: 180px;
           height: 107px;
           object-fit: cover;
           border-radius: 8px;
@@ -152,8 +165,7 @@
   .news-item img {
     cursor: pointer;
     flex-shrink: 0;  
-    max-width: 350px;         // Ngăn hình bị co lại
-    width: 45%;               // Chiếm 40% chiều ngang
+    width: 350px;               // Chiếm 40% chiều ngang
     height: 150px;            // Đặt chiều cao cố định
     object-fit: cover;        // Cắt ảnh cho vừa khung
     border-radius: 6px;
