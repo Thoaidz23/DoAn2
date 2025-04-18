@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Container, ListGroup, Image, Button, Form } from "react-bootstrap";
 import "../styles/CartPage.scss";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
+import { useNavigate } from "react-router-dom"; // 👈 import hook
 const CartPage = () => {
+  const Paynavigate = useNavigate(); // 👈 điều hướng đến trang khác
+
   const [cartItems, setCartItems] = useState([
     {
       id: 1,
@@ -125,7 +127,10 @@ const CartPage = () => {
                     })}
                   </span>
                 </h5>
-                <Button variant="success" size="lg">Thanh toán</Button>
+                <Button variant="success" size="lg" onClick={() => Paynavigate("/Payment-Infor")}>
+  Thanh toán
+</Button>
+
               </div>
             </div>
           </Container>
