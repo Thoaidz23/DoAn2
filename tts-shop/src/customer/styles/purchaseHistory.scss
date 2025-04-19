@@ -2,7 +2,6 @@
 .PurchaseHistory_container {
     background-color: whitesmoke;
     padding: 20px;
-    height: auto;
     margin-top: -5%;
     
   
@@ -11,6 +10,7 @@
       background-color: whitesmoke;
       border-radius: 8px;
       padding: 20px;
+      height: 100vh;
     }
   
     .user-info {

@@ -1,9 +1,7 @@
 import reportWebVitals from './reportWebVitals';
 import React from "react";
 import ReactDOM from "react-dom/client";
-import AdminApp from "./admin/App";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./admin/index.css";  // Gọi app trang quản trị
+import AdminApp from "./customer/views/App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

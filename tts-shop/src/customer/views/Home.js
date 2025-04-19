@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Thêm useEffect vào import
 import { Link } from "react-router-dom";
 import MenuBar from "../component/MenuBar";
 import { Carousel } from "react-bootstrap";
@@ -12,10 +12,6 @@ import banner2 from "../assets/img/banner2.jpg";
 import banner3 from "../assets/img/banner3.jpg";
 
 function Home() {
-  const [phoneIndex, setPhoneIndex] = useState(0);
-  const [laptopIndex, setLaptopIndex] = useState(0);
-  const [tvIndex, setTvIndex] = useState(0);
-  const visibleCount = 5;
   const newsList = [
     {
       id: 1,
@@ -94,6 +90,11 @@ function Home() {
       price: "25.900.000",
     },
   ];
+  const [phoneIndex, setPhoneIndex] = useState(0);
+  const [laptopIndex, setLaptopIndex] = useState(0);
+  const [saleProductIndex, setsalePorductIndex] = useState(0);
+  const [tvIndex, setTvIndex] = useState(0);
+  const visibleCount = 5;
 
   const handleNext = (type) => {
     if (type === "phone" && phoneIndex + visibleCount < products.length) {
@@ -101,6 +102,14 @@ function Home() {
     }
     if (type === "laptop" && laptopIndex + visibleCount < products.length) {
       setLaptopIndex((prev) => prev + 1);
+    }
+    if (type === "saleProduct") {
+      // Check if we have reached the end, if so, reset to the first product
+      if (saleProductIndex + visibleCount < products.length) {
+        setsalePorductIndex((prev) => prev + 1);
+      } else {
+        setsalePorductIndex(0); // Restart from the first product
+      }
     }
     if (type === "tv" && tvIndex + visibleCount < products.length) {
       setTvIndex((prev) => prev + 1);
@@ -114,6 +123,9 @@ function Home() {
     if (type === "laptop" && laptopIndex > 0) {
       setLaptopIndex((prev) => prev - 1);
     }
+    if (type === "saleProduct" && saleProductIndex > 0) {
+      setsalePorductIndex((prev) => prev - 1);
+    }
     if (type === "tv" && tvIndex > 0) {
       setTvIndex((prev) => prev - 1);
     }
@@ -121,7 +133,17 @@ function Home() {
 
   const visiblePhones = products.slice(phoneIndex, phoneIndex + visibleCount);
   const visibleLaptops = products.slice(laptopIndex, laptopIndex + visibleCount);
+  const visiblesaleProduct = products.slice(saleProductIndex, saleProductIndex + visibleCount);
   const visibleTvs = products.slice(tvIndex, tvIndex + visibleCount);
+
+  // Effect to automatically change the sale product every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleNext("saleProduct");
+    }, 3000); 
+
+    return () => clearInterval(interval); // Clean up the interval on component unmount
+  }, [saleProductIndex]);
 
   return (
     <div className="Home">
@@ -145,7 +167,33 @@ function Home() {
             </Carousel>
           </div>
         </div>
-
+        {/* Khuyến mãi hot */}
+        <div className="sale-product">
+   
+          <div className="title-sale">Khuyến Mãi Hôm Nay</div>
+          <div className="sale-product-btn section-prev-btn" onClick={() => handlePrev("saleProduct")}>
+            <FaChevronLeft />
+          </div>
+          <div className="sale-product-btn section-next-btn" onClick={() => handleNext("saleProduct")}>
+            <FaChevronRight />
+          </div>
+            <div className="container">
+            <div className="section-product-one-content-items">
+              {visiblesaleProduct.map((product, index) => (
+                <div className="section-product-one-content-item" key={`saleProduct-${index}`}>
+                  <img src={product.img} alt={product.alt} />
+                  <div className="section-product-one-content-item-text">
+                    <ul>
+                      <li>{product.name} <br /> {product.capacity}</li>
+                      <li>Online giá rẻ</li>
+                      <li>{product.price}<sup>đ</sup></li>
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+            </div>
+        </div>
         {/* ĐIỆN THOẠI */}
         <div className="section-product-one-content">
           <div className="section-product-one-content-btn section-prev-btn" onClick={() => handlePrev("phone")}>
@@ -167,7 +215,7 @@ function Home() {
             </div>
             <div className="section-product-one-content-items">
               {visiblePhones.map((product, index) => (
-                <div className="section-product-one-content-item" key={`phone-${index}`}>
+                <div className="section-product-one-content-item" key={`saleProduct-${index}`}>
                   <img src={product.img} alt={product.alt} />
                   <div className="section-product-one-content-item-text">
                     <ul>
