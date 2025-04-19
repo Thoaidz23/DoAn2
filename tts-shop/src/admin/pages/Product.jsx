@@ -7,6 +7,8 @@ import {
   ShieldX,
   Search,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+
 
 const Product = () => {
   const [products, setProducts] = useState([]);
@@ -75,14 +77,17 @@ const Product = () => {
             <Search size={16} />
           </Button>
         </Form>
-        <Button variant="primary">+ Thêm sản phẩm</Button>
+          <Button as={Link} to="/admin/product/add" variant="success" className="mb-3">
+            Thêm sản phẩm
+          </Button>
+
       </div>
 
       {/* Bảng sản phẩm */}
       <Table striped bordered hover responsive variant="dark">
         <thead>
           <tr>
-            <th className="text-center align-middle">#</th>
+            <th className="text-center align-middle">STT</th>
             <th className="text-center align-middle">Hình ảnh</th>
             <th className="text-center align-middle">Tên sản phẩm</th>
             <th className="text-center align-middle">Số lượng</th>
@@ -93,15 +98,16 @@ const Product = () => {
         <tbody>
           {products.length > 0 ? (
             products.map((product, index) => (
-              <tr key={product.id}>
+              <tr key={product.id_sanpham}>
                 <td className="text-center align-middle">{index + 1}</td>
                 <td className="text-center align-middle">
-                  <img
-                    src={product.hinhanh || "https://via.placeholder.com/150"}
-                    alt={product.ten_sanpham}
-                    className="img-thumbnail"
-                    style={{ width: "150px", height: "150px" }}
-                  />
+                <img
+                  src={`http://localhost:5000/images/product/${product.hinhanh}`}
+                  alt={product.ten_sanpham}
+                  className="img-thumbnail"
+                  style={{ width: "150px", height: "150px" }}
+                />
+
                 </td>
                 <td className="text-center align-middle">{product.ten_sanpham}</td>
                 <td className="text-center align-middle">{product.soluong || 0}</td>
@@ -109,7 +115,7 @@ const Product = () => {
                   {product.giasp?.toLocaleString("vi-VN")}₫
                 </td>
                 <td className="text-center align-middle">
-                  <Button variant="info" size="sm" className="me-2">Xem</Button>
+                  <Button as={Link} to={`/admin/product/${product.id_sanpham}`}  variant="info" size="sm" className="me-2">Xem</Button>
                   <Button variant="warning" size="sm" className="me-2">Sửa</Button>
                   <Button variant="danger" size="sm">Xóa</Button>
                 </td>

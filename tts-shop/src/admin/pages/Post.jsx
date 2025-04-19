@@ -1,39 +1,17 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { Search} from "lucide-react";
 
 const Post = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [posts, setPosts] = useState([]);
 
-  // Dữ liệu bài viết mẫu
-  const posts = [
-    {
-      id: 1,
-      title: "Mời bạn xem bộ ảnh Đà Lạt - Phan Thiết: “Chuyến đi của thanh xuân” qua ống kính của Xiaomi 14",
-      author: "Admin",
-      date: "2025-04-10",
-      image: "https://cdn-media.sforum.vn/storage/app/media/Nh%C3%A2n/Cover/B%E1%BB%99%20%E1%BA%A3nh%20ch%E1%BB%A5p%20Xiaomi%2014/Camera-Xaomi-14.jpg",
-    },
-    {
-      id: 2,
-      title: "Xu hướng công nghệ mới",
-      author: "Nguyễn Văn A",
-      date: "2025-04-08",
-      image: "https://cdn-media.sforum.vn/storage/app/media/Nh%C3%A2n/Cover/B%E1%BB%99%20%E1%BA%A3nh%20ch%E1%BB%A5p%20Xiaomi%2014/Camera-Xaomi-14.jpg",
-    },
-    {
-      id: 3,
-      title: "Làm sao chọn laptop phù hợp?",
-      author: "Trần Thị B",
-      date: "2025-04-01",
-      image: "https://cdn-media.sforum.vn/storage/app/media/Nh%C3%A2n/Cover/B%E1%BB%99%20%E1%BA%A3nh%20ch%E1%BB%A5p%20Xiaomi%2014/Camera-Xaomi-14.jpg",
-    },
-  ];
-
-  // Lọc bài viết theo từ khóa tìm kiếm
-  const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Gọi API từ backend khi component mount
+    useEffect(() => {
+      fetch("http://localhost:5000/api/posts")
+        .then((res) => res.json())
+        .then((data) => setPosts(data))
+        .catch((err) => console.error("Lỗi khi fetch sản phẩm:", err));
+    }, []);
 
   return (
     <div>
@@ -46,8 +24,6 @@ const Post = () => {
             </InputGroup.Text>
             <Form.Control
               placeholder="Tìm kiếm bài viết..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </InputGroup>
         </Col>
@@ -60,21 +36,22 @@ const Post = () => {
       <Table striped bordered hover responsive variant="dark">
         <thead>
           <tr>
-            <th>STT</th>
-            <th>Hình ảnh</th>
-            <th>Tiêu đề</th>
-            <th>Tác giả</th>
-            <th>Ngày đăng</th>
-            <th>Hành động</th>
+            <th className="text-center align-middle">STT</th>
+            <th className="text-center align-middle">Hình ảnh</th>
+            <th className="text-center align-middle">Tiêu đề</th>
+            <th className="text-center align-middle">Tác giả</th>
+            <th className="text-center align-middle">Tình trạng</th>
+            <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
-          {filteredPosts.map((post, index) => (
-            <tr key={post.id}>
-              <td className="align-middle text-center">{index + 1}</td>
+        {posts.length > 0 ? (
+          posts.map((post, index) => (
+            <tr key={post.id_baiviet}>
+              <td className="text-center align-middle">{index + 1}</td>
               <td className="text-center align-middle">
               <img
-                src={post.image}
+                src={`http://localhost:5000/images/post/${post.hinhanh}`}
                 alt={post.title}
                 className="img-thumbnail"
                 style={{
@@ -83,10 +60,10 @@ const Post = () => {
                 }}
                 />
               </td>
-              <td className="align-middle">{post.title}</td>
-              <td className="align-middle">{post.author}</td>
-              <td className="align-middle">{post.date}</td>
-              <td className="align-middle">
+              <td className="text-center align-middle">{post.tieude}</td>
+              <td className="text-center align-middle">{post.tacgia}</td>
+              <td className="text-center align-middle">{post.tinhtrang}</td>
+              <td className="text-center align-middle">
                 <Button variant="warning" size="sm" className="me-2">
                   Sửa
                 </Button>
@@ -95,7 +72,12 @@ const Post = () => {
                 </Button>
               </td>
             </tr>
-          ))}
+          ))
+        ) : (
+          <tr>
+            <td colSpan="6" className="text-center">Đang tải sản phẩm...</td>
+          </tr>
+        )}
         </tbody>
       </Table>
     </div>

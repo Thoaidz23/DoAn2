@@ -1,34 +1,18 @@
+import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Row, Col } from "react-bootstrap";
 import { Search } from "lucide-react";
 
 const Post = () => {
   // Dữ liệu giả lập đơn hàng
-  const orders = [
-    {
-      id: 1,
-      code: "DH001",
-      customer: "Nguyễn Văn A",
-      total: "2.500.000₫",
-      date: "12/04/2025",
-      status: "Đã giao",
-    },
-    {
-      id: 2,
-      code: "DH002",
-      customer: "Trần Thị B",
-      total: "1.200.000₫",
-      date: "11/04/2025",
-      status: "Đang xử lý",
-    },
-    {
-      id: 3,
-      code: "DH003",
-      customer: "Lê Văn C",
-      total: "3.750.000₫",
-      date: "10/04/2025",
-      status: "Đang giao",
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+  // Gọi API từ backend khi component mount
+
+    useEffect(() => {
+      fetch("http://localhost:5000/api/orders")
+        .then((res) => res.json())
+        .then((data) => setOrders(data))
+        .catch((err) => console.error("Lỗi khi fetch sản phẩm:", err));
+    }, []);
 
   return (
     <div>
@@ -54,25 +38,25 @@ const Post = () => {
       <Table striped bordered hover responsive variant="dark">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Mã đơn</th>
-            <th>Khách hàng</th>
-            <th>Tổng tiền</th>
-            <th>Ngày đặt</th>
-            <th>Trạng thái</th>
-            <th>Hành động</th>
+            <th className="text-center align-middle">STT</th>
+            <th className="text-center align-middle">Mã đơn</th>
+            <th className="text-center align-middle">Khách hàng</th>
+            <th className="text-center align-middle">Tổng tiền</th>
+            <th className="text-center align-middle">Ngày đặt</th>
+            <th className="text-center align-middle">Trạng thái</th>
+            <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
           {orders.map((order, index) => (
-            <tr key={order.id}>
-              <td>{index + 1}</td>
-              <td>{order.code}</td>
-              <td>{order.customer}</td>
-              <td>{order.total}</td>
-              <td>{order.date}</td>
-              <td>{order.status}</td>
-              <td>
+            <tr key={order.id_order}>
+              <td className="text-center align-middle">{index + 1}</td>
+              <td className="text-center align-middle">{order.code_order}</td>
+              <td className="text-center align-middle">{order.name}</td>
+              <td className="text-center align-middle">{order.total_price}</td>
+              <td className="text-center align-middle">{order.date}</td>
+              <td className="text-center align-middle">{order.status}</td>
+              <td className="text-center align-middle">
                 <Button variant="info" size="sm">Xem</Button>
               </td>
             </tr>
