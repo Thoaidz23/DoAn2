@@ -35,5 +35,35 @@ exports.getProductById = (req, res) => {
     });
   });
 };
+// controller/product.controller.js
+export const getFeaturedProducts = (req, res) => {
+  const sql = `
+    SELECT id_sanpham, tensanpham, dungluong, giaban, hinhanh 
+    FROM tbl_sanpham 
+    WHERE noibat = 1 
+    LIMIT 20
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: "Lỗi truy vấn sản phẩm" });
+    res.json(results);
+  });
+};
+
+// controller/post.controller.js
+export const getLatestPosts = (req, res) => {
+  const sql = `
+    SELECT id_baiviet, tieude, mota, hinhanh 
+    FROM tbl_baiviet 
+    ORDER BY ngaydang DESC 
+    LIMIT 8
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: "Lỗi truy vấn bài viết" });
+    res.json(results);
+  });
+};
+
 
 module.exports = { getProducts, getProductById };
