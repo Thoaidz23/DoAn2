@@ -1,18 +1,20 @@
+import React, { useEffect, useState } from "react";
 import { Table, Button } from "react-bootstrap";
 
 const ProductCategory = () => {
-  // Dữ liệu tĩnh về các danh mục sản phẩm
-  const categories = [
-    { id: 1, name: "Điện thoại", productCount: 20 },
-    { id: 2, name: "Laptop", productCount: 15 },
-    { id: 3, name: "Máy tính bảng", productCount: 10 },
-    { id: 4, name: "Phụ kiện", productCount: 30 },
-  ];
+  const [cagproducts, setCagproducts] = useState([]);
+
+  // Gọi API từ backend khi component mount
+      useEffect(() => {
+        fetch("http://localhost:5000/api/cagproducts")
+          .then((res) => res.json())
+          .then((data) => setCagproducts(data))
+          .catch((err) => console.error("Lỗi khi fetch danh mục thương hiệu:", err));
+      }, []);
 
 
   return (
     <div>
-      
 
       {/* Nút thêm danh mục */}
       <Button variant="primary" className="mt-4 mb-3">
@@ -23,19 +25,20 @@ const ProductCategory = () => {
       <Table striped bordered hover responsive variant="dark">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Tên danh mục</th>
-            <th>Số lượng sản phẩm</th>
-            <th>Hành động</th>
+            <th className="text-center align-middle">STT</th>
+            <th className="text-center align-middle">Tên danh mục</th>
+            <th className="text-center align-middle">Số lượng sản phẩm</th>
+            <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
-          {categories.map((category, index) => (
-            <tr key={category.id}>
-              <td>{index + 1}</td>
-              <td>{category.name}</td>
-              <td>{category.productCount}</td>
-              <td>
+          {cagproducts.length > 0 ?
+          cagproducts.map((cagproduct, index) => (
+            <tr key={cagproduct.id_dmsp}>
+              <td className="text-center align-middle">{index + 1}</td>
+              <td className="text-center align-middle">{cagproduct.ten_dmsp}</td>
+              <td className="text-center align-middle">{cagproduct.productCount}</td>
+              <td className="text-center align-middle">
                 <Button variant="info" size="sm" className="me-2">
                   Sửa
                 </Button>
@@ -44,7 +47,14 @@ const ProductCategory = () => {
                 </Button>
               </td>
             </tr>
-          ))}
+          )
+        ) : (
+          <tr>
+              <td colSpan="4" className="text-center">
+                Không có danh mục nào
+              </td>
+            </tr>
+        )}
         </tbody>
       </Table>
     </div>

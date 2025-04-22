@@ -156,3 +156,72 @@
 .panel-column li:hover {
   color: red;
 }
+@media (max-width: 768px) {
+  .menu-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    background-color: white;
+    border-top: 1px solid #ddd;
+    z-index: 999;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .menu-title {
+    display: none;
+  }
+
+  .menubar-nav {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .menu-item {
+    flex: 1;
+    text-align: center;
+  }
+
+  .nav-link {
+    flex-direction: column;
+    font-size: 11px;
+    padding: 5px 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .nav-link svg {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .menu-label {
+    margin-left: 0;
+  }
+
+  .expand-icon {
+    display: none;
+  }
+
+  .hover-panel {
+    display: none; // Ẩn panel khi ở màn hình nhỏ (có thể làm dạng popup nếu cần)
+  }
+}
+@media (max-width: 768px) {
+  .menu-bar {
+    display: none !important;
+  }
+}
+@media (max-width: 992px) {
+  .menu-bar {
+    display: none !important;
+  }
+}

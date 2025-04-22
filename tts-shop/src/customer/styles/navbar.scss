@@ -1,120 +1,123 @@
 .navbar {
-  background-color: #043828 !important; // Màu xanh đậm
+  background-color: #043828 !important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 5px 0px;
-  
-  .nav-link {
-    color: #fff !important; // Chữ trắng để nổi bật
-    font-weight: 600;
-    padding: 8px 15px;
-    border: 1px solid transparent; // Viền mặc định ẩn
-    border-radius: 20px;
-    transition: all 0.3s ease-in-out;
-    display: flex;
-    align-items: center;
-    gap: 8px; // Khoảng cách giữa icon và chữ
-
-    &:hover {
-      background-color: rgb(13, 126, 146);
-      border-color:  rgb(13, 126, 146);
-      border-width: 1px; // Độ dày viền nhỏ hơn
-    }
-  }
-
-  .navbar-toggler {
-    border-color: rgba(255, 255, 255, 0.5);
-  }
+  padding: 5px 0;
+  overflow-x: auto; /* ✅ Cho phép cuộn ngang toàn bộ navbar */
+  -webkit-overflow-scrolling: touch;
 }
 
-// Thanh tìm kiếm
+.navbar .container {
+  display: flex;
+  flex-wrap: nowrap; /* ✅ Ngăn xuống hàng */
+  align-items: center;
+  gap: 16px;
+  min-width: max-content;
+}
+
+/* Logo */
+.navbar-header {
+  flex-shrink: 0;
+}
+
+/* Tìm kiếm */
 .search-form {
-  width: 40%;
+  flex-shrink: 0;
+  width: 35%;
+  min-width: 200px;
   display: flex;
   justify-content: center;
 }
 
 .search-container {
   position: relative;
-  width: 80%;
+  width: 100%;
 }
 
 .search-input {
   width: 100%;
-  border: 2px solid #ffffff; // Viền trắng
+  border: 1px solid #ffffff;
   border-radius: 25px;
-  background: #ffffff; // Nền trắng
-  color: #000; // Chữ đen
+  background: #ffffff;
+  color: #000;
   font-size: 16px;
-
-  &::placeholder {
-    color: rgba(100, 100, 100, 0.7);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #787776; // Khi focus, viền màu vàng
-  }
-}
-// Thanh tìm kiếm
-.search-form {
-  width: 40%;
-  display: flex;
-  justify-content: center;
+  padding: 10px 15px 10px 40px;
 }
 
-.search-container {
+.search-input::placeholder {
+  color: rgba(100, 100, 100, 0.7);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ffcc00;
+}
+
+.search-input::-webkit-search-cancel-button {
   position: relative;
-  width: 80%;
+  cursor: pointer;
+  transform: scale(1.5);
 }
 
-.search-input {
-  width: 100%;
-  border: 1px solid #ffffff; // Viền trắng mỏng
-  border-radius: 25px;
-  background: #ffffff; // Nền trắng
-  color: #000; // Chữ đen
-  font-size: 16px;
-  padding: 10px 15px 10px 40px; // Dịch nội dung chữ sang phải để tránh trùng kính lúp
-
-  &::placeholder {
-    color: rgba(100, 100, 100, 0.7);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #ffcc00; // Khi focus, viền màu vàng
-  }
-}
-
-// Nút kính lúp bên trong ô tìm kiếm (bên trái)
 .search-btn {
   position: absolute;
-  left: 12px; // Cách mép trái 12px
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #d70018; // Màu đỏ đậm
+  color: #d70018;
   font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10; // Đảm bảo không bị che bởi input
+  z-index: 10;
 }
-// Căn chỉnh nút X (xoá văn bản)
-.search-input::-webkit-search-cancel-button {
-  position: relative;
-  cursor: pointer;
-  transform: scale(1.5); // Tăng kích thước lên 1.5 lần
+.nav-link-item {
+  text-decoration: none;
 }
-.navbar-toggler {
-  border: none; // Loại bỏ viền mặc định
-  background-color: transparent; // Giữ nền trong suốt
+/* Menu (3 nút) */
+.navbar-nav {
+  flex-direction: row;
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
 
-  .navbar-toggler-icon {
-    filter: invert(1); // Đổi màu thành trắng (hoặc bạn có thể thay bằng `color`)
-    width: 30px; // Tăng kích thước nếu cần
-    height: 30px;
+.nav-link-item {
+  color: #fff !important;
+  font-weight: 600;
+  padding: 8px 15px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.nav-link-item:hover {
+  background-color: rgb(13, 126, 146);
+  border-color: rgb(13, 126, 146);
+}
+
+@media (max-width: 992px) {
+  .navbar-header , .navbar-brand {
+   padding-left: 5px !important;
+  }
+  .search-form {
+    width: 25% !important;
+    min-width: 140px; /* Giới hạn nhỏ nhất */
+  }
+  @media (max-width: 768px) {
+    .navbar-header , .navbar-brand {
+     padding-left: 5px !important;
+    }
+    .search-form {
+      width: 20% !important;
+      min-width: 140px; /* Giới hạn nhỏ nhất */
+    }
   }
 }
