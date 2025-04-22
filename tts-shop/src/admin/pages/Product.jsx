@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-
 const Product = () => {
   const [products, setProducts] = useState([]);
 
@@ -116,7 +115,7 @@ const Product = () => {
                 </td>
                 <td className="text-center align-middle">
                   <Button as={Link} to={`/admin/product/${product.id_sanpham}`}  variant="info" size="sm" className="me-2">Xem</Button>
-                  <Button variant="warning" size="sm" className="me-2">Sửa</Button>
+                  <Button as={Link} to={`/admin/product/edit/${product.id_sanpham}`} variant="warning" size="sm" className="me-2">Sửa</Button>
                   <Button variant="danger" size="sm">Xóa</Button>
                 </td>
               </tr>
