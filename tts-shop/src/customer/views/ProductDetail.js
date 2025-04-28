@@ -212,9 +212,9 @@ const ProductDetail = () => {
               />
                             
             
-              <Row className="align-items-end mb-3 quantity">
+              <Row className="align-items-end mb-3 ">
                 <Col xs={4}>
-                  <Form.Group controlId="quantity">
+                  <Form.Group>
                     <Form.Label>Số lượng</Form.Label>
                     <Form.Control 
                       type="number"

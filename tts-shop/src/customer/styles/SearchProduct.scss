@@ -3,8 +3,7 @@
     background-color: rgba(0, 0, 0, 0.1);
     padding-left: 5px;
     padding-right: 5px;
-  
-    .container {
+    .container{
       gap: 0 !important; 
       display: flex;
     }
@@ -41,6 +40,7 @@
 
 
   .product-one-content {
+    height:20%;
     margin-top: 10px;
     background-color: whitesmoke;
     padding: 12px;

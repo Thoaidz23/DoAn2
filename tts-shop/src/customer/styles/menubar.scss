@@ -67,31 +67,46 @@
   position: absolute;
   top: 0;
   left: 250px;
-  width: 180px;
+  z-index: 1000;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 5px;
-  padding: 10px;
-  z-index: 1000;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 15px 20px;
+  min-width: 400px;
+  display: flex;
+  gap: 40px;
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in-out;
 }
 
-.hover-panel ul {
+.hover-column {
+  min-width: 150px;
+}
+
+.hover-column h6 {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.hover-column ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.hover-panel li {
-  padding: 6px 8px;
+.hover-column li {
+  padding: 5px 0;
   font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.hover-panel li:hover {
-  background-color: #f0f0f0;
+.hover-column li:hover {
   color: red;
+  background-color: #f0f0f0;
 }
+
 .overlay {
   position: fixed;
   top: 0;
@@ -102,21 +117,6 @@
   z-index: 100;
 }
 
-.hover-panel {
-  position: absolute;
-  top: 0;
-  left: 250px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px 20px;
-  z-index: 101;
-  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.3);
-  min-width: 400px;
-  display: flex;
-  flex-direction: column;
-  animation: fadeIn 0.2s ease-in-out;
-}
 
 @keyframes fadeIn {
   from {
