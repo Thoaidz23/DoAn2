@@ -48,12 +48,13 @@ function Product() {
     let result = [...products];
 
     if (brandId) {
-      result = result.filter((p) => String(p.id_catogory_brand) === brandId);
+      result = result.filter((p) => String(p.id_category_brand) === brandId);
     }
-
+    
     if (categoryId) {
-      result = result.filter((p) => String(p.id_catogory_product) === categoryId);
+      result = result.filter((p) => String(p.id_category_product) === categoryId);
     }
+    
 
     if (searchText) {
       const searchLower = searchText.toLowerCase();
@@ -91,11 +92,11 @@ function Product() {
                       <ul>
                         <li>
                           <Link to={`/ProductDetail/${product.id_group_product}`} style={{ textDecoration: "none", color: "inherit" }}>
-                            {product.ten_sanpham}
+                            {product.name_group_product}
                           </Link>
                         </li>
                         <li>Online giá rẻ</li>
-                        <li>{product.giasp}<sup>đ</sup></li>
+                        <li>{product.price}<sup>đ</sup></li>
                       </ul>
                     </div>
                   </div>

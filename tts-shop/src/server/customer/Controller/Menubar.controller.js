@@ -19,7 +19,6 @@ exports.getBrandsByCategory = (req, res) => {
     SELECT DISTINCT b.id_category_brand, b.name_category_brand
     FROM tbl_group_product g
     JOIN tbl_category_brand b  ON g.id_category_brand = b.id_category_brand
-    WHERE g.id_category_product = ?
   `;
   db.query(query, [categoryId], (err, results) => {
     if (err) {
