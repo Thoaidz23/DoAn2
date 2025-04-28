@@ -1,5 +1,5 @@
 .container-detail_bar {
-    margin-top: -5%;
+    margin-top: -5.3%;
     background-color: rgba(0, 0, 0, 0.1);
     padding-left: 5px;
     padding-right: 5px;
@@ -109,4 +109,82 @@
       }
     }
   }
-  
+  /* Responsive cho màn hình từ 992px đến dưới 1200px: 3 sản phẩm */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .product-one-content-item {
+    width: calc((100% - 2 * 10px) / 3);
+  }
+}
+
+/* Responsive cho màn hình từ 768px đến dưới 992px: 2 sản phẩm */
+@media (max-width: 991px) and (min-width: 768px) {
+  .product-one-content-item {
+    width: calc((100% - 10px) / 2);
+  }
+}
+
+/* Responsive cho màn hình dưới 768px: cuộn ngang từng item */
+@media (max-width: 767px) {
+  .product-one-content-items {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 10px;
+    margin: 0 10px;
+
+    .product-one-content-item {
+      flex: 0 0 80%;
+      width: auto;
+      scroll-snap-align: start;
+    }
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+  /* Dưới 768px: hiển thị 2 sản phẩm mỗi hàng (hàng ngang) */
+/* Dưới 768px: hiển thị 2 sản phẩm mỗi hàng (hàng ngang) */
+@media (max-width: 767px) {
+  .product-one-content-items {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép xuống hàng */
+    gap: 10px; /* Khoảng cách giữa các sản phẩm */
+    justify-content: space-between; /* Căn đều 2 sản phẩm 1 hàng */
+    padding: 0 10px;
+  }
+
+  .product-one-content-item {
+    flex: 0 0 calc(50% - 5px); /* Mỗi item chiếm 50% - trừ khoảng gap */
+    max-width: calc(50% - 5px);
+    margin-bottom: 10px;
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: contain; /* Ảnh không bị vỡ */
+    }
+  }
+}
+
+
+/* 768px đến 991px: hiển thị 3 sản phẩm mỗi hàng */
+@media (min-width: 768px) and (max-width: 991px) {
+  .product-one-content-item {
+    width: calc((100% - 2 * 10px) / 3); /* 3 sản phẩm mỗi hàng */
+  }
+}
+
+/* 992px đến 1199px: hiển thị 5 sản phẩm mỗi hàng */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .product-one-content-item {
+    width: calc((100% - 4 * 10px) / 5); /* 5 sản phẩm mỗi hàng */
+  }
+}
+
+/* Trên 1199px: hiển thị 5 sản phẩm mỗi hàng */
+@media (min-width: 1200px) {
+  .product-one-content-item {
+    width: calc((100% - 4 * 10px) / 5); /* 5 sản phẩm mỗi hàng */
+  }
+}

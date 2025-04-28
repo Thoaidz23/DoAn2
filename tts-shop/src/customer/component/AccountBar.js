@@ -30,7 +30,8 @@ function AccountBar({ activeMenu, setActiveMenu }) {
               }
             }}
           >
-            <i className={`bi ${item.icon}`}></i> {item.label}
+            <i className={`bi ${item.icon}`}></i> 
+            <span>{item.label}</span>
           </li>
         ))}
       </ul>
