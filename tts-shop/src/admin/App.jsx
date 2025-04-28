@@ -14,6 +14,7 @@ import PostCategory from './pages/PostCategory';
 import StaffAccount from './pages/StaffAccount';
 import CustomerAccount from './pages/CustomerAccount';
 import AddProduct from './pages/AddProduct';
+import EditProduct from "./pages/EditProduct";
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
             <Route path="/admin/product" element={<Product />} />
             <Route path="/admin/product/:id" element={<ProductDetail />} /> {/* Route cho trang chi tiết sản phẩm */}
             <Route path="/admin/product/add" element={<AddProduct />} />
+            <Route path="/admin/product/edit/:id" element={<EditProduct />} />
             <Route path="/admin/productcategory" element={<ProductCategory />} />
             <Route path="/admin/brandcategory" element={<BrandCategory />} />
             <Route path="/admin/post" element={<Post />} />

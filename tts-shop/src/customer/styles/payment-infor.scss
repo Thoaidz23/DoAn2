@@ -216,4 +216,26 @@
   .checkout-button:hover {
     border: 3px solid rgb(19, 223, 169);
   }
+  .payment-option {
+    cursor: pointer;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background-color: #fff;
+  
+    &:hover {
+      background-color: #f9f9f9;
+    }
+  
+    &.active {
+      background-color: rgb(155, 252, 176,0.5); // màu xám nhẹ khi được chọn
+      border-color: #9bfcb0;
+    }
+    p {
+      margin: 0;
+      font-weight: 500;
+    }
+  }
   
