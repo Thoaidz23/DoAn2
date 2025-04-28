@@ -18,8 +18,9 @@ exports.getBrandsByCategory = (req, res) => {
   const query = `
     SELECT DISTINCT b.id_category_brand, b.name_category_brand
     FROM tbl_group_product g
-    JOIN tbl_category_brand b  ON g.id_category_brand = b.id_category_brand
-  `;
+    JOIN tbl_category_brand b ON g.id_category_brand = b.id_category_brand
+    WHERE g.id_category_product = ?`; // Thêm điều kiện WHERE để lọc theo categoryId
+
   db.query(query, [categoryId], (err, results) => {
     if (err) {
       console.error('Lỗi truy vấn:', err);

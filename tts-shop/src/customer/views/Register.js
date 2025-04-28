@@ -60,12 +60,13 @@ const Register = () => {
       setSuccess("");
       return;
     }
-  
+    
     try {
       const { confirmPassword, ...submitData } = formData;
       const response = await axios.post("http://localhost:5000/api/users/register", submitData);
       setSuccess(response.data.message);
       setError("");
+      window.location.href = "/Login";
       setShowOtpModal(true);
       setFormData({
         name: "",
@@ -179,7 +180,7 @@ const Register = () => {
         <Button className="w-100 mt-3" onClick={handleRegister}>
           Đăng ký
         </Button>
-           
+        <p className="mt-2">Đã có tài khoản? <a href="/Login">Đăng nhập</a></p>
       </Form>
       {/* <OtpModal
           show={showOtpModal}
