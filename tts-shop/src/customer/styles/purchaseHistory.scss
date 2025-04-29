@@ -263,80 +263,25 @@
               color: #fff;
             }
           }
-        }
-      }
-    }
-  }.order-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 20px;
-    margin-bottom: 20%;
-    .order-item-v2 {
-      display: flex;
-      align-items: flex-start;
-      background: white;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-      padding: 16px;
-      gap: 20px;
-  
-      .product-image {
-        width: 100px;
-        height: 100px;
-        object-fit: contain;
-      }
-  
-      .order-info {
-        flex: 1;
-  
-        h5 {
-          font-weight: bold;
-          margin-bottom: 6px;
-        }
-  
-        .order-meta {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-top: 6px;
-  
-          .order-status {
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 6px;
+          .history-cancel-button {
+            background-color: transparent;
+            border: 1px solid #35dcb2;
+            color: #115149;
+            padding: 6px 12px;
             font-size: 14px;
-          }
-  
-          .đã-giao-hàng {
-            background-color: #e6ffe6;
-            color: green;
-          }
-  
-          .chờ-xác-nhận {
-            background-color: #ffffcc;
-            color: orange;
-          }
-  
-          .đang-chờ-huỷ {
-            background-color: #ffe6e6;
-            color: red;
-          }
-  
-          .price {
-            font-weight: bold;
-            color: red;
+            border-radius: 6px;
+            transition: 0.3s;
+            position: absolute;
+            top: 70px;
+            font-weight: 400;
+            right: 5px;
+            &:hover {
+              background-color: #18a574;
+              color: #fff;
+            }
           }
         }
-      }
-  
-      .order-actions {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 6px;
       }
     }
   }
-
   
