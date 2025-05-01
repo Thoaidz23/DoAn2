@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors'); // Kết nối MySQL
 const path = require("path");
+const bodyParser = require("body-parser");
 //admin
 const orderRoutes = require('./admin/routes/orderRoutes'); // Import routes đơn hàng
 const productRoutes = require('./admin/routes/productRoutes');
@@ -14,8 +15,10 @@ const HProductRoute = require('./customer/Routes/Home.routes')
 const searchRoutes = require("./customer/Routes/search.routes");
 const MenuBar = require("./customer/Routes/MenuBar.route")
 // const otpRoutes = require('./customer/Routes/Otp.route');
-// const PDRoutes = require('./customer/Routes/ProductDetail.routes');
+const groupProductRoute = require("./customer/Routes/ProductDetail.routes");
 const user = require('./customer/Routes/user.route');
+const cartRoutes = require('./customer/Routes/Cart.route');
+const cartPageRoute = require('./customer/Routes/CartPage.route');
 
 
 const app = express();
@@ -40,8 +43,12 @@ app.use('/api/Home',HProductRoute)
 app.use("/api/SearchProduct",searchRoutes );
 app.use('/api/category',MenuBar)
 // app.use('/api/otp', otpRoutes);
-// app.use('/api/productsdetail', productRoutes);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/api/group-route", groupProductRoute);
 app.use('/api/users', user);
+app.use('/api/cart', cartRoutes);
+app.use('/api/cartpage', cartPageRoute);
 // Server lắng nghe
 app.listen(PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);

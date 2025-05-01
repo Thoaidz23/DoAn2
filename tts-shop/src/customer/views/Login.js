@@ -1,54 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, FloatingLabel, Container, Button, Alert } from "react-bootstrap";
 import { Eye, EyeSlash } from "react-bootstrap-icons";
-import axios from 'axios';
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext"; // ✅ Import AuthContext
 
 const Login = () => {
+  const { login } = useContext(AuthContext); // ✅ Dùng context
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); 
-  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // ✅ Thêm state cho showPassword
   const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // ✅ Thêm state cho loading
 
   const handleLogin = async () => {
     setLoading(true);
+    setErrorMessage("");
+
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', {
+      const res = await axios.post("http://localhost:5000/api/users/login", {
         email,
-        password
+        password,
       });
 
-      const { token, user } = response.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      const { token, user } = res.data;
+      login(user, token); // ✅ Gọi login từ context
 
-      // Chuyển hướng theo role
-      if (user.role === 1) {
-        window.location.href = "/admin";
-      } else {
-        window.location.href = "/";
-      }
+      window.location.href = user.role === 1 ? "/admin" : "/";
     } catch (error) {
-      if (error.response && error.response.data) {
-        setErrorMessage(error.response.data.message || "Đăng nhập thất bại");
-      } else {
-        setErrorMessage("Có lỗi xảy ra. Vui lòng thử lại sau.");
-      }
+      setErrorMessage("Sai email hoặc mật khẩu");
     }
+
     setLoading(false);
   };
 
   return (
     <Container className="d-flex justify-content-center vh-100 mt-5">
       <Form className="w-50">
-        <h2 className="text-center mb-5">Đăng Nhập</h2>
+        <h2 className="text-center mb-4">Đăng Nhập</h2>
 
         {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
         <FloatingLabel controlId="floatingEmail" label="Email" className="mb-3">
           <Form.Control
             type="email"
-            placeholder=" "
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -58,35 +53,40 @@ const Login = () => {
           <FloatingLabel controlId="floatingPassword" label="Mật khẩu">
             <Form.Control
               type={showPassword ? "text" : "password"}
-              placeholder=" "
+              placeholder="Mật khẩu"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </FloatingLabel>
+
           {showPassword ? (
-            <EyeSlash
-              onClick={() => setShowPassword(!showPassword)}
-              style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", cursor: "pointer" }}
-            />
+            <EyeSlash onClick={() => setShowPassword(false)} style={eyeIconStyle} size={20} />
           ) : (
-            <Eye
-              onClick={() => setShowPassword(!showPassword)}
-              style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", cursor: "pointer" }}
-            />
+            <Eye onClick={() => setShowPassword(true)} style={eyeIconStyle} size={20} />
           )}
         </div>
 
-        <Button className="w-100 mt-3" onClick={handleLogin} disabled={loading}>
+        <Button className="w-100 mt-2" onClick={handleLogin} disabled={loading}>
           {loading ? "Đang đăng nhập..." : "Đăng nhập"}
         </Button>
 
         <div className="d-flex justify-content-between mt-3">
           <a href="/ForgetPassword">Quên mật khẩu?</a>
-          <p>Chưa có tài khoản? <a href="/Register">Đăng ký</a></p>
+          <span>
+            Chưa có tài khoản? <a href="/Register">Đăng ký</a>
+          </span>
         </div>
       </Form>
     </Container>
   );
+};
+
+const eyeIconStyle = {
+  position: "absolute",
+  right: 10,
+  top: "50%",
+  transform: "translateY(-50%)",
+  cursor: "pointer",
 };
 
 export default Login;

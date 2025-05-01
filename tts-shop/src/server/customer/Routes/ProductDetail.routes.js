@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { productController  } = require("../Controller/ProductDetail.controller");
+const groupProductController  = require("../Controller/ProductDetail.controller");
 
-// Route: GET /api/products/:id
-router.get('/:id', productController.getProductById);
+// ⚠️ Lỗi xảy ra nếu dòng dưới đây gọi tới một thuộc tính không tồn tại
+router.get("/:id", groupProductController.getProductDetail);
 
 module.exports = router;

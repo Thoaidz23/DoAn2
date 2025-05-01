@@ -2,6 +2,9 @@ import React, { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import NavBar from "../component/NavBar";
 import Footer from "../component/Footer";
+import ProductDetail from "../views/ProductDetail";
+import CartPage from "../views/CartPage"
+import { AuthProvider } from "../context/AuthContext"; // ✅ Thêm dòng này
 
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);
 
@@ -29,6 +32,8 @@ function AppContent() {
       <Suspense fallback={<div className="text-center mt-5">Đang tải trang...</div>}>
         <Routes key={location.pathname}>
           {routes}
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cartpage/:userId" element={<CartPage />} />
         </Routes>
       </Suspense>
       {!hideLayout && <Footer />}
@@ -38,9 +43,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <AuthProvider> {/* ✅ Bao bọc AppContent bởi AuthProvider */}
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   );
 }
 

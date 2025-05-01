@@ -60,14 +60,6 @@ function Home() {
     setIndexMap((prev) => ({ ...prev, [id_category_product]: prevIndex }));
   };
 
-  const newsList = [
-    {
-      id: 1,
-      title: "Rò rỉ cấu hình chi tiết Galaxy Z...",
-      description: "Đây là mô tả ngắn cho bài viết số 1.",
-      image: "https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg",
-    },
-  ];
 
   if (loading) return <div className="text-center mt-4">Đang tải dữ liệu...</div>;
 

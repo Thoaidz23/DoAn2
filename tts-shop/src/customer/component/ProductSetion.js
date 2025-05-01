@@ -49,9 +49,14 @@ function ProductSection({ title, visibleProducts, handleNext, handlePrev, brands
         </div>
 
         <div className="section-product-one-content-items">
-          {filteredProducts.length > 0 ? (
+        {filteredProducts.length > 0 ? (
             filteredProducts.map((product, index) => (
-              <div className="section-product-one-content-item" key={`${title}-${index}`}>
+              <div
+                className="section-product-one-content-item"
+                key={`${title}-${index}`}
+                onClick={() => navigate(`/product/${product.id_group_product}`)}
+                style={{ cursor: "pointer" }}
+              >
                 <img
                   src={`http://localhost:5000/images/product/${product.image}`}
                   alt={product.alt || product.name_group_product}
@@ -60,7 +65,7 @@ function ProductSection({ title, visibleProducts, handleNext, handlePrev, brands
                   <ul>
                     <li>{product.name_group_product}</li>
                     <li>Online giá rẻ</li>
-                    <li>{product.price}<sup>đ</sup></li>
+                    <li>{Number(product.price).toLocaleString()}<sup>đ</sup></li>
                   </ul>
                 </div>
               </div>
@@ -68,6 +73,7 @@ function ProductSection({ title, visibleProducts, handleNext, handlePrev, brands
           ) : (
             <p>Không có sản phẩm nào</p>
           )}
+
         </div>
       </div>
     </div>
