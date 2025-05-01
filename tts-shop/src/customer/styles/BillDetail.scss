@@ -1,156 +1,236 @@
 .billdetail-container {
-    background-color: whitesmoke;
-    padding: 20px;
-    margin-top: -5%;
+  background-color: whitesmoke;
+  padding: 20px;
+  margin-top: -5%;
 }
 
 .container {
-    display: flex;
-    gap: 20px;
-    height: 100%;
-  }
-.detailbill-content {
-    width: 75%;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; // scroll nếu quá dài
-    .order-detail-bill {
-      h3 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-weight: bold;
-      }
-  
-      .order-meta-bill {
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-        position: relative;
-      
-        p {
-          margin: 5px 0;
-      
-          .highlight {
-            font-weight: bold;
-            color: #000;
-          }
-        }
-      
-        .status-bill {
-          position: absolute;
-          top: 0;
-          right: 0;
-          font-weight: bold;
-      
-          .confirmed-bill {
-            color: green;
-          }
-        }
-      }
-      /*don hàng*/
-      .title-productbill {
-        color: #000;
-        font-size: 17px;
-        font-weight: bold;
-      }
-      .order-items-bill {
-        .item-detailbill {
-          display: flex;
-          align-items: center;
-          padding: 10px 0;
+  display: flex;
+  gap: 20px;
+  height: 100%;
+  flex-wrap: nowrap; /* Không cho các phần tử xuống dòng */
+  overflow-x: auto; /* Cho phép cuộn ngang nếu không đủ không gian */
+}
 
-          img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-right: 15px;
-          }
-  
-          .item-info-bill {
-            h4 {
-              margin: 0;
-              font-size: 16px;
-              
-            }
-  
-            p {
-              margin: 5px 0;
-              .price-bill {
-                color: red;
-                font-weight: bold;
-              }
-              .billdetail-Quantity {
-                color: red;
-              }
-            }
-          }
+.detailbill-content {
+  width: 75%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; // scroll nếu quá dài
+
+  .order-detail-bill {
+    h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .order-meta-bill {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      position: relative;
+
+      p {
+        margin: 5px 0;
+
+        .highlight {
+          font-weight: bold;
+          color: #000;
         }
       }
-      
-      .payment-info-bill {
-        margin-top: 20px;
-  
-        h4 {
-          font-size: 18px;
-          font-weight: bold;
-          margin-bottom: 15px;
-          i {
-            margin-right: 8px;
-          }
-        }
-  
-        .payment-row-bill,
-        .payment-row {
-          display: flex;
-          justify-content: space-between;
-          margin: 5px 0;
-           
-        }
-      
-        .total-bill .bold,
-        .bill-success {
-          color: #dc0c0c;
-          font-weight: bold;
-        }
-  
-        .bill-success {
+
+      .status-bill {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-weight: bold;
+
+        .confirmed-bill {
           color: green;
         }
       }
     }
+
+    /* Don hàng */
+    .title-productbill {
+      color: #000;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .order-items-bill {
+      .item-detailbill {
+        display: flex;
+      
+        padding: 10px 0;
+
+        img {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 10px;
+          margin-right: 15px;
+        }
+
+        .item-info-bill {
+          h4 {
+            margin: 0;
+            font-size: 16px;
+          }
+
+          p {
+            margin: 5px 0;
+            .price-bill {
+              color: red;
+              font-weight: bold;
+            }
+            .billdetail-Quantity {
+              color: red;
+            }
+          }
+        }
+      }
+    }
+
+    .payment-info-bill {
+      margin-top: 20px;
+
+      h4 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        i {
+          margin-right: 8px;
+        }
+      }
+
+      .payment-row-bill,
+      .payment-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px 0;
+      }
+
+      .total-bill .bold,
+      .bill-success {
+        color: #dc0c0c;
+        font-weight: bold;
+      }
+
+      .bill-success {
+        color: green;
+      }
+    }
   }
-/* khach hàng*/
+}
+
+/* Khách hàng */
 .customer-info-bill {
-    background-color: #ffffff;
-    margin-top: 25px;
-    border-radius: 12px;
-  
-    .customer-header-bill {
+  background-color: #ffffff;
+  margin-top: 25px;
+  border-radius: 12px;
+
+  .customer-header-bill {
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+    margin-bottom: 15px;
+  }
+
+  .customer-detailbill {
+    p {
       display: flex;
       align-items: center;
-      font-size: 17px;
-      margin-bottom: 15px;
-  
+      font-size: 16px;
+      margin: 8px 0;
+
+      .icon-bill {
+        color: #086e79;
+        font-size: 18px;
+        margin-right: 10px;
+        min-width: 20px;
+        text-align: center;
+      }
     }
-  
-    .customer-detailbill {
+  }
+}
+
+@media (max-width: 768px) {
+  .detailbill-content {
+    width: 80%; /* Cho phép phần content tự động thu nhỏ */
+    padding: 15px;
+    margin-top: 5%;
+  }
+
+  .order-detail-bill {
+    h1.title {
+      font-size: 20px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .order-meta-bill {
       p {
-        display: flex;
-        align-items: center;
+        font-size: 14px;
+      }
+      .status-bill {
+        font-size: 14px;
+      }
+    }
+
+    .title-productbill {
+      font-size: 16px;
+      margin-top: 10px; // thêm khoảng cách nhẹ
+    }
+
+    .order-items-bill {
+      .item-detailbill {
+        flex-direction: column;
+        align-items: flex-start;
+
+        img {
+          width: 80px;
+          height: 80px;
+          margin-bottom: 10px;
+        }
+
+        .item-info-bill {
+          h4 {
+            font-size: 15px;
+          }
+          p {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    .payment-info-bill {
+      h4 {
+        font-size: 17px;
+      }
+
+      .payment-row-bill,
+      .payment-row {
+        font-size: 14px;
+      }
+    }
+
+    .customer-info-bill {
+      margin-top: 20px;
+
+      .customer-header-bill {
         font-size: 16px;
-        margin: 8px 0;
-  
-        .icon-bill {
-          color: #086e79;
-          font-size: 18px;
-          margin-right: 10px;
-          min-width: 20px;
-          text-align: center;
+      }
+
+      .customer-detailbill {
+        p {
+          font-size: 14px;
         }
       }
     }
   }
-  
+}

@@ -1,5 +1,6 @@
 .container {  
   position: relative; /* Giúp sidebar nằm trong container */
+  overflow-x: hidden;
 }
 
 .menu-title {
@@ -17,7 +18,7 @@
   left: 0;
   width: 250px;
   background-color: #333;
-  padding-top: 20px;
+  padding-top: 15px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -46,7 +47,7 @@
 .menubar-nav .nav-link:hover {
   background-color: #f0f0f0;
   border-radius: 5px;
-  color: red;
+  color: rgb(38, 176, 130);
 }
 
 .menubar-nav .nav-link svg {
@@ -64,10 +65,10 @@
   margin-left: auto;
 }
 .hover-panel {
-  position: absolute;
-  top: 0;
-  left: 250px;
-  z-index: 1000;
+  position: fixed;
+  top: 80px; /* hoặc vị trí bạn muốn hiển thị */
+  left: 400px; /* hoặc tính toán theo thực tế */
+  z-index: 9999; /* cao để nằm trên tất cả */
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 5px;

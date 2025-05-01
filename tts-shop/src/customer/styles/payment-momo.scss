@@ -194,3 +194,54 @@
     }
   }
 }
+@media screen and (max-width: 768px) {
+  /* Điều chỉnh header */
+  .header-momo {
+    padding: 10px 0;
+  }
+
+  .header-momo__logo {
+    margin-left: 20px;
+  }
+
+  .header-momo__logo img {
+    width: 50px;
+    height: 30px;
+  }
+
+  /* Điều chỉnh bố cục thanh toán */
+  .container-momo {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .payment-momo-wrapper {
+    flex-direction: column;
+    height: auto;
+    gap: 20px;
+  }
+
+  .payment-momo-box {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .content-momo {
+    width: 100%;
+  }
+
+  /* Điều chỉnh QR */
+  .momo-qr-wrapper {
+    height: auto;
+    padding: 20px;
+  }cc 
+.momo-qr-wrapper {
+    padding: 20px;
+    height: auto;
+  }
+
+  .momo-qr-box {
+    width: 100%;
+  }
+  
+}

@@ -139,164 +139,149 @@
       }
     }
   }
-  .orders-list {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  
-    .order-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      position: relative;
-  
-      .order-info {
-        width: 60%;
-  
-        .order-code {
-          font-weight: bold;
-          font-size: 18px;
-        }
-  
-        .product-name {
-          font-size: 14px;
-          margin: 8px 0;
-          color: #333;
-        }
-  
-        .order-status {
-          display: inline-block;
-          padding: 4px 10px;
-          border-radius: 6px;
-          font-size: 13px;
-          margin-bottom: 8px;
-        }
-  
-        .pending-cancel {
-          background-color: #ffe2e2;
-          color: #d92626;
-        }
-  
-        .delivered {
-          background-color: #d4f9e6;
-          color: #0c8b4c;
-        }
-  
-        .price {
-          color: red;
-          font-size: 18px;
-  
-          sup {
-            font-size: 12px;
-          }
-        }
-      }
-  
-      .order-image {
-        width: 100px;
-        height: 100px;
-        margin-right: 20px;
-  
-        img {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
-          border-radius: 8px;
-        }
-      }
-  
-      .btn-detail {
-        background-color: white;
-        border: 1px solid red;
-        color: red;
-        padding: 6px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s;
-  
-        &:hover {
-          background-color: red;
-          color: white;
-        }
-      }
-    }
-  }.order-list {
+  /*co san pham*/ 
+  .order-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
     margin-top: 20px;
-    margin-bottom: 20%;
-    .order-item-v2 {
+  
+    .history-order-item {
       display: flex;
       align-items: flex-start;
-      background: white;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
+      background: #f8f9fa;
       padding: 16px;
-      gap: 20px;
+      border-radius: 8px;
+      position: relative;
   
-      .product-image {
-        width: 100px;
-        height: 100px;
-        object-fit: contain;
+      .history-order-left {
+        flex-shrink: 0;
+  
+        .history-order-item-image {
+          width: 150px;
+          height: auto;
+          object-fit: cover;
+          border-radius: 8px;
+        }
       }
   
-      .order-info {
+      .history-order-right {
         flex: 1;
-  
-        h5 {
-          font-weight: bold;
-          margin-bottom: 6px;
-        }
-  
-        .order-meta {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-top: 6px;
-  
-          .order-status {
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 14px;
-          }
-  
-          .đã-giao-hàng {
-            background-color: #e6ffe6;
-            color: green;
-          }
-  
-          .chờ-xác-nhận {
-            background-color: #ffffcc;
-            color: orange;
-          }
-  
-          .đang-chờ-huỷ {
-            background-color: #ffe6e6;
-            color: red;
-          }
-  
-          .price {
-            font-weight: bold;
-            color: red;
-          }
-        }
-      }
-  
-      .order-actions {
+        margin-left: 16px;
+        position: relative;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        gap: 6px;
+  
+        .history-order-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+  
+          .history-order-time {
+            position: absolute;
+            font-size: 12px;
+            color: #717171;
+            top: 0;
+            right: 5px;
+          }
+        }
+  
+        .history-order-name {
+          font-size: 16px;
+          font-weight: 500;
+          margin: 4px 0;
+          color: #212529;
+        }
+  
+        .history-order-status {
+          background-color: #d6d8db;
+          background-color: #b4bcc5; // xám
+          font-size: 12px;
+          padding: 4px 8px;
+          color: #ffffff; // chữ đen cho dễ nhìn
+          font-weight: 500 !important;
+          border-radius: 4px;
+          width: fit-content;
+          margin-top: 4px; /* Để sát dưới tên */
+        }  
+        // Các màu riêng theo trạng thái
+        .history-order-status.Chờ-xác-nhận {
+          background-color: rgba(252, 233, 88, 0.9); // vàng
+          color: #ffffff; // chữ đen cho dễ nhìn
+          font-weight: 500;
+        }
+        
+        .history-order-status.Đã-giao-hàng {
+          background-color: #54e576; // xanh lá
+          color: #ffffff; // chữ đen cho dễ nhìn
+          font-weight: 500;
+        }
+        
+        .history-order-status.Đã-xác-nhận {
+          background-color: #389962; // xanh dương
+          color: #ffffff; // chữ đen cho dễ nhìn
+          font-weight: 500;
+        }
+        
+        .history-order-status.Đã-huỷ {
+          background-color: #6c757d; // xám
+          color: #ffffff; // chữ đen cho dễ nhìn
+          font-weight: 500 !important;
+        }
+        
+        .history-order-status.Đang-vận-chuyển {
+          background-color: #1065a7; // đỏ
+          color: #ffffff; // chữ đen cho dễ nhìn
+          font-weight: 500; 
+        }
+        
+        .history-order-price {
+          font-size: 16px;
+          color: #dc3545;
+          font-weight: 600;
+          margin-top: 10px;
+        }
+  
+        .history-order-actions {
+          margin-top: 12px;
+  
+          .history-detail-button {
+            background-color: transparent;
+            border: 1px solid #35dcb2;
+            color: #115149;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: 0.3s;
+            position: absolute;
+            top: 110px;
+            font-weight: 400;
+            right: 5px;
+            &:hover {
+              background-color: #18a574;
+              color: #fff;
+            }
+          }
+          .history-cancel-button {
+            background-color: transparent;
+            border: 1px solid #35dcb2;
+            color: #115149;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: 0.3s;
+            position: absolute;
+            top: 70px;
+            font-weight: 400;
+            right: 5px;
+            &:hover {
+              background-color: #18a574;
+              color: #fff;
+            }
+          }
+        }
       }
     }
   }
-  
-  
   
