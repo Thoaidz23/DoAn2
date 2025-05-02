@@ -88,34 +88,32 @@ const Product = () => {
           <tr>
             <th className="text-center align-middle">STT</th>
             <th className="text-center align-middle">Hình ảnh</th>
-            <th className="text-center align-middle">Tên sản phẩm</th>
-            <th className="text-center align-middle">Số lượng</th>
-            <th className="text-center align-middle">Giá</th>
-            <th className="text-center align-middle">Hành động</th>
+            <th className="text-center align-middle">Tên dòng sản phẩm</th>
+            <th className="text-center align-middle">Danh mục</th>
+            <th className="text-center align-middle">Thương hiệu</th>
+            <th className="text-center align-middle">Hành động</th> 
           </tr>
         </thead>
         <tbody>
           {products.length > 0 ? (
             products.map((product, index) => (
-              <tr key={product.id_sanpham}>
+              <tr key={product.id_group_product}>
                 <td className="text-center align-middle">{index + 1}</td>
                 <td className="text-center align-middle">
                 <img
-                  src={`http://localhost:5000/images/product/${product.hinhanh}`}
-                  alt={product.ten_sanpham}
+                  src={`http://localhost:5000/images/product/${product.image}`}
+                  alt={product.name_group_product}
                   className="img-thumbnail"
                   style={{ width: "150px", height: "150px" }}
                 />
 
                 </td>
-                <td className="text-center align-middle">{product.ten_sanpham}</td>
-                <td className="text-center align-middle">{product.soluong || 0}</td>
+                <td className="text-center align-middle">{product.name_group_product}</td>
+                <td className="text-center align-middle">{product.name_category_product}</td>
+                <td className="text-center align-middle">{product.name_category_brand}</td>
                 <td className="text-center align-middle">
-                  {product.giasp?.toLocaleString("vi-VN")}₫
-                </td>
-                <td className="text-center align-middle">
-                  <Button as={Link} to={`/admin/product/${product.id_sanpham}`}  variant="info" size="sm" className="me-2">Xem</Button>
-                  <Button as={Link} to={`/admin/product/edit/${product.id_sanpham}`} variant="warning" size="sm" className="me-2">Sửa</Button>
+                  <Button as={Link} to={`/admin/product/${product.id_group_product}`}  variant="info" size="sm" className="me-2">Xem</Button>
+                  <Button as={Link} to={`/admin/product/edit/${product.id_group_product}`} variant="warning" size="sm" className="me-2">Sửa</Button>
                   <Button variant="danger" size="sm">Xóa</Button>
                 </td>
               </tr>

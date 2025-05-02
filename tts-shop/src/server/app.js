@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors'); // Kết nối MySQL
 const path = require("path");
 const orderRoutes = require('./admin/routes/orderRoutes'); // Import routes đơn hàng
-const productRoutes = require('./admin/routes/productRoutes');
+const groupProductRoutes = require('./admin/routes/groupProductRoutes');
 const cagpostRoutes = require('./admin/routes/cagpostRoutes');
 const cagbrandRoutes = require('./admin/routes/cagbrandRoutes');
 const cagproductRoutes = require('./admin/routes/cagproductRoutes');
@@ -20,7 +20,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Sử dụng các route
 app.use('/api/orders', orderRoutes);
-app.use('/api/products', productRoutes);
+app.use('/api/products', groupProductRoutes);
 app.use('/api/cagposts', cagpostRoutes);
 app.use('/api/cagbrands', cagbrandRoutes);
 app.use('/api/cagproducts', cagproductRoutes);
