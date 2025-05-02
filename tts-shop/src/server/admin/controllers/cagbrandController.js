@@ -3,7 +3,7 @@ const connection = require('../../db');  // Đảm bảo bạn đã có kết n�
 
 // Lấy tất cả từ cơ sở dữ liệu
 const getCagbrands = (req, res) => {
-  const query = 'SELECT id_dmth, ten_dmth FROM tbl_danhmucthuonghieu';
+  const query = 'SELECT id_category_brand, name_category_brand FROM tbl_category_brand';
   
   connection.query(query, (err, results) => {
     if (err) {
@@ -14,4 +14,17 @@ const getCagbrands = (req, res) => {
   });
 };
 
-module.exports = { getCagbrands };
+// Thêm thương hiệu
+const addCagbrand = (req, res) => {
+  const { name_category_brand } = req.body;
+  if (!name_category_brand) return res.status(400).json({ error: "Tên thương hiệu là bắt buộc" });
+
+  const sql = "INSERT INTO tbl_name_category (name_category_brand) VALUES (?)";
+  connection.query(sql, [name_category_brand], (err, result) => {
+    if (err) return res.status(500).json({ error: "Lỗi máy chủ" });
+    res.status(201).json({ message: "✅ Thêm thương hiệu thành công", insertedId: result.insertId });
+  });
+};
+
+
+module.exports = { getCagbrands, addCagbrand };

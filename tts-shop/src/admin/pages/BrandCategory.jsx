@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button} from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const BrandCategory = () => {
   const [cagbrands, setCagbrands] = useState([]);
@@ -15,9 +16,8 @@ const BrandCategory = () => {
 
   return (
     <div>
-
       {/* Nút thêm thương hiệu */}
-      <Button variant="primary" className="mt-4 mb-3">
+      <Button as={Link} to="/admin/brands/add" variant="primary" className="mt-4 mb-3">
         Thêm thương hiệu
       </Button>
 
@@ -27,17 +27,15 @@ const BrandCategory = () => {
           <tr>
             <th className="text-center align-middle">STT</th>
             <th className="text-center align-middle">Tên thương hiệu</th>
-            <th className="text-center align-middle">Số lượng sản phẩm</th>
             <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
           {cagbrands.length > 0 ?
             cagbrands.map((cagbrand, index) => (
-              <tr key={cagbrand.id_dmth}>
+              <tr key={cagbrand.id_category_brand}>
                 <td className="text-center align-middle">{index + 1}</td>
-                <td className="text-center align-middle">{cagbrand.ten_dmth}</td>
-                <td className="text-center align-middle">{cagbrand.productCount}</td>
+                <td className="text-center align-middle">{cagbrand.name_category_brand}</td>
                 <td className="text-center align-middle">
                   <Button variant="info" size="sm" className="me-2">
                     Sửa
