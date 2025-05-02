@@ -74,7 +74,8 @@ function Navbar() {
                     <FaUser /> {user.name}
                   </Link>
                   <button className="btn btn-outline-dark ms-2" onClick={logout}>
-                    <FaSignOutAlt /> Đăng xuất
+                    <a href="/"><FaSignOutAlt /> Đăng xuất</a>
+                    
                   </button>
                 </>
               ) : (

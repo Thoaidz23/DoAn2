@@ -2,15 +2,11 @@ import React, { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import NavBar from "../component/NavBar";
 import Footer from "../component/Footer";
-<<<<<<< HEAD
 import ProductDetail from "../views/ProductDetail";
 import CartPage from "../views/CartPage"
 import { AuthProvider } from "../context/AuthContext"; // ✅ Thêm dòng này
-=======
 import ScrollToTop from "../component/ScrollToTop"; // 👈 thêm dòng này
 import CustomerSupport from "../component/CustomerSP";
->>>>>>> ee35e46f7642cb3dfb8fe3405bb2b4d1f516c035
-
 
 // Tự động import toàn bộ component trong views (trừ App.js)
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);

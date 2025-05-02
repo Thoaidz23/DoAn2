@@ -19,7 +19,8 @@ const groupProductRoute = require("./customer/Routes/ProductDetail.routes");
 const user = require('./customer/Routes/user.route');
 const cartRoutes = require('./customer/Routes/Cart.route');
 const cartPageRoute = require('./customer/Routes/CartPage.route');
-
+const MyAccount = require("./customer/Routes/MyAccout.route");
+const accountRoutes = require("./customer/Routes/ChangePassword.route"); 
 
 const app = express();
 app.use(cors());
@@ -49,6 +50,8 @@ app.use("/api/group-route", groupProductRoute);
 app.use('/api/users', user);
 app.use('/api/cart', cartRoutes);
 app.use('/api/cartpage', cartPageRoute);
+app.use("/api/account", MyAccount);
+app.use("/api/change-password", accountRoutes);
 // Server lắng nghe
 app.listen(PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
