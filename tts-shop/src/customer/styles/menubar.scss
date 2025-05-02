@@ -1,5 +1,6 @@
 .container {  
   position: relative; /* Giúp sidebar nằm trong container */
+  overflow-x: hidden;
 }
 
 .menu-title {
@@ -17,7 +18,7 @@
   left: 0;
   width: 250px;
   background-color: #333;
-  padding-top: 20px;
+  padding-top: 15px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -46,7 +47,7 @@
 .menubar-nav .nav-link:hover {
   background-color: #f0f0f0;
   border-radius: 5px;
-  color: red;
+  color: rgb(38, 176, 130);
 }
 
 .menubar-nav .nav-link svg {
@@ -64,34 +65,49 @@
   margin-left: auto;
 }
 .hover-panel {
-  position: absolute;
-  top: 0;
-  left: 250px;
-  width: 180px;
+  position: fixed;
+  top: 80px; /* hoặc vị trí bạn muốn hiển thị */
+  left: 400px; /* hoặc tính toán theo thực tế */
+  z-index: 9999; /* cao để nằm trên tất cả */
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 5px;
-  padding: 10px;
-  z-index: 1000;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 15px 20px;
+  min-width: 400px;
+  display: flex;
+  gap: 40px;
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in-out;
 }
 
-.hover-panel ul {
+.hover-column {
+  min-width: 150px;
+}
+
+.hover-column h6 {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.hover-column ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.hover-panel li {
-  padding: 6px 8px;
+.hover-column li {
+  padding: 5px 0;
   font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.hover-panel li:hover {
-  background-color: #f0f0f0;
+.hover-column li:hover {
   color: red;
+  background-color: #f0f0f0;
 }
+
 .overlay {
   position: fixed;
   top: 0;
@@ -102,21 +118,6 @@
   z-index: 100;
 }
 
-.hover-panel {
-  position: absolute;
-  top: 0;
-  left: 250px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px 20px;
-  z-index: 101;
-  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.3);
-  min-width: 400px;
-  display: flex;
-  flex-direction: column;
-  animation: fadeIn 0.2s ease-in-out;
-}
 
 @keyframes fadeIn {
   from {
@@ -155,4 +156,73 @@
 
 .panel-column li:hover {
   color: red;
+}
+@media (max-width: 768px) {
+  .menu-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    background-color: white;
+    border-top: 1px solid #ddd;
+    z-index: 999;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .menu-title {
+    display: none;
+  }
+
+  .menubar-nav {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .menu-item {
+    flex: 1;
+    text-align: center;
+  }
+
+  .nav-link {
+    flex-direction: column;
+    font-size: 11px;
+    padding: 5px 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .nav-link svg {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .menu-label {
+    margin-left: 0;
+  }
+
+  .expand-icon {
+    display: none;
+  }
+
+  .hover-panel {
+    display: none; // Ẩn panel khi ở màn hình nhỏ (có thể làm dạng popup nếu cần)
+  }
+}
+@media (max-width: 768px) {
+  .menu-bar {
+    display: none !important;
+  }
+}
+@media (max-width: 992px) {
+  .menu-bar {
+    display: none !important;
+  }
 }

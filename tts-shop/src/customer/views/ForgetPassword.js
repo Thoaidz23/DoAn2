@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, FloatingLabel, Container, Button } from "react-bootstrap";
-import OtpModal from "../component/OtpModal";
+// import OtpModal from "../component/OtpModal";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -38,13 +38,13 @@ const ForgotPassword = () => {
       </Form>
 
       {/* Modal Component */}
-      <OtpModal
+      {/* <OtpModal
         show={showModal}
         onHide={() => setShowModal(false)}
         email={email}
         otp={otp}
         setOtp={setOtp}
-      />
+      /> */}
     </Container>
   );
 };

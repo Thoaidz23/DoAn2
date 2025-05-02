@@ -52,7 +52,7 @@ function AccountOverview() {
             {userInfo[fieldKey]}
             {editable && (
               <i
-                className="bi bi-stickies position-absolute"
+                className="bi bi-pencil-square position-absolute" 
                 style={{ right: "2rem", top: "0", cursor: "pointer" }}
                 onClick={() => setEditingField(fieldKey)}
               ></i>

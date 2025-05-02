@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import "../styles/catalognews.scss";
+import Newbar from "../component/Newbar.js";
 
 function Catalognews() {
   useEffect(() => {
@@ -15,9 +16,7 @@ function Catalognews() {
     });
 
     return () => {
-      categoryLinks.forEach(link => {
-        link.removeEventListener('click', () => {});
-      });
+      categoryLinks.forEach(link => link.removeEventListener('click', () => {}));
     };
   }, []);
 
@@ -97,73 +96,8 @@ function Catalognews() {
         </div>
       </div>
 
-      <div className="container-allnews">
-        <div className="container">
-          <h2>TẤT CẢ BÀI VIẾT</h2>
-          <div className="category_news">
-            <div className="container">
-              <a href="#" className="category-link active">Sản phẩm mới</a>
-              <a href="#" className="category-link">Đánh giá</a>
-              <a href="#" className="category-link">Mẹo hay</a>
-              <a href="#" className="category-link">Tư vấn</a>
-            </div>
-          </div>
-
-          <div className="content-allnews">
-            <div className="container">
-
-              <div className="news-item">
-                <Link to="/post/5">
-                  <img src="https://cdn-media.sforum.vn/storage/app/media/trannghia/trannghia/Galaxy-Z-Fold7-One-UI-8.jpg" alt="OnePlus 13T" />
-                </Link>
-                <div className="news-info">
-                  <Link to="/post/5">
-                    <h3>OnePlus 13T gây ấn tượng với tỷ lệ phân bố trọng lượng hoàn hảo 50:50</h3>
-                  </Link>
-                  <p>Điện thoại OnePlus 13T sắp ra mắt dự kiến sẽ có thiết kế cực kỳ cao cấp và tỷ lệ phân bố trọng lượng hoàn hảo...</p>
-                  <div className="meta">
-                    <span className="author">👤 Hải Nam</span>
-                    <span className="time">🕒 12/04/2025 22:00</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="news-item">
-                <Link to="/post/6">
-                  <img src="http://localhost/tts/admin/quanlybaiviet/uploads/1735194641_cau-hinh-spark-30-pro-cove.jpg" alt="Galaxy Z Fold7" />
-                </Link>
-                <div className="news-info">
-                  <Link to="/post/6">
-                    <h3>Galaxy Z Fold7 được thử nghiệm trên Geekbench với One UI 8, chip Snapdragon 8 Elite for Galaxy</h3>
-                  </Link>
-                  <p>Các điện thoại màn hình gập tiếp theo của Samsung dự kiến sẽ được cài sẵn giao diện người dùng One UI thế hệ tiếp theo...</p>
-                  <div className="meta">
-                    <span className="author">👤 Hải Nam</span>
-                    <span className="time">🕒 12/04/2025 21:30</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="news-item">
-                <Link to="/post/7">
-                  <img src="http://localhost/tts/admin/quanlybaiviet/uploads/1735194641_cau-hinh-spark-30-pro-cove.jpg" alt="Nordy AI" />
-                </Link>
-                <div className="news-info">
-                  <Link to="/post/7">
-                    <h3>Phục chế hình cũ bằng Nordy AI: Hồi sinh ký ức chỉ trong vài phút</h3>
-                  </Link>
-                  <p>Phục chế hình cũ bằng Nordy AI đang trở thành giải pháp được nhiều người lựa chọn để tái hiện những bức ảnh cũ kỹ, mờ nhòe...</p>
-                  <div className="meta">
-                    <span className="author">👤 Như Ý</span>
-                    <span className="time">🕒 12/04/2025 17:04</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Thêm bài viết tiếp nếu cần */}
-            </div>
-          </div>
-        </div>
+      <div className='container-allnews'>
+        <Newbar></Newbar>
       </div>
     </div>
   );

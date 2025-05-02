@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react"; // Thêm useEffect vào import
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import MenuBar from "../component/MenuBar";
 import { Carousel } from "react-bootstrap";
@@ -6,144 +7,61 @@ import "../styles/home.scss";
 import "../styles/index.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import ProductSection from "../component/ProductSetion";
 import banner1 from "../assets/img/xiaomi-14-web.jpg";
 import banner2 from "../assets/img/banner2.jpg";
 import banner3 from "../assets/img/banner3.jpg";
 
 function Home() {
-  const newsList = [
-    {
-      id: 1,
-      title: 'Rò rỉ cấu hình chi tiết Galaxy Z... ',
-      description: 'Đây là mô tả ngắn cho bài viết số 1.',
-      image: 'https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg',
-    },
-    {
-      id: 2,
-      title: 'Rò rỉ cấu hình chi tiết Galaxy Z...',
-      description: 'Đây là mô tả ngắn cho bài viết số 2.',
-      image: 'https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg',
-    },
-    {
-      id: 3,
-      title: 'Rò rỉ cấu hình chi tiết Galaxy Z...',
-      description: 'Đây là mô tả ngắn cho bài viết số 3.',
-      image: 'https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg',
-    },
-    {
-      id: 4,
-      title: 'Rò rỉ cấu hình chi tiết Galaxy Z...',
-      description: 'Đây là mô tả ngắn cho bài viết số 4.',
-      image: 'https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg',
-    },
-  ];
-
-  const products = [
-    {
-      img: "https://cdn.tgdd.vn/Products/Images/42/329150/iphone-16-pro-max-tu-nhien-thumb-600x600.jpg",
-      alt: "iPhone 16 Pro Max",
-      name: "iPhone 16 Pro Max",
-      capacity: "512GB",
-      price: "39.900.000",
-    },
-    {
-      img: "https://cdn.tgdd.vn/Products/Images/42/329150/iphone-16-pro-max-tu-nhien-thumb-600x600.jpg",
-      alt: "iPhone 16 Pro Max",
-      name: "iPhone 16 Pro Max",
-      capacity: "512GB",
-      price: "39.900.000",
-    },
-    {
-      img: "https://cdn.tgdd.vn/Products/Images/42/329140/iphone-16-plus-den.png",
-      alt: "iPhone 16 Plus",
-      name: "iPhone 16 Plus",
-      capacity: "256GB",
-      price: "29.900.000",
-    },
-    {
-      img: "https://cdn.tgdd.vn/Products/Images/42/329150/iphone-16-pro-max-tu-nhien-thumb-600x600.jpg",
-      alt: "iPhone 16 Pro Max",
-      name: "iPhone 16 Pro Max",
-      capacity: "512GB",
-      price: "39.900.000",
-    },
-    {
-      img: "https://cdn.tgdd.vn/Products/Images/42/329135/iphone-16-blue-600x600.png",
-      alt: "iPhone 16",
-      name: "iPhone 16",
-      capacity: "128GB",
-      price: "22.900.000",
-    },
-    {
-      img: "https://cdn.tgdd.vn/Products/Images/42/305658/iphone-15-pro-max-gold-thumbnew-600x600.jpg",
-      alt: "iPhone 15 Pro Max",
-      name: "iPhone 15 Pro Max",
-      capacity: "256GB",
-      price: "30.000.000",
-    },
-    {
-      img: "https://cdn.tgdd.vn/Products/Images/42/303823/iphone-15-plus-xanh-la-256gb-thumb-600x600.jpg",
-      alt: "iPhone 15 Plus",
-      name: "iPhone 15 Plus",
-      capacity: "256GB",
-      price: "25.900.000",
-    },
-  ];
-  const [phoneIndex, setPhoneIndex] = useState(0);
-  const [laptopIndex, setLaptopIndex] = useState(0);
-  const [saleProductIndex, setsalePorductIndex] = useState(0);
-  const [tvIndex, setTvIndex] = useState(0);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [brandsByCategory, setBrandsByCategory] = useState({}); // <-- Chuyển dòng này lên đây
+  const [indexMap, setIndexMap] = useState({});
+  const [loading, setLoading] = useState(true);
   const visibleCount = 5;
+  const [posts, setPosts] = useState([]);
 
-  const handleNext = (type) => {
-    if (type === "phone" && phoneIndex + visibleCount < products.length) {
-      setPhoneIndex((prev) => prev + 1);
-    }
-    if (type === "laptop" && laptopIndex + visibleCount < products.length) {
-      setLaptopIndex((prev) => prev + 1);
-    }
-    if (type === "saleProduct") {
-      // Check if we have reached the end, if so, reset to the first product
-      if (saleProductIndex + visibleCount < products.length) {
-        setsalePorductIndex((prev) => prev + 1);
-      } else {
-        setsalePorductIndex(0); // Restart from the first product
-      }
-    }
-    if (type === "tv" && tvIndex + visibleCount < products.length) {
-      setTvIndex((prev) => prev + 1);
-    }
-  };
 
-  const handlePrev = (type) => {
-    if (type === "phone" && phoneIndex > 0) {
-      setPhoneIndex((prev) => prev - 1);
-    }
-    if (type === "laptop" && laptopIndex > 0) {
-      setLaptopIndex((prev) => prev - 1);
-    }
-    if (type === "saleProduct" && saleProductIndex > 0) {
-      setsalePorductIndex((prev) => prev - 1);
-    }
-    if (type === "tv" && tvIndex > 0) {
-      setTvIndex((prev) => prev - 1);
-    }
-  };
-
-  const visiblePhones = products.slice(phoneIndex, phoneIndex + visibleCount);
-  const visibleLaptops = products.slice(laptopIndex, laptopIndex + visibleCount);
-  const visiblesaleProduct = products.slice(saleProductIndex, saleProductIndex + visibleCount);
-  const visibleTvs = products.slice(tvIndex, tvIndex + visibleCount);
-
-  // Effect to automatically change the sale product every 3 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      handleNext("saleProduct");
-    }, 3000); 
+    axios.get("http://localhost:5000/api/Home")
+    .then((response) => {
+      setProducts(response.data.products || []);
+      setCategories(response.data.categories || []);
+      setBrands(response.data.brands || []);
+      setBrandsByCategory(response.data.brandsByCategory || {});
+      setPosts(response.data.posts || []); 
+      console.log("brandsByCategory >>>", response.data.brandsByCategory); // 👈 THÊM DÒNG NÀY
+  
+      setLoading(false);  
+    })
+  ;
+  }, []);
 
-    return () => clearInterval(interval); // Clean up the interval on component unmount
-  }, [saleProductIndex]);
+  const groupedProducts = products.reduce((acc, product) => {
+    if (!acc[product.id_category_product]) {
+      acc[product.id_category_product] = [];
+    }
+    acc[product.id_category_product].push(product);
+    return acc;
+  }, {});
+
+  const handleNext = (id_category_product) => {
+    const list = groupedProducts[id_category_product];
+    const currentIndex = indexMap[id_category_product] || 0;
+    const nextIndex = currentIndex + visibleCount < list.length ? currentIndex + 1 : 0;
+    setIndexMap((prev) => ({ ...prev, [id_category_product]: nextIndex }));
+  };
+
+  const handlePrev = (id_category_product) => {
+    const list = groupedProducts[id_category_product] || [];
+    const currentIndex = indexMap[id_category_product] || 0;
+    const prevIndex = currentIndex > 0 ? currentIndex - 1 : Math.max(0, list.length - visibleCount);
+    setIndexMap((prev) => ({ ...prev, [id_category_product]: prevIndex }));
+  };
+
+
+  if (loading) return <div className="text-center mt-4">Đang tải dữ liệu...</div>;
 
   return (
     <div className="Home">
@@ -167,171 +85,61 @@ function Home() {
             </Carousel>
           </div>
         </div>
-        {/* Khuyến mãi hot */}
-        <div className="sale-product">
-   
-          <div className="title-sale">Khuyến Mãi Hôm Nay</div>
-          <div className="sale-product-btn section-prev-btn" onClick={() => handlePrev("saleProduct")}>
-            <FaChevronLeft />
-          </div>
-          <div className="sale-product-btn section-next-btn" onClick={() => handleNext("saleProduct")}>
-            <FaChevronRight />
-          </div>
-            <div className="container">
-            <div className="section-product-one-content-items">
-              {visiblesaleProduct.map((product, index) => (
-                <div className="section-product-one-content-item" key={`saleProduct-${index}`}>
-                  <img src={product.img} alt={product.alt} />
-                  <div className="section-product-one-content-item-text">
-                    <ul>
-                      <li>{product.name} <br /> {product.capacity}</li>
-                      <li>Online giá rẻ</li>
-                      <li>{product.price}<sup>đ</sup></li>
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-            </div>
-        </div>
-        {/* ĐIỆN THOẠI */}
-        <div className="section-product-one-content">
-          <div className="section-product-one-content-btn section-prev-btn" onClick={() => handlePrev("phone")}>
-            <FaChevronLeft />
-          </div>
-          <div className="section-product-one-content-btn section-next-btn" onClick={() => handleNext("phone")}>
-            <FaChevronRight />
-          </div>
-          <div className="container">
-            <div className="section-product-one-content-title-with-buttons">
-              <h2>Điện Thoại Nổi Bật</h2>
-              <div className="product-filter-buttons">
-                <button className="brand-button">Apple</button>
-                <button className="brand-button">Oppo</button>
-                <button className="brand-button">Samsung</button>
-                <button className="brand-button">Xiaomi</button>
-                <button className="brand-button">Xem tất cả</button>
-              </div>
-            </div>
-            <div className="section-product-one-content-items">
-              {visiblePhones.map((product, index) => (
-                <div className="section-product-one-content-item" key={`saleProduct-${index}`}>
-                  <img src={product.img} alt={product.alt} />
-                  <div className="section-product-one-content-item-text">
-                    <ul>
-                      <li>{product.name} <br /> {product.capacity}</li>
-                      <li>Online giá rẻ</li>
-                      <li>{product.price}<sup>đ</sup></li>
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        {/* LAPTOP */}
-        <div className="section-product-one-content">
-          <div className="section-product-one-content-btn section-prev-btn" onClick={() => handlePrev("laptop")}>
-            <FaChevronLeft />
-          </div>
-          <div className="section-product-one-content-btn section-next-btn" onClick={() => handleNext("laptop")}>
-            <FaChevronRight />
-          </div>
-          <div className="container">
-            <div className="section-product-one-content-title-with-buttons">
-              <h2>Máy Tính Nổi Bật</h2>
-              <div className="product-filter-buttons">
-                <button className="brand-button">Asus</button>
-                <button className="brand-button">MacBook</button>
-                <button className="brand-button">Dell</button>
-                <button className="brand-button">Lenovo</button>
-                <button className="brand-button">Xem tất cả</button>
-              </div>
-            </div>
-            <div className="section-product-one-content-items">
-              {visibleLaptops.map((product, index) => (
-                <div className="section-product-one-content-item" key={`laptop-${index}`}>
-                  <img src={product.img} alt={product.alt} />
-                  <div className="section-product-one-content-item-text">
-                    <ul>
-                      <li>{product.name} <br /> {product.capacity}</li>
-                      <li>Online giá rẻ</li>
-                      <li>{product.price}<sup>đ</sup></li>
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* Hiển thị từng danh mục sản phẩm */}
+        {Object.entries(groupedProducts).map(([id_category_product, productList]) => {
+          if (!productList || productList.length === 0) return null;
 
-        {/* TIVI */}
-        <div className="section-product-one-content">
-          <div className="section-product-one-content-btn section-prev-btn" onClick={() => handlePrev("tv")}>
-            <FaChevronLeft />
-          </div>
-          <div className="section-product-one-content-btn section-next-btn" onClick={() => handleNext("tv")}>
-            <FaChevronRight />
-          </div>
-          <div className="container">
-            <div className="section-product-one-content-title-with-buttons">
-              <h2>Tivi Nổi Bật</h2>
-              <div className="product-filter-buttons">
-                <button className="brand-button">LG</button>
-                <button className="brand-button">Samsung</button>
-                <button className="brand-button">TCL</button>
-                <button className="brand-button">Xem tất cả</button>
-              </div>
-            </div>
-            <div className="section-product-one-content-items">
-              {visibleTvs.map((product, index) => (
-                <div className="section-product-one-content-item" key={`tv-${index}`}>
-                  <img src={product.img} alt={product.alt} />
-                  <div className="section-product-one-content-item-text">
-                    <ul>
-                      <li>{product.name} <br /> {product.capacity}</li>
-                      <li>Online giá rẻ</li>
-                      <li>{product.price}<sup>đ</sup></li>
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+          const index = indexMap[id_category_product] || 0;
+          const visibleProducts = productList.slice(index, index + visibleCount);
+          const category = categories.find((cat) => cat.id_category_product === Number(id_category_product));
+          const title = category ? category.name_category_product : `Danh Mục ${id_category_product}`;
+
+       
+
+          return (
+            <ProductSection
+            key={id_category_product}
+            title={title}
+            visibleProducts={visibleProducts}
+            handleNext={() => handleNext(Number(id_category_product))}
+            handlePrev={() => handlePrev(Number(id_category_product))}
+            brandsByCategory={brandsByCategory}
+            id_category_product={Number(id_category_product)} 
+          />
+
+
+          );
+        })}
+
+        {/* Tin tức */}
         <div className="container">
-  <div className="section-product-one-content-title-with-buttons">
-    <h2>Bài viết</h2>
-    <Link to="/Catalognews" className="see-all">Xem tất cả</Link>
-
-  </div>
-
-  <div className="news-wrapper" style={{ margin: '10px' }}>
-    <div className="container">
-      {/* Giảm khoảng cách giữa các bài viết */}
-      <div className="row gx-2 gy-2">
-        {newsList.map((item) => (
-          <div className="col-md-3" key={item.id}>
-            <div className="card h-100">
-              {/* Giảm padding hình ảnh */}
-              <div className="image-wrapper p-1">
-                <img src={item.image} className="card-img-top rounded" alt={item.title} />
-              </div>
-              <div className="card-body">
-                <h5 className="card-title">{item.title}</h5>
-                <p className="card-text">{item.description}</p>
-              </div>
+          <div className="section-product-one-content-title-with-buttons">
+            <h2>Bài viết</h2>
+            <Link to="/Catalognews" className="see-all">
+              Xem tất cả
+            </Link>
+          </div>
+          <div className="news-wrapper" style={{ margin: "10px" }}>
+            <div className="row gx-2 gy-2">
+              {posts.map((item) => (
+                <div className="col-md-3" key={item.id_post}>
+                  <div className="card h-100">
+                    <div className="image-wrapper p-1">
+                      <img src={`http://localhost:5000/images/product/${item.image}`} className="card-img-top rounded" alt={item.title} />
+                    </div>
+                    <div className="card-body">
+                      <h5 className="card-title">{item.title}</h5>
+                      <p className="card-text">{item.content.slice(0,100)}...</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</div>
+        </div>
 
-      </div>
-      <div className = "footer-spacing">
+        <div className="footer-spacing"></div>
       </div>
     </div>
   );

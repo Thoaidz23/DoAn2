@@ -7,6 +7,17 @@
   flex-wrap: wrap;
   gap: 2%;
 
+  .carousel-item{
+    height: 500px;
+    overflow: hidden;
+    position: relative;
+    background-color: #ffffff;
+  }
+  .image-container img {
+    margin-top: 5%;
+    height: 80%; 
+    object-fit: contain; 
+  }
   .carousel-control-prev,
   .carousel-control-next {
       height: 15%;
@@ -66,12 +77,17 @@
   .thumbnail-container {
     display: flex;
     justify-content: flex-start;
+    overflow: hidden;
+    position: relative;
     gap: 1%;
     margin-top: 1%;
+    
     padding-bottom: 1%;
     overflow: hidden;
     cursor: grab;
     user-select: none;
+    height: 15%;
+    width: 50%;
 
     &.dragging {
       cursor: grabbing;
@@ -81,8 +97,8 @@
       flex-shrink: 0;
       width: 19%;
       height: auto;
-      object-fit: cover;
-      border-radius: 1%;
+      object-fit: contain;
+      border-radius: 10px;
       border: 0.2% solid transparent;
       transition: border 0.3s;
       user-select: none;
@@ -139,8 +155,23 @@
       transition: all 0.3s ease;
     }
   }
-  
-  
+  .error-message {
+    background-color: #f44336;
+  color: white;
+  text-align: center;
+  font-size: 16px !important; /* nhỏ lại + đảm bảo áp dụng */
+  font-weight: 500;
+  position: fixed;
+  top: 13%;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 15%;
+  padding: 1% 0 0 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: opacity 0.5s ease-in-out;
+  }
   
   
 }
