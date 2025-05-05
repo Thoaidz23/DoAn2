@@ -7,14 +7,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/navbar.scss";
 
 function Navbar() {
-  const { user, logout } = useContext(AuthContext); // Lấy user từ context
+  const { user } = useContext(AuthContext); // Lấy user từ context
   const [searchQuery, setSearchQuery] = useState("");
+    const [showError, setShowError] = useState(false); 
   // Xử lý sự kiện tìm kiếm
   const handleSearch = (event) => {
     event.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search/${searchQuery}`); // Điều hướng đến trang kết quả tìm kiếm
-    }
+     navigate(`/SearchProduct?search=${searchQuery}`)} // Điều hướng đến trang kết quả tìm kiếm
   };
   
   const navigate = useNavigate();
@@ -23,16 +23,33 @@ function Navbar() {
     if (user) {
       navigate(`/cartpage/${user.id}`);
     } else {
-      alert("Vui lòng đăng nhập để tiếp tục."); // Thông báo trước khi redirect
+      setShowError(true); // Nếu chưa đăng nhập, hiển thị thông báo lỗi
+      // Tắt thông báo sau 3 giây
+      setTimeout(() => {
+        setShowError(false); // Ẩn thông báo sau 3 giây
+      }, 3000);
       navigate("/login");
     }
   };
+
   
+  const nameParts = user?.name.split(' ');
+  const firstName = nameParts?.[nameParts.length - 1];
   
   return (
     <header>
       <nav className="navbar navbar-expand-lg fixed-top navbar-light bg-white">
         <div className="container">
+          {showError && (
+              <div className="error-message">
+                <p>Vui lòng đăng nhập <p>để vào giỏ hàng.</p></p>
+              </div>
+            )}
+             {showError && (
+              <div className="error-message">
+                <p>Vui lòng đăng nhập <p>để vào giỏ hàng.</p></p>
+              </div>
+            )}
           {/* Logo */}
           <Link to="/" className="navbar-brand">
             <img src={logo} alt="Shop Logo" width="150px" height="60px" />
@@ -71,12 +88,9 @@ function Navbar() {
               {user ? (
                 <>
                   <Link to="/MyAccount" className="nav-link-item px-3 fw-bold">
-                    <FaUser /> {user.name}
-                  </Link>
-                  <button className="btn btn-outline-dark ms-2" onClick={logout}>
-                    <a href="/"><FaSignOutAlt /> Đăng xuất</a>
+                    <FaUser /> {firstName}
                     
-                  </button>
+                  </Link>
                 </>
               ) : (
                 <Link to="/login" className="nav-link-item btn btn-outline-dark nav-item-custom px-3">

@@ -16,7 +16,8 @@ const getCart = async (req, res) => {
         JOIN tbl_color cl ON cl.id_color = p.id_color
         JOIN tbl_ram r1 ON r1.id_ram = p.id_ram
         JOIN tbl_rom r2 ON r2.id_rom = p.id_rom
-        WHERE id_user =  ?`,
+        WHERE id_user =  ?
+        ORDER BY id_cart DESC`,
       [userId],
       (err, results) => {
         if (err) return res.status(500).json({ message: 'Lỗi server', error: err });

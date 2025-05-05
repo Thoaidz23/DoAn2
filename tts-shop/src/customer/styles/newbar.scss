@@ -1,76 +1,83 @@
-
+/* Container chính */
 .container {
-    position: relative;
-    width: 100%;
-    overflow: hidden; /* Ngăn cuộn bên ngoài */
-  }
-  
-  /* Tiêu đề bài viết và liên kết "Xem tất cả" */
-  .content-title-newbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .see-all-newbar {
-    position: absolute;
-    right: 0;
-    color: #000;
-    font-size: 18px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .see-all-newbar:hover {
-    text-decoration: underline;
-  }
-  
-  /* Wrapper cho hình ảnh */
-  .image-wrapper {
-    background-color: #f8f9fa; /* Xám nhạt */
-    border-radius: 10px;
-    padding: 10px;
-    overflow: hidden; /* Ngăn cuộn trong hình ảnh */
-  }
-  
-  /* Hiệu ứng hover cho card */
-  .card {
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-  }
-  
-  .card:hover {
-    transform: scale(1.02);
-  }
-  
-  /* Gạch chân tiêu đề khi hover card */
-  .card:hover .card-title {
-    text-decoration: underline;
-  }
-  .image-wrapper {
-    background-color: #f8f9fa; /* Màu nền nhẹ cho hình ảnh */
-    border-radius: 10px;
-    padding: 10px;
-    overflow: hidden; /* Ngăn cuộn trong hình ảnh */
-    width: 100%;
-    height: 60%; /* Đảm bảo hình ảnh chiếm phần lớn khung */
-  }
-  .card-title {
-    font-size: 14px; /* Kích thước chữ tiêu đề */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Cắt bớt tiêu đề nếu dài quá */
-    white-space: nowrap; /* Đảm bảo tiêu đề không xuống dòng */
-  }
-  
-  .card-text {
-    font-size: 12px; /* Kích thước chữ mô tả */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Cắt bớt mô tả nếu dài quá */
-    white-space: nowrap; /* Đảm bảo mô tả không xuống dòng */
-  }
-    
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* Ngăn cuộn bên ngoài */
+  margin-bottom: 30px; /* Tạo khoảng cách giữa các container */
+}
+
+/* Tiêu đề bài viết và liên kết "Xem tất cả" */
+.content-title-newbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.see-all-newbar {
+  color: #000;
+  font-size: 18px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.see-all-newbar:hover {
+  text-decoration: underline;
+}
+
+/* Wrapper cho hình ảnh */
+.image-wrapper {
+  background-color: #f8f9fa; /* Xám nhạt */
+  border-radius: 10px;
+  padding: 10px;
+  overflow: hidden; /* Ngăn cuộn trong hình ảnh */
+  width: 100%;
+  height: 60%; /* Điều chỉnh độ cao hình ảnh */
+}
+
+/* Hiệu ứng hover cho card */
+.card {
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  border: none; /* Bỏ viền mặc định */
+  margin-bottom: 20px; /* Tạo khoảng cách giữa các card */
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+/* Gạch chân tiêu đề khi hover card */
+.card:hover .card-title {
+  text-decoration: underline;
+}
+
+/* Tiêu đề card */
+.card-title {
+  font-size: 14px; /* Kích thước chữ tiêu đề */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Cắt bớt tiêu đề nếu dài quá */
+  white-space: nowrap; /* Đảm bảo tiêu đề không xuống dòng */
+  margin-bottom: 10px; /* Tạo khoảng cách dưới tiêu đề */
+}
+
+/* Mô tả card */
+.card-text {
+  font-size: 12px; /* Kích thước chữ mô tả */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Cắt bớt mô tả nếu dài quá */
+  white-space: nowrap; /* Đảm bảo mô tả không xuống dòng */
+}
+
+/* Cải thiện khoảng cách giữa các phần tử */
+.row {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.col-md-3 {
+  margin-bottom: 20px;
+}

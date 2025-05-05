@@ -27,7 +27,7 @@ const getHomeData = async (req, res) => {
     }, {});
 
     // Lấy bài viết
-    const [posts] = await db.promise().query('SELECT * FROM tbl_post');
+    const [posts] = await db.promise().query('SELECT * FROM tbl_post ORDER BY date DESC');
 
     res.status(200).json({ products, categories, brandsByCategory, posts });
 

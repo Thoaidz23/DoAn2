@@ -1,46 +1,62 @@
-import React from 'react';
-import { Container, Row, Col, Image, Card, Button, Badge } from 'react-bootstrap';
-import "../styles/PostDetail.scss"
 
-import img1 from "../assets/img/anhbaiviet.jpg"
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Container, Row, Col, Image } from 'react-bootstrap';
+import axios from 'axios';
+import "../styles/PostDetail.scss";
 
 const PostDetail = () => {
-  const post = {
-    title: "Khám phá vẻ đẹp của Đà Lạt",
-    date: "14/04/2025",
-    author: "Nguyễn Văn A",
-    content:  (
-      <>
-        <p>Đà Lạt – thành phố ngàn hoa, luôn là điểm đến lý tưởng của những ai yêu thích thiên nhiên, khí hậu mát mẻ và cảnh quan lãng mạn.</p>
-        <img src={img1} alt="Đà Lạt" style={{ width: '70%', margin: '0 15% 2% 15%' }} />
-        <p>Bài viết này sẽ đưa bạn đến những địa điểm hấp dẫn như Hồ Xuân Hương, Thung Lũng Tình Yêu, Đồi chè Cầu Đất, và nhiều hơn nữa.</p>
-      </>
-    ),
-    image: img1,
+  const { id_post } = useParams(); // Lấy id từ URL
+  const [post, setPost] = useState(null); // state để lưu bài viết
+  console.log(id_post)
+  useEffect(() => {
+    // Kiểm tra id_post có hợp lệ trước khi gọi API
+    if (id_post) {
+      axios.get(`http://localhost:5000/api/posts/${id_post}`)
+
+        .then(response => {
+          setPost(response.data); // Lưu dữ liệu vào state
+        })
+        .catch(error => {
+          console.error("Lỗi khi lấy bài viết:", error);
+        });
+    }
+  }, [id_post]); // Chạy lại khi id_post thay đổi
+
+  if (!post) return <div>Đang tải...</div>; // Nếu chưa có dữ liệu
+  const formatDate = (isoDateStr) => {
+    const date = new Date(isoDateStr);
+    const vnTime = new Date(date.getTime()); // Cộng 7 tiếng
+  
+    const day = vnTime.getDate().toString().padStart(2, '0');
+    const month = (vnTime.getMonth() + 1).toString().padStart(2, '0');
+    const year = vnTime.getFullYear();
+    const hours = vnTime.getHours().toString().padStart(2, '0');
+    const minutes = vnTime.getMinutes().toString().padStart(2, '0');
+  
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
-
   return (
-    <Container className="my-5 ">
-  <Row className="justify-content-center">
-    <Col md={8} className='container-pd'>
-      <div style={{ width: '100%', height: '300px', overflow: 'hidden', borderRadius: '10px', marginBottom: '1rem' }}>
-        <Image 
-          src={post.image}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-      </div>
+    <Container className="my-5">
+      <Row className="justify-content-center">
+        <Col md={8} className='container-pd'>
+          <div style={{ width: '100%', height: '300px', overflow: 'hidden', borderRadius: '10px', marginBottom: '1rem' }}>
+            <Image
+              src={`http://localhost:5000/images/product/${post.image}`} // Đảm bảo đường dẫn đúng
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
 
-      <h2 className="text-center">{post.title}</h2>
-      <div className="mb-2 text-muted text-center">
-        <small>
-          Đăng bởi <strong>{post.author}</strong> | Ngày: {post.date}
-        </small>
-      </div>
-      <p style={{ textAlign: "justify", lineHeight: "1.8" }}>{post.content}</p> 
-    </Col>
-  </Row>
-</Container>
-
+          <h2 className="text-center">{post.title}</h2>
+          <div className="mb-2 text-muted text-center">
+            <small>
+              Đăng bởi <strong>{post.author}</strong> | Ngày: {formatDate(post.date)}
+            </small>
+          </div>
+          <div style={{ textAlign: "justify", lineHeight: "1.8",fontWeight : "400"}} dangerouslySetInnerHTML={{ __html: post.content }} />
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

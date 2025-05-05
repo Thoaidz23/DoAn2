@@ -7,9 +7,10 @@ import "./customer/styles/index.scss";  // Gọi app trang quản trị
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+
 root.render(
   <React.StrictMode>
-    <App />  {/* Hiển thị giao diện trang quản trị */}
+    <App /> 
   </React.StrictMode>
 );
 

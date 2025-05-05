@@ -1,11 +1,12 @@
-import React from "react";
+import React,{useContext} from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles/AccountBar.scss";
 
 function AccountBar({ activeMenu, setActiveMenu }) {
   const navigate = useNavigate();
-
+  const { user, logout } = useContext(AuthContext);
   const menuItems = [
     { icon: "bi-person", label: "Tài khoản của bạn", path: "/MyAccount" },
     { icon: "bi-receipt", label: "Lịch sử mua hàng", path: "/purchaseHistory" },
@@ -16,23 +17,25 @@ function AccountBar({ activeMenu, setActiveMenu }) {
 
   return (
     <div className="sidebar">
+      
       <ul>
         {menuItems.map((item) => (
           <li
-            key={item.label}
-            className={activeMenu === item.label ? "active" : ""}
-            onClick={() => {
-              setActiveMenu(item.label);
-              if (item.label === "Thoát tài khoản") {
-                // Xử lý logout ở đây
-              } else {
-                navigate(item.path);
-              }
-            }}
-          >
-            <i className={`bi ${item.icon}`}></i> 
-            <span>{item.label}</span>
-          </li>
+          key={item.label}
+          className={activeMenu === item.label ? "active" : ""}
+          onClick={() => {
+            setActiveMenu(item.label);
+            if (item.label === "Thoát tài khoản") {
+              navigate("/");
+              logout();
+            } else {
+              navigate(item.path);
+            }
+          }}
+        >
+          <i className={`bi ${item.icon}`}></i> 
+          <span>{item.label}</span>
+        </li>        
         ))}
       </ul>
     </div>
