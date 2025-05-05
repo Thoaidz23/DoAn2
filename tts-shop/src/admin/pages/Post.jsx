@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { Search} from "lucide-react";
+import { Link } from 'react-router-dom';
 
 const Post = () => {
   const [posts, setPosts] = useState([]);
@@ -28,7 +29,9 @@ const Post = () => {
           </InputGroup>
         </Col>
         <Col md={6} className="text-end">
-          <Button variant="primary">Thêm bài viết</Button>
+        <Button as={Link} to="/admin/post/add" variant="primary" className="mt-4 mb-3">
+          Thêm bài viết
+        </Button>
         </Col>
       </Row>
 
@@ -40,18 +43,18 @@ const Post = () => {
             <th className="text-center align-middle">Hình ảnh</th>
             <th className="text-center align-middle">Tiêu đề</th>
             <th className="text-center align-middle">Tác giả</th>
-            <th className="text-center align-middle">Tình trạng</th>
+            <th className="text-center align-middle">Danh mục</th>
             <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
         {posts.length > 0 ? (
           posts.map((post, index) => (
-            <tr key={post.id_baiviet}>
+            <tr key={post.id_post}>
               <td className="text-center align-middle">{index + 1}</td>
               <td className="text-center align-middle">
               <img
-                src={`http://localhost:5000/images/post/${post.hinhanh}`}
+                src={`http://localhost:5000/images/post/${post.image}`}
                 alt={post.title}
                 className="img-thumbnail"
                 style={{
@@ -60,9 +63,9 @@ const Post = () => {
                 }}
                 />
               </td>
-              <td className="text-center align-middle">{post.tieude}</td>
-              <td className="text-center align-middle">{post.tacgia}</td>
-              <td className="text-center align-middle">{post.tinhtrang}</td>
+              <td className="text-center align-middle">{post.title}</td>
+              <td className="text-center align-middle">{post.author}</td>
+              <td className="text-center align-middle">{post.name_category_post}</td>
               <td className="text-center align-middle">
                 <Button variant="warning" size="sm" className="me-2">
                   Sửa
@@ -75,7 +78,7 @@ const Post = () => {
           ))
         ) : (
           <tr>
-            <td colSpan="6" className="text-center">Đang tải sản phẩm...</td>
+            <td colSpan="6" className="text-center">Không có bài viết nào</td>
           </tr>
         )}
         </tbody>

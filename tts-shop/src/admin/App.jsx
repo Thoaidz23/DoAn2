@@ -18,6 +18,12 @@ import EditProduct from "./pages/EditProduct";
 import AddProductCategory from "./pages/AddProductCategory";
 import EditProductCategory from "./pages/EditProductCategory";
 import AddBrandCategory from "./pages/AddBrandCategory";
+import EditBrandCategory from "./pages/EditBrandCategory";
+import AddPostCategory from "./pages/AddPostCategory";
+import EditPostCategory from "./pages/EditPostCategory";
+import AddBanner from "./pages/AddBanner";
+import EditBanner from "./pages/EditBanner";
+import AddPost from './pages/AddPost';
 
 
 function App() {
@@ -48,6 +54,13 @@ function App() {
             <Route path="/admin/categories/add" element={<AddProductCategory />} />
             <Route path="/admin/categories/edit/:id" element={<EditProductCategory />} />
             <Route path="/admin/brands/add" element={<AddBrandCategory />} />
+            <Route path="/admin/edit-brand/:id" element={<EditBrandCategory />} />
+            <Route path="/admin/postcategory/add" element={<AddPostCategory />} />
+            <Route path="/admin/postcategory/edit/:id" element={<EditPostCategory />} />
+            <Route path="/admin/banner/add" element={<AddBanner />} />
+            <Route path="/admin/banner/edit/:id" element={<EditBanner />} />
+            <Route path="/admin/post/add" element={<AddPost />} />
+
 
             {/* Route khác sau này */}
           </Routes>
