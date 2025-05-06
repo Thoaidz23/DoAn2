@@ -6,6 +6,23 @@ const connection = require('../../db'); // db.js dùng mysql2 bình thường
 const register = (req, res) => {
   const { name, email, phone, address, password } = req.body;
 
+  // Kiểm tra điều kiện mật khẩu
+  const hasWhitespace = /\s/.test(password);
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+  if (hasWhitespace) {
+    return res.status(400).json({ message: 'Mật khẩu không được chứa khoảng trắng' });
+  }
+
+  if (!hasUppercase) {
+    return res.status(400).json({ message: 'Mật khẩu phải có ít nhất một chữ in hoa' });
+  }
+
+  if (!hasSpecialChar) {
+    return res.status(400).json({ message: 'Mật khẩu phải có ít nhất một ký tự đặc biệt' });
+  }
+
   connection.execute('SELECT * FROM tbl_user WHERE email = ?', [email], (err, results) => {
     if (err) {
       console.error('Lỗi truy vấn email:', err);
@@ -23,7 +40,7 @@ const register = (req, res) => {
 
       connection.execute(
         'INSERT INTO tbl_user (name, email, phone, address, password, role) VALUES (?, ?, ?, ?, ?, ?)',
-        [name, email, phone, address, hashedPassword,2],
+        [name, email, phone, address, hashedPassword, 2],
         (err, result) => {
           if (err) {
             console.error("Lỗi thêm người dùng:", err);

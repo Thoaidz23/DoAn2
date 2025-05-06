@@ -7,12 +7,12 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import AccountBar from "../component/AccountBar";
 import img from "../assets/img/img1.png";
 
-// ... các import khác
 const AccountOverview = () => {
   const [activeMenu, setActiveMenu] = useState("Cập nhật tài khoản");
   const [editingField, setEditingField] = useState(null);
   const [isChanged, setIsChanged] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [phoneError, setPhoneError] = useState(""); // Thêm biến lỗi số điện thoại
   const { user } = useContext(AuthContext); // lấy user.id
 
   useEffect(() => {
@@ -41,25 +41,43 @@ const AccountOverview = () => {
     const isEditing = editingField === fieldKey;
 
     const handleChange = (e) => {
+      const value = e.target.value;
+
+      if (fieldKey === "phone") {
+        if (/[^\d]/.test(value)) {
+          setPhoneError("Số điện thoại không được chứa chữ!");
+        } else if (value.length < 9 || value.length > 11) {
+          setPhoneError("Số điện thoại chỉ được phép từ 9-11 số!");
+        } else {
+          setPhoneError("");
+        }
+      }
+
       setUserInfo((prev) => ({
         ...prev,
-        [fieldKey]: e.target.value,
+        [fieldKey]: value,
       }));
+
       setIsChanged(true);
     };
 
     return (
-      <div className="mb-3 position-relative">
+      <div className="mb-3 position-relative border-1">
         <strong>{label}:</strong>{" "}
         {isEditing ? (
-          <input
-            type="text"
-            className="form-control mt-2"
-            value={userInfo[fieldKey]}
-            onChange={handleChange}
-            onBlur={() => setEditingField(null)}
-            autoFocus
-          />
+          <>
+            <input
+              type="text"
+              className="form-control mt-2"
+              value={userInfo[fieldKey]}
+              onChange={handleChange}
+              onBlur={() => setEditingField(null)}
+              autoFocus
+            />
+            {fieldKey === "phone" && phoneError && (
+              <div className="text-danger mt-1">{phoneError}</div>
+            )}
+          </>
         ) : (
           <>
             {userInfo[fieldKey]}
@@ -88,7 +106,16 @@ const AccountOverview = () => {
           {renderField("Địa chỉ", "address")}
           {isChanged && (
             <div className="mt-4 text-end">
-              <button className="btn btn-primary" onClick={handleSave}>
+              <button
+                className="btn btn-primary"
+                onClick={handleSave}
+                disabled={!!phoneError}
+                // nút lưu mờ khi có lỗi
+                style={{
+                  opacity: phoneError ? 0.3 : 1,
+                  pointerEvents: phoneError ? "none" : "auto", 
+                }}
+              >
                 Lưu thay đổi
               </button>
             </div>
@@ -100,5 +127,3 @@ const AccountOverview = () => {
 };
 
 export default AccountOverview;
-
-

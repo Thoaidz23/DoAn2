@@ -49,12 +49,16 @@ const Register = () => {
       return;
     }
   
-    if (password.length < 6) {
-      setError("Mật khẩu phải có ít nhất 6 ký tự!");
+    if (password.length < 8) {
+      setError("Mật khẩu phải có ít nhất 8 ký tự!");
       setSuccess("");
       return;
     }
-  
+    if (password.length > 30) {
+      setError("Mật khẩu phải nhỏ hơn 30 ký tự!");
+      setSuccess("");
+      return;
+    }
     if (password !== confirmPassword) {
       setError("Mật khẩu và xác nhận mật khẩu không khớp!");
       setSuccess("");
