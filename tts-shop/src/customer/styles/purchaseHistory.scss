@@ -4,15 +4,16 @@
     padding: 20px;
     margin-top: -5%;
     
-  
     .purchase-history-content {
       width: 75%;
       background-color: whitesmoke;
       border-radius: 8px;
       padding: 20px;
-      height: 100vh;
+      min-height: 100vh; // ✅ Thay vì cố định, cho nó cao ít nhất bằng chiều cao màn hình
+      height: auto;       // ✅ Cho phép tự động mở rộng theo nội dung
+      overflow: visible;  // Đảm bảo không ẩn nội dung
     }
-  
+    
     .user-info {
       display: flex;
       align-items: center;

@@ -3,7 +3,7 @@ const db = require("../../db");
 // Lấy chi tiết sản phẩm và thông số kỹ thuật
 const getProductDetail = async (req, res) => {
   const { id } = req.params;
-
+  console.log(id)
   try {
     // Lấy chi tiết sản phẩm
     const productQuery = `
