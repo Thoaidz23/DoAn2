@@ -31,13 +31,7 @@ function PurchaseHistory() {
       price: 8280000,
       status: "Chờ xác nhận",
     },
-    {
-      id: "XXI307473",
-      name: "Smart Tivi LG 4K 55 inch Evo Oled Pose (55LX1TPSA) 2024 và 1 sản phẩm khác",
-      image: img3,
-      price: 25790000,
-      status: "Đã huỷ",
-    },
+  
   ];
 
   const filters = [
