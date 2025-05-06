@@ -7,7 +7,14 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import AccountBar from '../component/AccountBar';
+<<<<<<< HEAD
 import { AuthContext } from "../context/AuthContext";
+=======
+
+import img1 from "../assets/img/ss.webp";
+import img2 from "../assets/img/ss.webp";
+
+>>>>>>> 552f03b3b1827a0b83b5c92da17983720ad014c2
 
 function PurchaseHistory() {
   const [activeFilter, setActiveFilter] = useState('Tất cả');
@@ -16,6 +23,7 @@ function PurchaseHistory() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
+<<<<<<< HEAD
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -47,6 +55,25 @@ function PurchaseHistory() {
     4: 'Chờ hủy',
     5: 'Đã huỷ',
   };
+=======
+  const orders = [
+    {
+      id: "ZFD559585",
+      name: "Smart Tivi LG 4K 55 inch Evo Oled Pose (55LX1TPSA) 2024",
+      image: img1,
+      price: 25000000,
+      status: "Đã giao hàng",
+    },
+    {
+      id: "GZB643108",
+      name: "Đồng hồ thông minh Huawei Watch D2",
+      image: img2,
+      price: 8280000,
+      status: "Chờ xác nhận",
+    },
+  
+  ];
+>>>>>>> 552f03b3b1827a0b83b5c92da17983720ad014c2
 
   const filters = [
     'Tất cả',

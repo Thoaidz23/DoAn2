@@ -7,13 +7,16 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import AccountBar from "../component/AccountBar";
 import img from "../assets/img/img1.png";
 
-const AccountOverview = () => {
+const UploadAccount = () => {
   const [activeMenu, setActiveMenu] = useState("Cập nhật tài khoản");
   const [editingField, setEditingField] = useState(null);
   const [isChanged, setIsChanged] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [phoneError, setPhoneError] = useState(""); // Thêm biến lỗi số điện thoại
   const { user } = useContext(AuthContext); // lấy user.id
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("success"); // success | danger | warning
 
   useEffect(() => {
     if (user && user.id) {
@@ -27,14 +30,30 @@ const AccountOverview = () => {
   const handleSave = async () => {
     try {
       await axios.put(`http://localhost:5000/api/upload-account/${user.id}`, userInfo);
-      alert("Đã lưu thay đổi thành công!");
+      setAlertMessage("Đã lưu thay đổi thành công!");
+      setAlertVariant("success");
+      setShowAlert(true);
       setEditingField(null);
       setIsChanged(false);
+
+      // Tắt thông báo sau 1 giây
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 1000); // 1 giây
+
     } catch (error) {
       console.error("Lỗi khi cập nhật:", error);
-      alert("Cập nhật thất bại!");
+      setAlertMessage("Cập nhật thất bại!");
+      setAlertVariant("danger");
+      setShowAlert(true);
+
+      // Tắt thông báo sau 1 giây
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 1000); // 1 giây
     }
   };
+  
 
   const renderField = (label, fieldKey, editable = true) => {
     if (!userInfo) return null;
@@ -98,6 +117,30 @@ const AccountOverview = () => {
     <div className="account-overview-container">
       <div className="container">
         <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+        
+        {/* Thông báo (Alert) hiển thị ngay trên trang */}
+        {showAlert && (
+          <div
+          className="position-fixed top-10 end-0 z-3 "
+          style={{
+            minWidth: "300px",
+            maxWidth: "90%",
+            zIndex: 1050,
+            marginRight : "290px"
+          }}
+        >
+          <div className={`alert alert-${alertVariant} alert-dismissible fade show text-center`} role="alert">
+            {alertMessage}
+            <button
+              type="button"
+              className="btn-close"
+              onClick={() => setShowAlert(false)}
+            ></button>
+          </div>
+        </div>
+        
+        )}
+
         <div className="account-content p-4 bg-white shadow rounded-4">
           <img src={img} alt="Avatar" className="avatar" />
           {renderField("Họ và tên", "name")}
@@ -110,10 +153,9 @@ const AccountOverview = () => {
                 className="btn btn-primary"
                 onClick={handleSave}
                 disabled={!!phoneError}
-                // nút lưu mờ khi có lỗi
                 style={{
                   opacity: phoneError ? 0.3 : 1,
-                  pointerEvents: phoneError ? "none" : "auto", 
+                  pointerEvents: phoneError ? "none" : "auto",
                 }}
               >
                 Lưu thay đổi
@@ -126,4 +168,4 @@ const AccountOverview = () => {
   );
 };
 
-export default AccountOverview;
+export default UploadAccount;
