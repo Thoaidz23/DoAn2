@@ -31,6 +31,18 @@ function Navbar() {
       navigate("/login");
     }
   };
+  const handleToHistory  = () => {
+    if (user) {
+      navigate(`/PurchaseHistory`);
+    } else {
+      setShowError(true); // Nếu chưa đăng nhập, hiển thị thông báo lỗi
+      // Tắt thông báo sau 3 giây
+      setTimeout(() => {
+        setShowError(false); // Ẩn thông báo sau 3 giây
+      }, 3000);
+      navigate("/login");
+    }
+  };
 
   
   const nameParts = user?.name.split(' ');
@@ -42,14 +54,10 @@ function Navbar() {
         <div className="container">
           {showError && (
               <div className="error-message">
-                <p>Vui lòng đăng nhập <p>để vào giỏ hàng.</p></p>
+                <p>Vui lòng đăng nhập</p>
               </div>
             )}
-             {showError && (
-              <div className="error-message">
-                <p>Vui lòng đăng nhập <p>để vào giỏ hàng.</p></p>
-              </div>
-            )}
+             
           {/* Logo */}
           <Link to="/" className="navbar-brand">
             <img src={logo} alt="Shop Logo" width="150px" height="60px" />
@@ -74,13 +82,13 @@ function Navbar() {
 
           {/* Menu */}
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link to="/PurchaseHistory" className="nav-link-item px-3">
+            <li onClick={handleToHistory} className="nav-item" style={{cursor:"pointer"}}>
+              <div className="nav-link-item px-3">
                 <FaHistory /> Lịch sử đơn hàng
-              </Link>
+              </div>
             </li>
             <li className="nav-item">
-              <div onClick={handleToCart} className="nav-link-item px-3">
+              <div onClick={handleToCart} className="nav-link-item px-3" style={{cursor:"pointer"}}>
                 <FaShoppingCart /> Giỏ hàng
               </div>
             </li>

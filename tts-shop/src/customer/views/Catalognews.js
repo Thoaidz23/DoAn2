@@ -44,7 +44,7 @@ function Catalognews() {
           {featuredPost && (
             <div className="left-news">
               <Link to={`/postdetail/${featuredPost.id_post}`}>
-                <img src={`http://localhost:5000/images/product/${featuredPost.image}`} alt={featuredPost.title} />
+                <img src={`http://localhost:5000/images/post/${featuredPost.image}`} alt={featuredPost.title} />
                 <div className="overlay-text">
                   <h3>{featuredPost.title}</h3>
                   <p>{featuredPost.desc_post}</p>
@@ -61,7 +61,7 @@ function Catalognews() {
             {otherPosts.map(post => (
               <div className="small-news" key={post.id_post}>
                 <Link to={`/PostDetail/${post.id_post}`}>
-                  <img src={`http://localhost:5000/images/product/${post.image}`} alt={post.title} />
+                  <img src={`http://localhost:5000/images/post/${post.image}`} alt={post.title} />
                 </Link>
                 <div className='postcontent'>
                   <Link to={`/PostDetail/${post.id_post}`}>

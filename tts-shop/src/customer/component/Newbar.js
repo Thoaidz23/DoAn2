@@ -70,7 +70,7 @@ function Newbar() {
                   <div className="card h-100 shadow-sm">
                     <div className="position-relative">
                       <img
-                        src={`http://localhost:5000/images/product/${item.image}`} // Đảm bảo rằng API trả về hình ảnh đúng
+                        src={`http://localhost:5000/images/post/${item.image}`} // Đảm bảo rằng API trả về hình ảnh đúng
                         className="card-img-top rounded"
                         alt={item.title}
                         style={{ width: '100%', height: '180px', objectFit: 'cover' }}

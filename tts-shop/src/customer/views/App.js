@@ -3,15 +3,16 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import NavBar from "../component/NavBar";
 import Footer from "../component/Footer";
 import ProductDetail from "../views/ProductDetail";
+import BillDetail from "./BillDetail";
 import CartPage from "../views/CartPage"
-import { AuthProvider } from "../context/AuthContext"; // ✅ Thêm dòng này
+import { AuthProvider,AuthContext } from "../context/AuthContext"; // ✅ Thêm dòng này
 import ScrollToTop from "../component/ScrollToTop"; // 👈 thêm dòng này
 import CustomerSupport from "../component/CustomerSP";
 import CatalogProduct from "./CatalogProduct";
 import PostDetail from "./PostDetail"
 // Tự động import toàn bộ component trong views (trừ App.js)
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);
-
+  
 const routes = pages.keys().map((key) => {
   const name = key.replace("./", "").replace(".js", "").toLowerCase();
   const Component = pages(key).default;
@@ -41,10 +42,12 @@ function AppContent() {
           <Route path="/cartpage/:userId" element={<CartPage />} />
           <Route path="/catalogproduct/:id_category" element={<CatalogProduct />} />
           <Route path="/postdetail/:id_post" element={<PostDetail />} />
+          <Route path="/bill-detail/:code_order" element={<BillDetail />} />
         </Routes>
       </Suspense>
       <Footer />
-      <CustomerSupport />
+      
+      {/* {user && <CustomerSupport /> } */}
 
     </>
   );

@@ -47,7 +47,7 @@ function CatalogProduct() {
               posts.map(post => (
                 <div className="catalogProduct-item" key={post.id_post}>
                 <Link to={`/postdetail/${post.id_post}`}>
-                    <img src={`http://localhost:5000/images/product/${post.image}`} alt={post.title} />
+                    <img src={`http://localhost:5000/images/post/${post.image}`} alt={post.title} />
                   </Link>
                   <div className="Product-info">
                   <Link to={`/postdetail/${post.id_post}`}>

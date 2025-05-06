@@ -38,11 +38,11 @@ const PostDetail = () => {
   };
   return (
     <Container className="my-5">
-      <Row className="justify-content-center">
+      <Row className="justify-content-center"  style={{width:"100%"}}>
         <Col md={8} className='container-pd'>
           <div style={{ width: '100%', height: '300px', overflow: 'hidden', borderRadius: '10px', marginBottom: '1rem' }}>
             <Image
-              src={`http://localhost:5000/images/product/${post.image}`} // Đảm bảo đường dẫn đúng
+              src={`http://localhost:5000/images/post/${post.image}`} // Đảm bảo đường dẫn đúng
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>

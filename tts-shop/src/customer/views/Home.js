@@ -9,21 +9,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "../styles/newbar.scss"
 import ProductSection from "../component/ProductSetion";
-import banner1 from "../assets/img/xiaomi-14-web.jpg";
-import banner2 from "../assets/img/banner2.jpg";
-import banner3 from "../assets/img/banner3.jpg";
+
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const  [banner,setBanner]  = useState([])
   const [brandsByCategory, setBrandsByCategory] = useState({}); // <-- Chuyển dòng này lên đây
   const [indexMap, setIndexMap] = useState({});
   const [loading, setLoading] = useState(true);
   const visibleCount = 5;
   const [posts, setPosts] = useState([]);
 
-  console.log(posts)
   useEffect(() => {
     axios.get("http://localhost:5000/api/Home")
     .then((response) => {
@@ -32,6 +30,7 @@ function Home() {
       setBrands(response.data.brands || []);
       setBrandsByCategory(response.data.brandsByCategory || {});
       setPosts(response.data.posts || []); 
+      setBanner(response.data.banner || [])
       console.log("brandsByCategory >>>", response.data.brandsByCategory); // 👈 THÊM DÒNG NÀY
   
       setLoading(false);  
@@ -85,7 +84,16 @@ function Home() {
         <div className="content">
           <div className="banner">
             <Carousel>
-              <Carousel.Item>
+            {banner.map((bannera, index) => (
+                <Carousel.Item key={index}>
+                  <img
+                    src={`http://localhost:5000/images/banner/${bannera.image}`}
+                    alt={`Banner ${index + 1}`}
+                    className="d-block w-100 banner-item"
+                  />
+                </Carousel.Item>
+              ))}
+              {/* <Carousel.Item>
                 <img src={banner1} alt="Banner 1" className="d-block w-100 banner-item" />
               </Carousel.Item>
               <Carousel.Item>
@@ -93,7 +101,7 @@ function Home() {
               </Carousel.Item>
               <Carousel.Item>
                 <img src={banner3} alt="Banner 3" className="d-block w-100 banner-item" />
-              </Carousel.Item>
+              </Carousel.Item> */}
             </Carousel>
           </div>
         </div>
@@ -136,7 +144,7 @@ function Home() {
                             <div className="position-relative">
                             <Link to={`/postdetail/${item.id_post}`}>
                               <img
-                                src={`http://localhost:5000/images/product/${item.image}`} // Đảm bảo rằng API trả về hình ảnh đúng
+                                src={`http://localhost:5000/images/post/${item.image}`} // Đảm bảo rằng API trả về hình ảnh đúng
                                 className="card-img-top rounded"
                                 alt={item.title}
                                 style={{ width: '100%', height: '180px', objectFit: 'cover' }}

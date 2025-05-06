@@ -1,4 +1,4 @@
-const connection = require('../../db');
+const pool = require('../../db');
 
 const generateCodeOrder = () => {
   const letters = Array.from({ length: 4 }, () =>
@@ -9,7 +9,7 @@ const generateCodeOrder = () => {
 };
 
 const addToPay = (req, res) => {
-  const { id_user, products, name_user, address, phone,method } = req.body;
+  const { id_user, products, name_user, address, phone, method } = req.body;
 
   if (!id_user || !products || products.length === 0 || !name_user || !address || !phone) {
     return res.status(400).json({ message: 'Thiếu thông tin' });
@@ -18,61 +18,75 @@ const addToPay = (req, res) => {
   const code_order = generateCodeOrder();
   const total_price = products.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const insertOrderQuery = `
-  INSERT INTO tbl_order (id_user, code_order, status, total_price, name_user, address, phone, date,paystatus , method)
-  VALUES (?, ?, 0, ?, ?, ?, ?, NOW(),0,?)
-`;
-connection.query(
-  insertOrderQuery,
-  [id_user, code_order, total_price, name_user, address, phone,method],
-  (err1, result) => {
-    if (err1) {
-      return connection.rollback(() => {
-        console.error('Lỗi khi thêm đơn hàng:', err1);
-        res.status(500).json({ message: 'Lỗi server khi thêm đơn hàng' });
-      });
+  pool.getConnection((err, conn) => {
+    if (err) {
+      console.error('Lỗi lấy kết nối từ pool:', err);
+      return res.status(500).json({ message: 'Lỗi kết nối database' });
     }
 
-    // Sau khi thêm order, xóa giỏ hàng
-    const deleteCartQuery = `DELETE FROM tbl_cart WHERE id_user = ?`;
-    connection.query(deleteCartQuery, [id_user], (errDel) => {
-      if (errDel) {
-        return connection.rollback(() => {
-          console.error('Lỗi khi xóa giỏ hàng:', errDel);
-          res.status(500).json({ message: 'Lỗi khi xóa giỏ hàng' });
-        });
+    conn.beginTransaction(err => {
+      if (err) {
+        conn.release();
+        console.error('Lỗi bắt đầu transaction:', err);
+        return res.status(500).json({ message: 'Lỗi transaction' });
       }
 
-      // Thêm chi tiết đơn hàng
-      const insertDetailQuery = `
-        INSERT INTO tbl_order_detail (code_order, id_product, quantity_product)
-        VALUES ?
+      const insertOrderQuery = `
+        INSERT INTO tbl_order (id_user, code_order, status, total_price, name_user, address, phone, date, paystatus, method)
+        VALUES (?, ?, 0, ?, ?, ?, ?, NOW(), 0, ?)
       `;
-      const detailValues = products.map(item => [code_order, item.id_product, item.quantity]);
 
-      connection.query(insertDetailQuery, [detailValues], (err2) => {
-        if (err2) {
-          return connection.rollback(() => {
-            console.error('Lỗi khi thêm chi tiết đơn hàng:', err2);
-            res.status(500).json({ message: 'Lỗi server khi thêm chi tiết đơn hàng' });
+      conn.query(insertOrderQuery, [id_user, code_order, total_price, name_user, address, phone, method], (err1, result1) => {
+        if (err1) {
+          return conn.rollback(() => {
+            conn.release();
+            console.error('Lỗi thêm đơn hàng:', err1);
+            res.status(500).json({ message: 'Lỗi thêm đơn hàng' });
           });
         }
 
-        connection.commit(errCommit => {
-          if (errCommit) {
-            return connection.rollback(() => {
-              res.status(500).json({ message: 'Lỗi commit giao dịch' });
+        const deleteCartQuery = `DELETE FROM tbl_cart WHERE id_user = ?`;
+        conn.query(deleteCartQuery, [id_user], (errDel) => {
+          if (errDel) {
+            return conn.rollback(() => {
+              conn.release();
+              console.error('Lỗi xoá giỏ hàng:', errDel);
+              res.status(500).json({ message: 'Lỗi xoá giỏ hàng' });
             });
           }
 
-          res.status(201).json({ message: 'Đã thanh toán thành công', code_order });
+          const insertDetailQuery = `
+            INSERT INTO tbl_order_detail (code_order, id_product, quantity_product)
+            VALUES ?
+          `;
+          const detailValues = products.map(item => [code_order, item.id_product, item.quantity]);
+
+          conn.query(insertDetailQuery, [detailValues], (err2) => {
+            if (err2) {
+              return conn.rollback(() => {
+                conn.release();
+                console.error('Lỗi chi tiết đơn hàng:', err2);
+                res.status(500).json({ message: 'Lỗi chi tiết đơn hàng' });
+              });
+            }
+
+            conn.commit(errCommit => {
+              if (errCommit) {
+                return conn.rollback(() => {
+                  conn.release();
+                  console.error('Lỗi commit:', errCommit);
+                  res.status(500).json({ message: 'Lỗi commit' });
+                });
+              }
+
+              conn.release();
+              res.status(201).json({ message: 'Đặt hàng thành công', code_order });
+            });
+          });
         });
       });
     });
-  }
-);
-
+  });
 };
-
 
 module.exports = { addToPay };

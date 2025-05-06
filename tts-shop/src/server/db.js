@@ -1,20 +1,24 @@
 const mysql = require('mysql2');
 
-// Tạo kết nối đến MySQL
-const connection = mysql.createConnection({
+// Tạo pool kết nối đến MySQL
+const pool = mysql.createPool({
   host: 'localhost',
-  user: 'root', // Tài khoản mặc định của MySQL trên XAMPP
-  password: '', // Nếu không có mật khẩu thì để trống
-  database: 'ttsshop' // Thay bằng tên cơ sở dữ liệu của bạn
+  user: 'root',
+  password: '',
+  database: 'ttsshop',
+  waitForConnections: true,
+  connectionLimit: 10,     // Số lượng kết nối tối đa
+  queueLimit: 0
 });
 
-// Kiểm tra kết nối
-connection.connect((err) => {
+// Kiểm tra kết nối (tuỳ chọn)
+pool.getConnection((err, connection) => {
   if (err) {
-    console.error('Lỗi kết nối MySQL: ' + err.stack);
+    console.error('Lỗi kết nối MySQL:', err.stack);
     return;
   }
-  console.log('Đã kết nối MySQL với id ' + connection.threadId);
+  console.log('✅ Kết nối pool MySQL thành công với ID:', connection.threadId);
+  connection.release(); // Trả kết nối lại pool
 });
 
-module.exports = connection;
+module.exports = pool;

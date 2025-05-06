@@ -1,44 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/index.scss';
 import '../styles/purchaseHistory.scss';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import AccountBar from '../component/AccountBar';
-
-import img1 from "../assets/img/ss.webp";
-import img2 from "../assets/img/ss.webp";
-import img3 from "../assets/img/ss.webp";
+import { AuthContext } from "../context/AuthContext";
 
 function PurchaseHistory() {
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
+  const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-  const orders = [
-    {
-      id: "ZFD559585",
-      name: "Smart Tivi LG 4K 55 inch Evo Oled Pose (55LX1TPSA) 2024",
-      image: img1,
-      price: 25000000,
-      status: "Đã giao hàng",
-    },
-    {
-      id: "GZB643108",
-      name: "Đồng hồ thông minh Huawei Watch D2",
-      image: img2,
-      price: 8280000,
-      status: "Chờ xác nhận",
-    },
-    {
-      id: "XXI307473",
-      name: "Smart Tivi LG 4K 55 inch Evo Oled Pose (55LX1TPSA) 2024 và 1 sản phẩm khác",
-      image: img3,
-      price: 25790000,
-      status: "Đã huỷ",
-    },
-  ];
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        if (!user.id) {
+          console.warn('Chưa đăng nhập');
+          return;
+        }
+
+        const res = await axios.get(`http://localhost:5000/api/orders/purchase-history/${user.id}`);
+        setOrders(res.data);
+      } catch (err) {
+        console.error('Lỗi lấy dữ liệu đơn hàng:', err);
+      }
+    };
+
+    fetchOrders();
+  }, [user.id]);
+
+  const statusPay = {
+    0: 'Chưa thanh toán',
+    1: 'Đã thanh toán'
+  };
+  
+  const statusMap = {
+    0: 'Chờ xác nhận',
+    1: 'Đã xác nhận',
+    2: 'Đang vận chuyển',
+    3: 'Đã giao hàng',
+    4: 'Chờ hủy',
+    5: 'Đã huỷ',
+  };
 
   const filters = [
     'Tất cả',
@@ -50,6 +58,11 @@ function PurchaseHistory() {
     'Đã huỷ',
   ];
 
+  const filteredOrders = orders.filter(order => {
+    const orderStatusText = statusMap[order.status];
+    return activeFilter === 'Tất cả' || orderStatusText === activeFilter;
+  });
+  console.log(user)
   return (
     <div className="PurchaseHistory_container">
       <div className="container">
@@ -58,8 +71,8 @@ function PurchaseHistory() {
           <div className="user-info">
             <img src="/avatar.png" alt="Avatar" className="avatar" />
             <div className="user-details">
-              <h3>THOẠI MINH</h3>
-              <p>09*****264 <i className="bi bi-eye"></i></p>
+              <h3>{user.name || 'THOẠI MINH'}</h3>
+              <p>{user.email || '09*****264'} <i className="bi bi-eye"></i></p>
             </div>
           </div>
 
@@ -70,9 +83,11 @@ function PurchaseHistory() {
             </div>
             <div className="summary-item">
               <h2>
-                {orders.reduce((total, order) => total + order.price, 0).toLocaleString()} đ
+                {orders.reduce((total, order) => total + order.total_price, 0).toLocaleString()} đ
               </h2>
-              <p>Tổng tiền tích lũy từ 01/01/2024</p>
+              <p>Tổng tiền tích lũy từ {new Date(orders[orders.length-1]?.date).toLocaleDateString()}</p>
+
+
             </div>
           </div>
 
@@ -90,7 +105,7 @@ function PurchaseHistory() {
             </div>
           </div>
 
-          {orders.length === 0 ? (
+          {filteredOrders.length === 0 ? (
             <div className="empty-order">
               <img
                 src="https://th.bing.com/th/id/OIP.ab45PW30UOa0XJ7sDrQK7QHaHa?pid=ImgDet&w=206&h=206&c=7&dpr=1.6"
@@ -100,56 +115,69 @@ function PurchaseHistory() {
             </div>
           ) : (
             <div className="order-list">
-              {orders
-                .filter(order => activeFilter === 'Tất cả' || order.status === activeFilter)
-                .map(order => (
-                  <div key={order.id} className="history-order-item">
-                    <div className="history-order-left">
-                      <img
-                        src={order.image}
-                        alt={order.name}
-                        className="history-order-item-image"
-                      />
-                    </div>
-                    <div className="history-order-right">
-                      <div className="history-order-header">
-                        <span className="history-order-time">19/04/2025 16:47</span>
-                      </div>
-                      <h4 className="history-order-name">{order.name}</h4>
-                      <span className={'history-order-status ' + order.status.replace(/\s+/g, '-')}>
-                        {order.status}
+              {filteredOrders.map((order) => (
+                <div key={order.code_order} className="history-order-item">
+                  <div className="history-order-left">
+                    <img
+                      src={`http://localhost:5000/images/product/${order.product_image}`}
+                      alt={order.product_name}
+                      className="history-order-item-image"
+                    />
+                  </div>
+                  <div className="history-order-right">
+                    <div className="history-order-header">
+                      <span className="history-order-time">
+                        {new Date(order.date).toLocaleString()}
                       </span>
+                    </div>
+                    <h4 className="history-order-name">{order.product_name}</h4>
+                    <span
+                      className={'history-order-status ' + statusMap[order.status]?.replace(/\s+/g, '-')}>
+                      {statusMap[order.status] || 'Không xác định'}
+                    </span>
+                    <span
+                      className={'history-order-status ' + statusPay[order.paystatus]?.replace(/\s+/g, '-')}>
+                      {statusPay[order.paystatus] || 'Không xác định'}
+                    </span>
 
-                      <p className="history-order-price">
-                        {order.price.toLocaleString()} đ
-                      </p>
+                    <p className="history-order-price">
+                      {order.total_price.toLocaleString()} đ
+                    </p>
 
-                      <div className="history-order-actions">
-                        {/* Yêu cầu hủy đơn: Luôn hiển thị */}
-                        {order.status  != "Chờ xác nhận" ? (
-                          <div></div>
-                        ):(
-                          <button
+                    <div className="history-order-actions">
+                      {order.status === 0 && (
+                        <button
                           className="history-cancel-button"
-                          onClick={() => alert(`Bạn đã yêu cầu hủy đơn: ${order.id}`)}
+                          onClick={async () => {
+                            if (window.confirm(`Bạn có chắc muốn yêu cầu hủy đơn ${order.code_order}?`)) {
+                              try {
+                                const res = await axios.put(`http://localhost:5000/api/bill-detail/cancel/${order.code_order}`);
+                                alert(res.data.message || 'Yêu cầu hủy thành công');
+                                
+                                // Cập nhật lại danh sách đơn hàng sau khi hủy
+                                const updatedOrders = await axios.get(`http://localhost:5000/api/orders/purchase-history/${user.id}`);
+                                setOrders(updatedOrders.data);
+                              } catch (err) {
+                                console.error('Lỗi hủy đơn:', err);
+                                alert('Hủy đơn không thành công!');
+                              }
+                            }
+                          }}
                         >
                           Yêu cầu hủy đơn
                         </button>
-                          
-                        )}
-                        
+                      )}
 
-                        <button
-                          className="history-detail-button"
-                          onClick={() => navigate('/BillDetail')}
-                        >
-                          Xem chi tiết
-                        </button>
-                      </div>
-
+                      <button
+                        className="history-detail-button"
+                        onClick={() => navigate(`/bill-detail/${order.code_order}`)}
+                      >
+                        Xem chi tiết
+                      </button>
                     </div>
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
           )}
         </div>

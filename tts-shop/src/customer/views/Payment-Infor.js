@@ -78,10 +78,12 @@ const PaymentInfor = () => {
   
     try {
       if (selectedPayment === 0) {
+       
         // COD - gọi API luôn
+        
         const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
         alert("Thanh toán thành công bằng COD!");
-        navigate("/PurchaseDetail");
+        navigate("/PurchaseHistory");
       } else if (selectedPayment === 1) {
         // MoMo - chuyển sang trang xử lý MoMo
         navigate("/Payment-momo", { state: { payload } });
