@@ -81,6 +81,7 @@ const CartPage = () => {
         <div>Đang tải...</div>
       ) : cartItems.length === 0 ? (
         <div className="empty-cart text-center">
+          <h3>Giỏ hàng của bạn</h3>
           <Image
             src={require("../assets/img/giohangtrong.png")}
             alt="Giỏ hàng trống"
