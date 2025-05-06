@@ -47,7 +47,7 @@ function MenuBar() {
   return (
     <div className="container">
       <div className="menu-bar">
-        <h3 className="menu-title">Danh mục</h3>
+          <h3 className="menu-title">Danh mục</h3>
         <ul className="menubar-nav">
           {category.map((category) => (
             <li
@@ -64,7 +64,7 @@ function MenuBar() {
                 {getIconByCategory(category.icon)}
                 <span className="menu-label">{category.name_category_product}</span>
               </Link>
-
+            
               {hoveredItem === category.id_category_product && (
                 <div className="hover-panel">
                   <div className="hover-column">
@@ -80,6 +80,7 @@ function MenuBar() {
                             >
                               {brand.name_category_brand}
                             </li>
+                            
                           ))
                         ) : (
                           <li>Không có thương hiệu</li>
@@ -101,7 +102,14 @@ function MenuBar() {
                 </div>
               )}
             </li>
-          ))}
+          ))} 
+          <li onClick={() => navigate(`/Catalognews`)} className="menu-item">
+          <span className="nav-link">
+            <i className="bi bi-newspaper" style={{cursor:"pointer"}}></i>
+            <span className="menu-label " style={{marginLeft:"4%",cursor:"pointer"}}> Bài viết công nghệ</span>
+          </span>
+        </li>
+        
         </ul>
       </div>
     </div>

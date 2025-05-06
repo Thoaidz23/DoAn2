@@ -40,6 +40,7 @@ function PurchaseHistory() {
     'Đã xác nhận',
     'Đang vận chuyển',
     'Đã giao hàng',
+    'Chờ hủy',
     'Đã huỷ',
   ];
 
@@ -119,12 +120,18 @@ function PurchaseHistory() {
 
                       <div className="history-order-actions">
                         {/* Yêu cầu hủy đơn: Luôn hiển thị */}
-                        <button
+                        {order.status  != "Chờ xác nhận" ? (
+                          <div></div>
+                        ):(
+                          <button
                           className="history-cancel-button"
                           onClick={() => alert(`Bạn đã yêu cầu hủy đơn: ${order.id}`)}
                         >
                           Yêu cầu hủy đơn
                         </button>
+                          
+                        )}
+                        
 
                         <button
                           className="history-detail-button"
