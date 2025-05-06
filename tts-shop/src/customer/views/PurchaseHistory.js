@@ -9,7 +9,7 @@ import AccountBar from '../component/AccountBar';
 
 import img1 from "../assets/img/ss.webp";
 import img2 from "../assets/img/ss.webp";
-import img3 from "../assets/img/ss.webp";
+
 
 function PurchaseHistory() {
   const [activeFilter, setActiveFilter] = useState('Tất cả');
