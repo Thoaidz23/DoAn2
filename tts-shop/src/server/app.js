@@ -18,6 +18,7 @@ const MenuBar = require("./customer/Routes/MenuBar.route")
 const groupProductRoute = require("./customer/Routes/ProductDetail.routes");
 const user = require('./customer/Routes/user.route');
 const cartRoutes = require('./customer/Routes/Cart.route');
+const payRoutes = require('./customer/Routes/Pay.route');
 const cartPageRoute = require('./customer/Routes/CartPage.route');
 const MyAccount = require("./customer/Routes/MyAccout.route");
 const accountRoutes = require("./customer/Routes/ChangePassword.route"); 
@@ -25,6 +26,8 @@ const uploadAccountRoutes = require('./customer/Routes/UploadAcc.route');
 const catalognewsRoutes = require('./customer/Routes/catalognews.route');
 const catalogproduct   = require('./customer/Routes/CatalogProduct.route');
 const postdetail = require('./customer/Routes/PostDetail.route')
+const paymentInfoRoutes = require('./customer/Routes/CartInfo.route');
+
 
 const app = express();
 app.use(cors());
@@ -53,6 +56,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/group-route", groupProductRoute);
 app.use('/api/users', user);
 app.use('/api/cart', cartRoutes);
+app.use('/api/pay', payRoutes);
 app.use('/api/cartpage', cartPageRoute);
 app.use("/api/account", MyAccount);
 app.use("/api/change-password", accountRoutes);
@@ -60,7 +64,7 @@ app.use("/api/upload-account", uploadAccountRoutes);
 app.use('/api/catalognews', catalognewsRoutes);
 app.use('/api/catalogproduct', catalogproduct);
 app.use('/api/',postdetail)
-
+app.use('/api/payment', paymentInfoRoutes);
 // Server lắng nghe
 app.listen(PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
