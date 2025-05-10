@@ -27,9 +27,16 @@ const getHomeData = async (req, res) => {
     }, {});
 
     // Lấy bài viết
+<<<<<<< HEAD
     const [posts] = await db.promise().query('SELECT * FROM tbl_post');
 
     res.status(200).json({ products, categories, brandsByCategory, posts });
+=======
+    const [posts] = await db.promise().query('SELECT * FROM tbl_post ORDER BY date DESC');
+    const [banner]  = await db.promise().query('SELECT * FROM tbl_banner');
+    
+    res.status(200).json({ products, categories, brandsByCategory, posts , banner});
+>>>>>>> d796181d0ce5157210794b691833585f6e52a437
 
   } catch (err) {
     console.error("Lỗi truy vấn:", err);

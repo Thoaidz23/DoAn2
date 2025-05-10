@@ -8,21 +8,23 @@ import "../styles/index.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import ProductSection from "../component/ProductSetion";
-import banner1 from "../assets/img/xiaomi-14-web.jpg";
-import banner2 from "../assets/img/banner2.jpg";
-import banner3 from "../assets/img/banner3.jpg";
+
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const  [banner,setBanner]  = useState([])
   const [brandsByCategory, setBrandsByCategory] = useState({}); // <-- Chuyển dòng này lên đây
   const [indexMap, setIndexMap] = useState({});
   const [loading, setLoading] = useState(true);
   const visibleCount = 5;
   const [posts, setPosts] = useState([]);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d796181d0ce5157210794b691833585f6e52a437
   useEffect(() => {
     axios.get("http://localhost:5000/api/Home")
     .then((response) => {
@@ -31,6 +33,7 @@ function Home() {
       setBrands(response.data.brands || []);
       setBrandsByCategory(response.data.brandsByCategory || {});
       setPosts(response.data.posts || []); 
+      setBanner(response.data.banner || [])
       console.log("brandsByCategory >>>", response.data.brandsByCategory); // 👈 THÊM DÒNG NÀY
   
       setLoading(false);  
@@ -73,7 +76,16 @@ function Home() {
         <div className="content">
           <div className="banner">
             <Carousel>
-              <Carousel.Item>
+            {banner.map((bannera, index) => (
+                <Carousel.Item key={index}>
+                  <img
+                    src={`http://localhost:5000/images/banner/${bannera.image}`}
+                    alt={`Banner ${index + 1}`}
+                    className="d-block w-100 banner-item"
+                  />
+                </Carousel.Item>
+              ))}
+              {/* <Carousel.Item>
                 <img src={banner1} alt="Banner 1" className="d-block w-100 banner-item" />
               </Carousel.Item>
               <Carousel.Item>
@@ -81,7 +93,7 @@ function Home() {
               </Carousel.Item>
               <Carousel.Item>
                 <img src={banner3} alt="Banner 3" className="d-block w-100 banner-item" />
-              </Carousel.Item>
+              </Carousel.Item> */}
             </Carousel>
           </div>
         </div>
@@ -107,11 +119,12 @@ function Home() {
             brandsByCategory={brandsByCategory}
             id_category_product={Number(id_category_product)} 
           />
-
+          
 
           );
         })}
 
+<<<<<<< HEAD
         {/* Tin tức */}
         <div className="container">
           <div className="section-product-one-content-title-with-buttons">
@@ -131,6 +144,46 @@ function Home() {
                     <div className="card-body">
                       <h5 className="card-title">{item.title}</h5>
                       <p className="card-text">{item.content.slice(0,100)}...</p>
+=======
+        <div className="mb-5">
+                <div className="content-title-newbar mt-4 d-flex justify-content-between align-items-center">
+                  <h2>Bài viết mới nhất</h2>
+                  <Link to={`/Catalognews/`} className="see-all-newbar">Xem tất cả</Link>
+                </div>
+                <div className="news-wrapper">
+                  <div className="container">
+                    <div className="row gx-2 gy-3">
+                      {posts.slice(0,4).map((item) => (
+                        <div className="col-md-3" key={item.id_post}>
+                          <div className="card h-100 shadow-sm">
+                            <div className="position-relative">
+                            <Link to={`/postdetail/${item.id_post}`}>
+                              <img
+                                src={`http://localhost:5000/images/post/${item.image}`} // Đảm bảo rằng API trả về hình ảnh đúng
+                                className="card-img-top rounded"
+                                alt={item.title}
+                                style={{ width: '100%', height: '180px', objectFit: 'cover' }}
+                              /> </Link>
+                            </div>
+                            <div className="card-body p-2 pb-0">
+                              <h6 className="card-title fw-bold">{item.title}</h6>
+                              <div className="text-muted small d-flex flex-wrap align-items-center mt-3 ">
+                                <div className="me-5" >
+                                  <i className="bi bi-person-circle me-1"></i>
+                                  <span className="me-5">{item.author}</span>
+                                </div>
+                                <div className="me-5"></div>
+                                <div>
+                                  <i className="bi bi-clock me-1 "></i>
+                                  <span>{formatDate(item.date)}</span>
+                                </div>
+                                
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+>>>>>>> d796181d0ce5157210794b691833585f6e52a437
                     </div>
                   </div>
                 </div>

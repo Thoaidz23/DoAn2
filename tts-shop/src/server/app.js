@@ -23,6 +23,29 @@ const cagproductRoutes = require('./admin/routes/cagproductRoutes');
 const bannerRoutes = require('./admin/routes/bannerRoutes');
 const postRoutes = require('./admin/routes/postRoutes');
 
+//customer
+const HProductRoute = require('./customer/Routes/Home.routes')
+const searchRoutes = require("./customer/Routes/search.routes");
+const MenuBar = require("./customer/Routes/MenuBar.route")
+const otpRoutes = require('./customer/Routes/Otp.route');
+const groupProductRoute = require("./customer/Routes/ProductDetail.routes");
+const user = require('./customer/Routes/user.route');
+const cartRoutes = require('./customer/Routes/Cart.route');
+const payRoutes = require('./customer/Routes/Pay.route');
+const cartPageRoute = require('./customer/Routes/CartPage.route');
+const MyAccount = require("./customer/Routes/MyAccout.route");
+const accountRoutes = require("./customer/Routes/ChangePassword.route"); 
+const uploadAccountRoutes = require('./customer/Routes/UploadAcc.route');
+const catalognewsRoutes = require('./customer/Routes/catalognews.route');
+const catalogproduct   = require('./customer/Routes/CatalogProduct.route');
+const postdetail = require('./customer/Routes/PostDetail.route')
+const paymentInfoRoutes = require('./customer/Routes/CartInfo.route');
+const order = require('./customer/Routes/Order.route');
+const bill = require('./customer/Routes/BillDetail.route')
+const resetPasswordRoute = require('./customer/Routes/Newpassword.route');
+const chatRoutes = require('./customer/Routes/chat.route'); 
+
+
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', groupProductRoutes);
 app.use('/api/cagposts', cagpostRoutes);
@@ -43,10 +66,33 @@ const cartPageRoute = require('./customer/Routes/CartPage.route');
 app.use('/api/Home', HProductRoute);
 app.use("/api/SearchProduct", searchRoutes);
 app.use('/api/category', MenuBar);
+
+//customer
+app.use('/api/Home',HProductRoute)
+app.use("/api/SearchProduct",searchRoutes );
+app.use('/api/category',MenuBar)
+app.use('/api/otp', otpRoutes);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use("/api/group-route", groupProductRoute);
 app.use('/api/users', user);
 app.use('/api/cart', cartRoutes);
+app.use('/api/pay', payRoutes);
 app.use('/api/cartpage', cartPageRoute);
+
+app.use("/api/account", MyAccount);
+app.use("/api/change-password", accountRoutes);
+app.use("/api/upload-account", uploadAccountRoutes);
+app.use('/api/catalognews', catalognewsRoutes);
+app.use('/api/catalogproduct', catalogproduct);
+app.use('/api/',postdetail)
+app.use('/api/payment', paymentInfoRoutes);
+app.use('/api/orders', order);
+app.use('/api/bill-detail', bill); 
+app.use(resetPasswordRoute);
+app.use('/api/chat', chatRoutes);
+
 
 // ======= Khởi động server =======
 app.listen(PORT, () => {

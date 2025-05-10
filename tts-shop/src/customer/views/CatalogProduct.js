@@ -22,6 +22,7 @@ function CatalogProduct() {
   }, []);
 
   return (
+<<<<<<< HEAD
     <div>
       <div className="CatalogProduct_container">
         <div className="container">
@@ -119,6 +120,18 @@ function CatalogProduct() {
                 <div className="Product-info">
                   <Link to="/post/5">
                     <h3>OnePlus 13T gây ấn tượng với tỷ lệ phân bố trọng lượng hoàn hảo 50:50</h3>
+=======
+    <div className="container-allProduct">
+      <div className="container">
+      <h2>{posts.length > 0 ? posts[0].name_category_post : 'Danh mục'}</h2>
+        <div className="content-allProduct">
+          <div className="container">
+            {posts.length > 0 ? (
+              posts.map(post => (
+                <div className="catalogProduct-item" key={post.id_post}>
+                <Link to={`/postdetail/${post.id_post}`}>
+                    <img src={`http://localhost:5000/images/post/${post.image}`} alt={post.title} />
+>>>>>>> d796181d0ce5157210794b691833585f6e52a437
                   </Link>
                   <p>Điện thoại OnePlus 13T sắp ra mắt dự kiến sẽ có thiết kế cực kỳ cao cấp và tỷ lệ phân bố trọng lượng hoàn hảo...</p>
                   <div className="meta">

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, FloatingLabel, Form, Alert } from "react-bootstrap";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const OtpModal = ({ show, onHide, email, otp, setOtp }) => {
+const OtpModal = ({ show, onHide, email, otp, setOtp, mode, onVerified }) => {
   const [counter, setCounter] = useState(30);
   const [isCounting, setIsCounting] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   // Bắt đầu đếm ngược khi modal hiện
   useEffect(() => {
@@ -32,16 +34,26 @@ const OtpModal = ({ show, onHide, email, otp, setOtp }) => {
 
   const handleVerifyOtp = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/users/verify-otp", {
+      const res = await axios.post("http://localhost:5000/api/otp/verify-otp", {
         email,
         otp,
       });
       setMessage(res.data.message);
       setError("");
+
       setTimeout(() => {
         setMessage("");
-        onHide(); // Đóng modal sau khi xác thực thành công
+        onHide(); // hoặc giữ modal nếu muốn
+
+        if (mode === "reset-password") {
+          navigate("/Newpassword", { state: { email } });
+        } else if (mode === "register" && typeof onVerified === "function") {
+          onVerified(); // gọi callback để tạo user
+        }
+
+        setOtp(""); // Clear OTP field
       }, 1500);
+
     } catch (err) {
       setError(err.response?.data?.message || "Lỗi xác thực OTP");
       setMessage("");
@@ -49,8 +61,11 @@ const OtpModal = ({ show, onHide, email, otp, setOtp }) => {
   };
 
   const handleResendOtp = async () => {
+    // Không cho phép gửi lại OTP trong khi đang đếm ngược
+    if (isCounting) return;
+
     try {
-      await axios.post("http://localhost:5000/api/users/send-otp", { email });
+      await axios.post("http://localhost:5000/api/otp/send-otp", { email });
       setMessage("OTP mới đã được gửi!");
       setError("");
       setCounter(30);

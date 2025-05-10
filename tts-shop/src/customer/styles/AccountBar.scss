@@ -42,7 +42,68 @@
       }
     }
   }
-
+  .logout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  
+    .modal-content {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 10px;
+      text-align: center;
+      width: 800px;
+      p {
+        margin-bottom: 20px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+  
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      
+        button {
+          flex: 1; // đảm bảo các nút có cùng kích thước
+          padding: 12px 0;
+          border: none;
+          font-weight: bold;
+          cursor: pointer;
+          border-radius: 6px;
+          font-size: 16px;
+          transition: background 0.3s ease;
+        }
+      
+        .cancel {
+          background: #f0f0f0;
+          color: #333;
+      
+          &:hover {
+            background: #ddd;
+          }
+        }
+      
+        .confirm {
+          background: #09905e;
+          color: white;
+      
+          &:hover {
+            background: #105f42;
+          }
+        }
+      }
+      
+    }
+  }
+  
 
   @media (max-width: 768px) {
     width: 60px;

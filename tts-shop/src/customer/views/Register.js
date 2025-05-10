@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Form, FloatingLabel, Container, Button, Alert } from "react-bootstrap";
 import { Eye, EyeSlash } from "react-bootstrap-icons";
 import axios from "axios";
-// import OtpModal from "../component/OtpModal";
+import OtpModal from "../component/OtpModal";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +20,8 @@ const Register = () => {
   const [success, setSuccess] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtpModal, setShowOtpModal] = useState(false);
+  
+  const navigate = useNavigate(); // Hook dùng để điều hướng
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,62 +29,59 @@ const Register = () => {
 
   const handleRegister = async () => {
     const { name, email, phone, address, password, confirmPassword } = formData;
-  
+
     // Regex kiểm tra email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{9,11}$/;
-  
+
     if (!name || !email || !phone || !address || !password || !confirmPassword) {
       setError("Vui lòng nhập đầy đủ thông tin!");
       setSuccess("");
       return;
     }
-  
+
     if (!emailRegex.test(email)) {
       setError("Email không hợp lệ!");
       setSuccess("");
       return;
     }
-  
+
     if (!phoneRegex.test(phone)) {
       setError("Số điện thoại không hợp lệ! Chỉ gồm 9–11 chữ số.");
       setSuccess("");
       return;
     }
-  
-    if (password.length < 6) {
-      setError("Mật khẩu phải có ít nhất 6 ký tự!");
+
+    if (password.length < 8) {
+      setError("Mật khẩu phải có ít nhất 8 ký tự!");
       setSuccess("");
       return;
     }
-  
+    if (password.length > 30) {
+      setError("Mật khẩu phải nhỏ hơn 30 ký tự!");
+      setSuccess("");
+      return;
+    }
     if (password !== confirmPassword) {
       setError("Mật khẩu và xác nhận mật khẩu không khớp!");
       setSuccess("");
       return;
     }
-    
+
     try {
-      const { confirmPassword, ...submitData } = formData;
-      const response = await axios.post("http://localhost:5000/api/users/register", submitData);
-      setSuccess(response.data.message);
-      setError("");
-      window.location.href = "/Login";
-      setShowOtpModal(true);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
-        password: "",
-        confirmPassword: ""
+      // Gửi OTP trước, chưa gọi /register
+      await axios.post("http://localhost:5000/api/otp/send-otp", {
+        email:email,
+        mode: "register", // thêm field purpose để backend biết mục đích gửi
       });
+
+      setError("");
+      setShowOtpModal(true); // Hiện modal nhập OTP
     } catch (err) {
-      setError(err.response?.data?.message || "Lỗi không xác định");
+      setError(err.response?.data?.message || "Không gửi được OTP");
       setSuccess("");
     }
   };
-  
 
   return (
     <Container className="d-flex justify-content-center vh-100 mt-5">
@@ -182,14 +182,35 @@ const Register = () => {
         </Button>
         <p className="mt-2">Đã có tài khoản? <a href="/Login">Đăng nhập</a></p>
       </Form>
-      {/* <OtpModal
-          show={showOtpModal}
-          onHide={() => setShowOtpModal(false)}
-          email={formData.email}
-          otp={otp}
-          setOtp={setOtp}
-        /> */}
-            
+
+      {/* Modal OTP */}
+      <OtpModal
+        show={showOtpModal}
+        onHide={() => setShowOtpModal(false)}
+        email={formData.email}
+        otp={otp}
+        setOtp={setOtp}
+        mode="register"
+        onVerified={async () => {
+          try {
+            const { confirmPassword, ...submitData } = formData;
+            const res = await axios.post("http://localhost:5000/api/users/register", submitData);
+            setSuccess("Đăng ký thành công! Hãy đăng nhập.");
+            setShowOtpModal(false);
+            setFormData({
+              name: "",
+              email: "",
+              phone: "",
+              address: "",
+              password: "",
+              confirmPassword: ""
+            });
+            navigate("/Login"); // Sử dụng navigate thay vì window.location.href
+          } catch (err) {
+            setError(err.response?.data?.message || "Lỗi khi tạo tài khoản");
+          }
+        }}
+      />
     </Container>
   );
 };

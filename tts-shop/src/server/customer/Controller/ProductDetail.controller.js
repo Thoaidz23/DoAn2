@@ -3,7 +3,7 @@ const db = require("../../db");
 // Lấy chi tiết sản phẩm và thông số kỹ thuật
 const getProductDetail = async (req, res) => {
   const { id } = req.params;
-
+  console.log(id)
   try {
     // Lấy chi tiết sản phẩm
     const productQuery = `
@@ -23,13 +23,14 @@ const getProductDetail = async (req, res) => {
       WHERE p.id_group_product = ?
       GROUP BY p.id_product;
     `;
-
+   
     const productResult = await new Promise((resolve, reject) => {
       db.query(productQuery, [id], (err, result) => {
         if (err) return reject(err);
         resolve(result);
       });
     });
+    
     // Kiểm tra tồn tại
     if (productResult.length === 0) {
       return res.status(404).json({ message: "Sản phẩm không tìm thấy." });

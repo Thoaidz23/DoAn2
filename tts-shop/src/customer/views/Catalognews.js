@@ -30,6 +30,7 @@ function Catalognews() {
 
       <div className="content-catalognews">
         <div className="container">
+<<<<<<< HEAD
           <div className="left-news">
             <Link to="/PostDetail">
               <img
@@ -42,6 +43,38 @@ function Catalognews() {
                 <div className="meta">
                   <span className="author">👤 Thông Võ</span>
                   <span className="time">🕒 12/04/2025 11:19</span>
+=======
+          {featuredPost && (
+            <div className="left-news">
+              <Link to={`/postdetail/${featuredPost.id_post}`}>
+                <img src={`http://localhost:5000/images/post/${featuredPost.image}`} alt={featuredPost.title} />
+                <div className="overlay-text">
+                  <h3>{featuredPost.title}</h3>
+                  <p>{featuredPost.desc_post}</p>
+                  <div className="meta">
+                    <span className="author">👤 {featuredPost.author}</span>
+                    <span className="time">🕒 {formatDate(featuredPost.date)}</span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+
+          <div className="right-news">
+            {otherPosts.map(post => (
+              <div className="small-news" key={post.id_post}>
+                <Link to={`/PostDetail/${post.id_post}`}>
+                  <img src={`http://localhost:5000/images/post/${post.image}`} alt={post.title} />
+                </Link>
+                <div className='postcontent'>
+                  <Link to={`/PostDetail/${post.id_post}`}>
+                    <h4>{post.title}</h4>
+                  </Link>
+                  <div className="meta">
+                    <span>👤 {post.author}</span>
+                    <span>🕒 {formatDate(post.date)}</span>
+                  </div>
+>>>>>>> d796181d0ce5157210794b691833585f6e52a437
                 </div>
               </div>
             </Link>
