@@ -50,7 +50,7 @@ function BillDetail() {
             <div className="order-items-bill">
               {products.map((item, index) => (
                 <div className="item-detailbill" key={index}>
-                  <img src={item.image} alt={item.name_product} />
+                  <img src={`http://localhost:5000/images/product/${item.image}`} alt={item.name_product} />
                   <div className="item-info-bill">
                     <h4>{item.name_product}</h4>
                     <p>Giá : <span className="price-bill">{item.price.toLocaleString()}đ</span></p>
