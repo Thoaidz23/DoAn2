@@ -42,7 +42,7 @@ const ForgotPassword = () => {
         </FloatingLabel>
 
         {/* Button */}
-        <Button variant="primary" className="mt-4 w-100" onClick={handleContinue}>
+        <Button variant="primary" className="mt-4 w-100" style={{ backgroundColor: "#076247", borderColor: "#076247", fontWeight: "bold" }} onClick={handleContinue}>
           Tiếp tục
         </Button>
 
@@ -51,7 +51,9 @@ const ForgotPassword = () => {
 
         <div className="d-flex justify-content-between mt-3 text-dark">
           <a href=""></a>
-          <p>Bạn chưa có tài khoản <a href="./Register">Đăng ký ngay</a></p>
+          <p>Bạn chưa có tài khoản <a href="./Register"
+          style={{color : "#149f59" , fontWeight: "500"}}
+          >Đăng ký ngay</a></p>
         </div>
       </Form>
 

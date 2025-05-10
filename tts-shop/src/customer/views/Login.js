@@ -66,14 +66,20 @@ const Login = () => {
           )}
         </div>
 
-        <Button className="w-100 mt-2" onClick={handleLogin} disabled={loading}>
+        <Button className="w-100 mt-2" 
+        style={{ backgroundColor: "#076247", borderColor: "#076247", fontWeight: "bold" }} 
+        onClick={handleLogin} disabled={loading}>
           {loading ? "Đang đăng nhập..." : "Đăng nhập"}
         </Button>
 
         <div className="d-flex justify-content-between mt-3">
-          <a href="/ForgetPassword">Quên mật khẩu?</a>
+          <a href="/ForgetPassword"
+          style={{color : "#149f59" , fontWeight: "500"}}
+          >Quên mật khẩu?</a>
           <span>
-            Chưa có tài khoản? <a href="/Register">Đăng ký</a>
+            Chưa có tài khoản? <a href="/Register "
+            style={{color : "#149f59" , fontWeight: "500"}}
+            >Đăng ký</a>
           </span>
         </div>
       </Form>

@@ -10,12 +10,8 @@
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
-<<<<<<< HEAD
     "body-parser": "^2.2.0",
-    "bootstrap": "^5.3.5",
-=======
     "bootstrap": "^5.3.6",
->>>>>>> 552f03b3b1827a0b83b5c92da17983720ad014c2
     "bootstrap-icons": "^1.11.3",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
