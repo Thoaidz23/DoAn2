@@ -10,7 +10,7 @@ import { CartPlus, BagCheck } from "react-bootstrap-icons";
 import "../styles/ProductDetail.scss";
 import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
-
+import TopHeadBar from "../component/TopHeadBar";
 const ProductDetail = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
@@ -224,7 +224,15 @@ const getAvailableOptions = (field) => {
   
    
   return (
+    <div>
+   <TopHeadBar
+  searchText=""
+  categoryName={selectedProduct?.name_group_product}
+/>
+
+    <div className="Product-detail-content">
     <div className="product-detail">
+      
       <Container fluid>
               {/* Nơi bạn muốn hiển thị thông báo lớn */}
             {showError && (
@@ -435,6 +443,8 @@ const getAvailableOptions = (field) => {
         
       </Container>
     </div>
+    </div>
+      </div>
   );
 };
 

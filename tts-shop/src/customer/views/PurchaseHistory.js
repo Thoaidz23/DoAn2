@@ -9,13 +9,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 import AccountBar from '../component/AccountBar';
 import { AuthContext } from "../context/AuthContext";
 
+
 function PurchaseHistory() {
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -48,6 +48,7 @@ function PurchaseHistory() {
     4: 'Chờ hủy',
     5: 'Đã huỷ',
   };
+
 
   const filters = [
     'Tất cả',
@@ -94,7 +95,7 @@ function PurchaseHistory() {
 
           <div className="filter-section">
             <div className="filter-buttons">
-              {filters.map((filter) => (
+            {filters.map((filter) => (
                 <button
                   key={filter}
                   className={activeFilter === filter ? 'active' : ''}

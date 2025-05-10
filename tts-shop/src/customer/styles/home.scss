@@ -1,12 +1,12 @@
   .container {
     padding: 0;
     display: flex;
+    gap: 15px !important;
     margin: auto; /* Căn giữa container */
-    gap: 2% !important; /* Khoảng cách giữa MenuBar và Banner */
     flex-wrap: wrap; /* Cho phép phần tử xuống dòng khi không đủ không gian */
   }
   .Home{
-    margin-top: -5%;
+    margin-top: -5.3%;
   }
   .menu-wrapper {
     flex-basis: 20%;

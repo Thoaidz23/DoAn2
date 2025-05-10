@@ -53,60 +53,92 @@ function ChangePassword() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+  e.preventDefault();
+  setError("");
+  setSuccess("");
 
-    const { currentPassword, newPassword, confirmPassword } = formData;
+  const { currentPassword, newPassword, confirmPassword } = formData;
 
-    const newFieldErrors = {
-      currentPassword: currentPassword ? "" : "Vui lòng nhập mật khẩu hiện tại.",
-      newPassword: newPassword ? "" : "Vui lòng nhập mật khẩu mới.",
-      confirmPassword: confirmPassword ? "" : "Vui lòng xác nhận mật khẩu mới.",
-    };
-
-    setFieldErrors(newFieldErrors);
-    if (Object.values(newFieldErrors).some((msg) => msg !== "")) return;
-
-    if (newPassword.length < 8) {
-      setError("Mật khẩu mới phải có ít nhất 8 ký tự.");
-      clearMessages();
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError("Mật khẩu mới không khớp.");
-      clearMessages();
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        `http://localhost:5000/api/change-password/${user.id}`,
-        { currentPassword, newPassword },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setSuccess(res.data.message || "Đổi mật khẩu thành công!");
-      setFormData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-      setFieldErrors({ currentPassword: "", newPassword: "", confirmPassword: "" });
-      clearMessages();
-    } catch (err) {
-      const msg = err?.response?.data?.message || "Đã xảy ra lỗi khi đổi mật khẩu.";
-      setError(msg);
-      clearMessages();
-    } finally {
-      setLoading(false);
-    }
+  const newFieldErrors = {
+    currentPassword: currentPassword ? "" : "Vui lòng nhập mật khẩu hiện tại.",
+    newPassword: newPassword ? "" : "Vui lòng nhập mật khẩu mới.",
+    confirmPassword: confirmPassword ? "" : "Vui lòng xác nhận mật khẩu mới.",
   };
+
+  setFieldErrors(newFieldErrors);
+  if (Object.values(newFieldErrors).some((msg) => msg !== "")) return;
+
+  // ✅ Điều kiện kiểm tra mật khẩu mới
+  if (newPassword === currentPassword) {
+    setError("Mật khẩu mới phải khác mật khẩu hiện tại.");
+    clearMessages();
+    return;
+  }
+
+  if (newPassword.length < 8) {
+    setError("Mật khẩu mới phải có ít nhất 8 ký tự.");
+    clearMessages();
+    return;
+  }
+
+  if (newPassword.length > 30) {
+    setError("Mật khẩu mới không được vượt quá 30 ký tự.");
+    clearMessages();
+    return;
+  }
+
+  if (!/[A-Z]/.test(newPassword)) {
+    setError("Mật khẩu mới phải chứa ít nhất 1 chữ cái in hoa.");
+    clearMessages();
+    return;
+  }
+
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+    setError("Mật khẩu mới phải chứa ít nhất 1 ký tự đặc biệt.");
+    clearMessages();
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    setError("Mật khẩu mới không khớp.");
+    clearMessages();
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    console.log("Đang gửi dữ liệu đổi mật khẩu:", { currentPassword, newPassword });
+    console.log("User ID:", user?.id);
+    console.log("Token:", token);
+
+    const res = await axios.post(
+      `http://localhost:5000/api/change-password/${user.id}`,
+      { currentPassword, newPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setSuccess(res.data.message || "Đổi mật khẩu thành công!");
+    setFormData({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+    setFieldErrors({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    clearMessages();
+  } catch (err) {
+    console.error("Lỗi trả về từ server:", err?.response);
+    const msg = err?.response?.data?.message || "Đã xảy ra lỗi khi đổi mật khẩu.";
+    setError(msg);
+    clearMessages();
+  } finally {
+    setLoading(false);
+  }
+};
 
   const renderInput = (label, name, show, toggle) => {
     const handleBlur = () => {
