@@ -52,6 +52,7 @@ const AddPost = () => {
     <Container className="mt-4">
       <h3>Thêm bài viết mới</h3>
       <Form onSubmit={handleSubmit} encType="multipart/form-data">
+
         <Form.Group className="mb-3">
           <Form.Label>Tiêu đề</Form.Label>
           <Form.Control
@@ -59,6 +60,15 @@ const AddPost = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Nhập tiêu đề"
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Ảnh bài viết</Form.Label>
+          <Form.Control
+            type="file"
+            onChange={(e) => setImage(e.target.files[0])}
+            accept="image/*"
           />
         </Form.Group>
 
@@ -96,15 +106,6 @@ const AddPost = () => {
               </option>
             ))}
           </Form.Select>
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Ảnh bài viết</Form.Label>
-          <Form.Control
-            type="file"
-            onChange={(e) => setImage(e.target.files[0])}
-            accept="image/*"
-          />
         </Form.Group>
 
         <Button variant="success" type="submit">

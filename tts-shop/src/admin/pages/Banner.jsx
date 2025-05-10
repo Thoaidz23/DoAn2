@@ -31,11 +31,11 @@ const Banner = () => {
       <div>
         <h3 className="mb-4">Quản lý Banner</h3>
   
-        <div className="mb-3 text-end">
-              <Button as={Link} to="/admin/banner/add" variant="primary" className="mt-4 mb-3">
-        Thêm banner
-      </Button>
-        </div>
+        <div className="mb-3 text-end" style={{ marginTop: "-8px" }}>
+        <Button as={Link} to="/admin/banner/add" variant="primary" className="mb-3">
+          Thêm banner
+        </Button>
+      </div>
   
         <div className="table-responsive">
           <table className="table table-bordered table-dark table-hover align-middle">
