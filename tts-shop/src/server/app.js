@@ -1,7 +1,20 @@
 const express = require('express');
 const cors = require('cors'); // Kết nối MySQL
 const path = require("path");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const PORT = 5000;
+
 const bodyParser = require("body-parser");
+
+
+// Chen hinh
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+
 //admin
 const orderRoutes = require('./admin/routes/orderRoutes'); // Import routes đơn hàng
 const groupProductRoutes = require('./admin/routes/groupProductRoutes');
@@ -10,6 +23,9 @@ const cagbrandRoutes = require('./admin/routes/cagbrandRoutes');
 const cagproductRoutes = require('./admin/routes/cagproductRoutes');
 const bannerRoutes = require('./admin/routes/bannerRoutes');
 const postRoutes = require('./admin/routes/postRoutes');
+
+
+
 //customer
 const HProductRoute = require('./customer/Routes/Home.routes')
 const searchRoutes = require("./customer/Routes/search.routes");
@@ -32,16 +48,6 @@ const bill = require('./customer/Routes/BillDetail.route')
 const resetPasswordRoute = require('./customer/Routes/Newpassword.route');
 const chatRoutes = require('./customer/Routes/chat.route'); 
 
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-const PORT = 5000;
-
-// Chen hinh
-app.use('/images', express.static(path.join(__dirname, 'images')));
-
 // admin
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', groupProductRoutes);
@@ -50,6 +56,8 @@ app.use('/api/cagbrands', cagbrandRoutes);
 app.use('/api/cagproducts', cagproductRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/posts', postRoutes);
+
+
 //customer
 app.use('/api/Home',HProductRoute)
 app.use("/api/SearchProduct",searchRoutes );

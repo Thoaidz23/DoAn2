@@ -9,13 +9,13 @@ const generateCodeOrder = () => {
 };
 
 const addToPay = (req, res) => {
-  const { id_user, products, name_user, address, phone, method } = req.body;
+  const { id_user, products, name_user, address, phone, method, code_order: reqCodeOrder } = req.body;
 
   if (!id_user || !products || products.length === 0 || !name_user || !address || !phone) {
     return res.status(400).json({ message: 'Thiếu thông tin' });
   }
 
-  const code_order = generateCodeOrder();
+  const code_order = reqCodeOrder || generateCodeOrder(); 
   const total_price = products.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   pool.getConnection((err, conn) => {
@@ -88,5 +88,6 @@ const addToPay = (req, res) => {
     });
   });
 };
+
 
 module.exports = { addToPay };

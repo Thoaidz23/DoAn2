@@ -11,6 +11,15 @@ const Paymentmomo = () => {
   const location = useLocation();
   const { payload } = location.state || {}; // Lấy payload từ location
 
+  const generateCodeOrder = () => {
+    const letters = Array.from({ length: 4 }, () =>
+      String.fromCharCode(65 + Math.floor(Math.random() * 26))
+    ).join('');
+    const numbers = Math.floor(1000 + Math.random() * 9000);
+    return letters + numbers;
+  };
+  const [code] = useState(generateCodeOrder());
+
   useEffect(() => {
     const timer = setInterval(() => {
       if (seconds > 0) {
@@ -42,6 +51,7 @@ const Paymentmomo = () => {
       const momoPayload = {
         ...payload,
         method: 1, // 1 = MoMo
+        code_order: code,
       };
 
       const res = await axios.post("http://localhost:5000/api/pay/addpay", momoPayload);
@@ -69,8 +79,8 @@ const Paymentmomo = () => {
           <div className="payment-momo-box">
             <h3>Thông tin đơn hàng</h3>
             <div className="order-info-momo">
-              <div className="row-momo"><strong>Nhà cung cấp:</strong> <span>TTS SHOP</span></div>
-              <div className="row-momo"><strong>Mã đơn hàng:</strong> <span>Sẽ được tạo</span></div>
+              <div className="row-momo"><strong>Nhà cung cấp</strong> <span>TTS SHOP</span></div>
+              <div className="row-momo"><strong>Mã đơn hàng <span style={{fontWeight:"100",color:"red"}}>(Nhập mã đơn hàng vào lời nhắn)</span></strong> <span>{code}</span></div>
               <div className="row-momo price-row">
                 <strong>Số tiền:</strong> 
                 <span className="price">

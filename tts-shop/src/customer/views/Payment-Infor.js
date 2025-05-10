@@ -14,17 +14,26 @@ const PaymentInfor = () => {
   const [userInfo, setUserInfo] = useState(null); // Lưu thông tin người dùng từ context
   const [loading, setLoading] = useState(true); // Trạng thái loading
 
+  const [tempAddress, setTempAddress] = useState("");  // Địa chỉ chỉnh sửa
+  const [isEditingAddress, setIsEditingAddress] = useState(false); // Trạng thái chỉnh sửa
+
+  const [tempPhone , setTempPhone] = useState("");  // Địa chỉ chỉnh sửa
+  const [isEditingPhone, setIsEditingPhone] = useState(false); // Trạng thái chỉnh sửa
+
+
   useEffect(() => {
     if (!user) {
       setLoading(false); // Nếu không có user, thoát khỏi loading ngay
       return;
     }
-
+    
     const fetchCartData = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/payment/${user.id}`);
         console.log("Dữ liệu từ API:", res.data);
         setCartItems(res.data.product); // dùng đúng mảng
+        setTempAddress(res.data.address);
+        setTempPhone(res.data.phone)
       } catch (err) {
         console.error("Lỗi khi lấy giỏ hàng:", err);
       }
@@ -65,8 +74,8 @@ const PaymentInfor = () => {
     const payload = {
       id_user: user.id,
       name_user: userInfo.name,
-      address: userInfo.address,
-      phone: userInfo.phone,
+      address: tempAddress || userInfo.address,
+      phone: tempPhone || userInfo.phone,
       method: selectedPayment, // Gửi phương thức thanh toán (0, 1, 2)
       products: cartItems.map(item => ({
         id_product: item.id_product,
@@ -143,13 +152,52 @@ const PaymentInfor = () => {
                 <div>
                   <p>{userInfo.name}</p>
                   <p>Email: {userInfo.email}</p>
-                  <p>Địa chỉ : {userInfo.address}</p>
+                  <p>
+                    Địa chỉ: {
+                      isEditingAddress ? (
+                        <input
+                          type="text"
+                          value={tempAddress}
+                          onChange={(e) => setTempAddress(e.target.value)}
+                          className="edit-address-input"
+                          style={{width:"200%"}}
+                        />
+                      ) : (
+                        tempAddress || userInfo.address
+                      )
+                    }
+                  <p
+                    className="edit-icon"
+                    onClick={() => setIsEditingAddress((prev) => !prev)}
+                    style={{top:"44%"}}
+                  >
+                    {isEditingAddress ? "✔" : "✎"}
+                  </p>
+
+                  </p>
+                  <p>
+                    Số điện thoại: {
+                      isEditingPhone ? (
+                        <input
+                          type="text"
+                          value={tempPhone}
+                          onChange={(e) => setTempPhone(e.target.value)}
+                          className="edit-address-input"
+                        />
+                      ) : (
+                        tempPhone || userInfo.phone
+                      )
+                    }
+                    <span
+                    className="edit-icon"
+                    onClick={() => setIsEditingPhone((prev) => !prev)}
+                  >
+                    {isEditingPhone ? "✔" : "✎"}
+                  </span>
+
+                  </p>
                 </div>
                 <div className="right-align">
-                  <p>{userInfo.phone}</p>
-                  <span
-                    className="edit-icon"
-                    onClick={() => navigate('/Home.js')}>✎</span>
                 </div>
               </div>
             </div>
@@ -157,6 +205,7 @@ const PaymentInfor = () => {
         ) : (
           <p>Vui lòng đăng nhập để xem thông tin khách hàng.</p>
         )}
+        
 
         {/* Phương thức thanh toán */}
         <h2 className="section-title section-header">PHƯƠNG THỨC THANH TOÁN</h2>

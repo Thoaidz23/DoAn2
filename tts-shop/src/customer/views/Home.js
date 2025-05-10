@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import MenuBar from "../component/MenuBar";
 import { Carousel } from "react-bootstrap";
 import "../styles/home.scss";
 import "../styles/index.scss";
@@ -9,7 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "../styles/newbar.scss"
 import ProductSection from "../component/ProductSetion";
-
+import MenuBar from "../component/MenuBar";
 
 function Home() {
   const [products, setProducts] = useState([]);
