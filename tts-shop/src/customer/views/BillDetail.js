@@ -11,6 +11,8 @@ function BillDetail() {
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
 
+  const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
+
   useEffect(() => {
     console.log("Mã đơn hàng:", code_order);
     axios.get(`http://localhost:5000/api/bill-detail/${code_order}`)
@@ -28,7 +30,7 @@ function BillDetail() {
   return (
     <div className="billdetail-container">
       <div className="container">
-        <AccountBar />
+            <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         <div className="detailbill-content">
           <div className="order-detail-bill">
             <div className="title-row">

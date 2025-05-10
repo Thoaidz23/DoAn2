@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import React, { useContext, useState } from "react";
 
 import avatar from '../assets/avatar.jpg';
+import { AuthContext } from "../../customer/context/AuthContext";
 
 import {
     Box,
@@ -18,6 +20,11 @@ import {
 
 
   const Sidebar = () => {
+    const { logout } = useContext(AuthContext);
+    const handleLogout = () => {
+      logout();
+      navigate("/login");
+    };
     const menuItems = [
         { label: "Thống kê", icon: <BarChart2 size={18} />, path: "/admin/dashboard" },
         { label: "Đơn hàng", icon: <Receipt size={18} />, path: "/admin/order" },
@@ -84,11 +91,7 @@ import {
 <div className="border-top border-secondary px-4 py-3">
       <button
         className="btn btn-outline-light w-100 d-flex align-items-center gap-2"
-        onClick={() => {
-          // Xử lý logout tại đây
-          console.log("Đăng xuất");
-          navigate("/login"); // ví dụ
-        }}
+        onClick={handleLogout}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -107,7 +110,7 @@ import {
             d="M4.854 11.354a.5.5 0 0 0 0-.708L2.707 8.5H10a.5.5 0 0 0 0-1H2.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708 0z"
           />
         </svg>
-        <span>Đăng xuất</span>
+        <span >Đăng xuất</span>
       </button>
     </div>
   </div>

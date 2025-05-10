@@ -10,6 +10,7 @@ import ScrollToTop from "../component/ScrollToTop"; // 👈 thêm dòng này
 import CustomerSupport from "../component/CustomerSP";
 import CatalogProduct from "./CatalogProduct";
 import PostDetail from "./PostDetail"
+import "../styles/App.scss"
 // Tự động import toàn bộ component trong views (trừ App.js)
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);
   
@@ -36,6 +37,7 @@ function AppContent() {
       <ScrollToTop />
       {!hideLayout && <NavBar />}
       <Suspense fallback={<div className="text-center mt-5">Đang tải trang...</div>}>
+      <div style={{marginTop:"10%",background:"white"}}></div>
         <Routes>
           {routes}
           <Route path="/product/:id" element={<ProductDetail />} />

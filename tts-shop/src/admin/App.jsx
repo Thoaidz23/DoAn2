@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-import '../admin/index.css';
 import Sidebar from "./components/Sidebar";
 import Dashboard from './pages/Dashboard';
 import Order from './pages/Order';
@@ -31,7 +30,7 @@ function App() {
           style={{ marginLeft: '16.6667%', minHeight: '100vh' }} // tương ứng col-2
         >
           <Routes>
-            <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+            {/* <Route path="/" element={<Navigate to="/admin/dashboard" replace />} /> */}
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/order" element={<Order />} />
             <Route path="/admin/banner" element={<Banner />} />
