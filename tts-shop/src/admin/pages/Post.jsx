@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { Search} from "lucide-react";
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Post = () => {
   const [posts, setPosts] = useState([]);
@@ -13,6 +14,19 @@ const Post = () => {
         .then((data) => setPosts(data))
         .catch((err) => console.error("Lỗi khi fetch sản phẩm:", err));
     }, []);
+
+    const handleDelete = async (id) => {
+        if (window.confirm("Bạn có chắc chắn muốn xóa banner này không?")) {
+          try {
+            await axios.delete(`http://localhost:5000/api/posts/${id}`);
+            alert("Xóa bài viết thành công!");
+            window.location.reload();
+          } catch (err) {
+            console.error("Lỗi khi xóa bài viết:", err);
+            alert("Xóa không thành công");
+          }
+        }
+      };
 
   return (
     <div>
@@ -67,12 +81,15 @@ const Post = () => {
               <td className="text-center align-middle">{post.author}</td>
               <td className="text-center align-middle">{post.name_category_post}</td>
               <td className="text-center align-middle">
-                <Button variant="warning" size="sm" className="me-2">
-                  Sửa
-                </Button>
-                <Button variant="danger" size="sm">
-                  Xóa
-                </Button>
+                <Link to={`/admin/post/edit/${post.id_post}`}>
+                <Button variant="warning" size="sm" className="me-2">Sửa</Button>
+              </Link>
+                <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDelete(post.id_post)}
+                    >
+                      Xóa
+                    </button>
               </td>
             </tr>
           ))

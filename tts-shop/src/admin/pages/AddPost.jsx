@@ -1,28 +1,59 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Container } from "react-bootstrap";
-import axios from "axios";
+import { Form, Button, Card, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const AddPost = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
+  const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  // Lấy danh sách danh mục
+  // Lấy danh sách danh mục từ API
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/cagposts")
-      .then((res) => setCategories(res.data))
-      .catch((err) => console.error("Lỗi khi lấy danh mục:", err));
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/cagposts");
+        const result = await response.json();
+        if (response.ok) {
+          setCategories(result); // Giả sử response trả về một mảng các danh mục
+        } else {
+          setError("Không thể lấy danh mục bài viết.");
+        }
+      } catch (err) {
+        setError("Lỗi khi tải danh mục bài viết.");
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !author || !content || !category || !image) {
-      alert("Vui lòng nhập đầy đủ thông tin");
+    if (!title.trim()) {
+      setError("Tiêu đề không được để trống.");
+      return;
+    }
+
+    if (!author.trim()) {
+      setError("Tên tác giả không được để trống.");
+      return;
+    }
+
+    if (!image) {
+      setError("Vui lòng chọn ảnh cho bài viết.");
+      return;
+    }
+
+    if (!category) {
+      setError("Vui lòng chọn danh mục cho bài viết.");
       return;
     }
 
@@ -30,45 +61,55 @@ const AddPost = () => {
     formData.append("title", title);
     formData.append("author", author);
     formData.append("content", content);
-    formData.append("id_category_post", category);
+    formData.append("date", new Date().toISOString()); // Thời gian hiện tại
     formData.append("image", image);
+    formData.append("id_category_post", category);
 
     try {
-      await axios.post("http://localhost:5000/api/posts", formData);
-      alert("Thêm bài viết thành công");
-      // Reset form nếu muốn
-      setTitle("");
-      setAuthor("");
-      setContent("");
-      setCategory("");
-      setImage(null);
-    } catch (error) {
-      console.error("Lỗi khi thêm bài viết:", error);
-      alert("Thêm thất bại");
+      const response = await fetch("http://localhost:5000/api/posts", {
+        method: "POST",
+        body: formData,
+      });
+
+      const text = await response.text();  // Đọc phản hồi dưới dạng văn bản
+      console.log(text);  // In ra phản hồi (có thể là HTML nếu gặp lỗi)
+
+      try {
+        const result = JSON.parse(text);  // Cố gắng chuyển sang JSON
+        if (response.ok) {
+          setSuccess(true);
+          setError("");
+          setTimeout(() => {
+            navigate("/admin/post"); // Điều hướng tới danh sách bài viết sau khi thành công
+          }, 1500);
+        } else {
+          setError(result.message || "Lỗi khi thêm bài viết.");
+        }
+      } catch (err) {
+        setError("Phản hồi không phải dạng JSON: " + err.message);
+      }
+    } catch (err) {
+      console.error("Error during fetch:", err);
+      setError("Lỗi máy chủ: " + (err.message || "Không xác định"));
     }
   };
 
   return (
-    <Container className="mt-4">
-      <h3>Thêm bài viết mới</h3>
-      <Form onSubmit={handleSubmit} encType="multipart/form-data">
+    <Card className="p-4 bg-dark text-white">
+      <h3 className="mb-4">Thêm mới bài viết</h3>
 
+      {error && <Alert variant="danger">{error}</Alert>}
+      {success && <Alert variant="success">✅ Thêm bài viết thành công!</Alert>}
+
+      <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
-          <Form.Label>Tiêu đề</Form.Label>
+          <Form.Label>Tiêu Đề</Form.Label>
           <Form.Control
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Nhập tiêu đề"
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Ảnh bài viết</Form.Label>
-          <Form.Control
-            type="file"
-            onChange={(e) => setImage(e.target.files[0])}
-            accept="image/*"
+            placeholder="Nhập tiêu đề bài viết"
+            required
           />
         </Form.Group>
 
@@ -79,40 +120,59 @@ const AddPost = () => {
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
             placeholder="Nhập tên tác giả"
+            required
           />
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Nội dung</Form.Label>
+          <Form.Label>Ảnh bài viết</Form.Label>
           <Form.Control
-            as="textarea"
-            rows={5}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Nhập nội dung bài viết"
+            type="file"
+            onChange={(e) => setImage(e.target.files[0])}
+            accept="image/*"
+            required
           />
         </Form.Group>
+
+        <Form.Group className="mb-3">
+  <Form.Label>Nội dung</Form.Label>
+  <div className="bg-white text-dark rounded">
+    <CKEditor
+      editor={ClassicEditor}
+      data={content}
+      onChange={(event, editor) => {
+        const data = editor.getData();
+        setContent(data);
+      }}
+    />
+  </div>
+</Form.Group>
+
+
+
 
         <Form.Group className="mb-3">
           <Form.Label>Danh mục</Form.Label>
-          <Form.Select
+          <Form.Control
+            as="select"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            required
           >
-            <option value="">-- Chọn danh mục --</option>
+            <option value="">Chọn danh mục</option>
             {categories.map((cat) => (
               <option key={cat.id_category_post} value={cat.id_category_post}>
                 {cat.name_category_post}
               </option>
             ))}
-          </Form.Select>
+          </Form.Control>
         </Form.Group>
 
-        <Button variant="success" type="submit">
+        <Button variant="primary" type="submit">
           Thêm bài viết
         </Button>
       </Form>
-    </Container>
+    </Card>
   );
 };
 

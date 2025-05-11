@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
 import '../admin/index.css';
 import Sidebar from "./components/Sidebar";
 import Dashboard from './pages/Dashboard';
@@ -24,6 +23,7 @@ import EditPostCategory from "./pages/EditPostCategory";
 import AddBanner from "./pages/AddBanner";
 import EditBanner from "./pages/EditBanner";
 import AddPost from './pages/AddPost';
+import EditPost from './pages/EditPost';
 
 
 function App() {
@@ -60,6 +60,7 @@ function App() {
             <Route path="/admin/banner/add" element={<AddBanner />} />
             <Route path="/admin/banner/edit/:id" element={<EditBanner />} />
             <Route path="/admin/post/add" element={<AddPost />} />
+            <Route path="/admin/post/edit/:id" element={<EditPost />} />
 
 
             {/* Route khác sau này */}
