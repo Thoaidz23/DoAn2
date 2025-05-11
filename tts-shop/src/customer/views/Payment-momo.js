@@ -10,6 +10,17 @@ const Paymentmomo = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { payload } = location.state || {}; // Lấy payload từ location
+  const [errorMessage, setErrorMessage] = useState("");
+      
+  useEffect(() => {
+    if (errorMessage && errorMessage !== "Thanh toán thành công qua Vietcombank!") {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+  
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
 
   const generateCodeOrder = () => {
     const letters = Array.from({ length: 4 }, () =>
@@ -41,31 +52,42 @@ const Paymentmomo = () => {
     window.history.back();
   };
 
-  const handleHistory = async () => {
-    if (!payload) {
-      alert("Không có dữ liệu đơn hàng!");
-      return;
-    }
+const handleHistory = async () => {
+  if (!payload) {
+    setErrorMessage("Không có dữ liệu đơn hàng!");
+    return;
+  }
 
-    try {
-      const momoPayload = {
-        ...payload,
-        method: 1, // 1 = MoMo
-        code_order: code,
-      };
+  try {
+    const vcbPayload = {
+      ...payload,
+      method: 2,
+      code_order: code,
+    };
 
-      const res = await axios.post("http://localhost:5000/api/pay/addpay", momoPayload);
-      alert("Thanh toán thành công qua MoMo!");
+    const res = await axios.post("http://localhost:5000/api/pay/addpay", vcbPayload);
+    setErrorMessage("Thanh toán thành công qua MOMO!");
+    
+    // ⏳ Chờ 3 giây trước khi chuyển trang
+    setTimeout(() => {
       navigate("/PurchaseHistory");
-    } catch (error) {
-      console.error("Lỗi khi gửi đơn hàng:", error);
-      alert("Gửi đơn hàng thất bại!");
-    }
-  };
+    }, 3000);
+    
+  } catch (error) {
+    console.error("Lỗi khi gửi đơn hàng:", error);
+    setErrorMessage("Gửi đơn hàng thất bại!");
+  }
+};
+
 
   return (
     <div>
       <div className="header-momo">
+         {errorMessage && (
+    <div className="notification-bank">
+      {errorMessage}
+    </div>
+  )}
         <div className="header-momo__logo">
           <img 
             src="https://th.bing.com/th/id/OIP.-DhgkiQDEdoru7CJdZrwEAHaHa?w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.6&pid=3.1&rm=2" 
