@@ -14,17 +14,17 @@ const PaymentInfor = () => {
   const [cartItems, setCartItems] = useState([]); // Lưu giỏ hàng
   const [userInfo, setUserInfo] = useState(null); // Lưu thông tin người dùng từ context
   const [loading, setLoading] = useState(true); // Trạng thái loading
- const [errorMessage1, setErrorMessage1] = useState("");
+ const [errorMessage, setErrorMessage] = useState("");
 
 useEffect(() => {
-  if (errorMessage1) {
+  if (errorMessage) {
     const timer = setTimeout(() => {
-      setErrorMessage1("");
+      setErrorMessage("");
     }, 3000);
 
     return () => clearTimeout(timer);
   }
-}, [errorMessage1]);
+}, [errorMessage]);
 
   const [tempAddress, setTempAddress] = useState("");  // Địa chỉ chỉnh sửa
   const [isEditingAddress, setIsEditingAddress] = useState(false); // Trạng thái chỉnh sửa
@@ -79,10 +79,10 @@ useEffect(() => {
 
   const handleAddToPay = async () => {
     if (selectedPayment === null) {
-      setErrorMessage1("Vui lòng chọn phương thức thanh toán!");
+      setErrorMessage("Vui lòng chọn phương thức thanh toán!");
       return;
     }
-    setErrorMessage1(""); // Xóa lỗi cũ nếu có
+    setErrorMessage(""); // Xóa lỗi cũ nếu có
 
     if (!user || cartItems.length === 0 || !userInfo) return;
   
@@ -112,7 +112,7 @@ useEffect(() => {
     }
   } catch (err) {
     console.error("Lỗi khi thêm vào đơn hàng:", err);
-    setErrorMessage1("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
+    setErrorMessage("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
   }
 };
 
@@ -120,14 +120,15 @@ useEffect(() => {
   return (
     
     <div className="payment-infor">
-
-      <div className="container-infor">
-        {errorMessage1 && (
-  <p className="error-message1"> 
+       {errorMessage && (
+  <p className="error-message"> 
     <FaExclamationTriangle className="warning-icon" /> 
-    {errorMessage1}
+
+    {errorMessage}
   </p>
 )}
+
+      <div className="container-infor">
         <div className="title-row">
           <IoArrowBack className="back-icon" onClick={() => window.history.back()} />
           <h1 className="title">Thông Tin</h1>

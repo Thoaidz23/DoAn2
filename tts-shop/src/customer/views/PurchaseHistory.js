@@ -9,22 +9,20 @@ import 'react-datepicker/dist/react-datepicker.css';
 import AccountBar from '../component/AccountBar';
 import { AuthContext } from "../context/AuthContext";
 
-
 function PurchaseHistory() {
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
   const [orders, setOrders] = useState([]);
+  const [errorMessage1, setErrorMessage1] = useState('');
+  const [confirmModal, setConfirmModal] = useState({ show: false, orderCode: '' });
+
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        if (!user.id) {
-          console.warn('Chưa đăng nhập');
-          return;
-        }
-
+        if (!user.id) return;
         const res = await axios.get(`http://localhost:5000/api/orders/purchase-history/${user.id}`);
         setOrders(res.data);
       } catch (err) {
@@ -35,11 +33,20 @@ function PurchaseHistory() {
     fetchOrders();
   }, [user.id]);
 
+  useEffect(() => {
+    if (errorMessage1) {
+      const timer = setTimeout(() => {
+        setErrorMessage1('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage1]);
+
   const statusPay = {
     0: 'Chưa thanh toán',
     1: 'Đã thanh toán'
   };
-  
+
   const statusMap = {
     0: 'Chờ xác nhận',
     1: 'Đã xác nhận',
@@ -49,24 +56,35 @@ function PurchaseHistory() {
     5: 'Đã huỷ',
   };
 
-
-  const filters = [
-    'Tất cả',
-    'Chờ xác nhận',
-    'Đã xác nhận',
-    'Đang vận chuyển',
-    'Đã giao hàng',
-    'Chờ hủy',
-    'Đã huỷ',
-  ];
+  const filters = ['Tất cả', 'Chờ xác nhận', 'Đã xác nhận', 'Đang vận chuyển', 'Đã giao hàng', 'Chờ hủy', 'Đã huỷ'];
 
   const filteredOrders = orders.filter(order => {
     const orderStatusText = statusMap[order.status];
     return activeFilter === 'Tất cả' || orderStatusText === activeFilter;
   });
-  console.log(user)
+
+  const handleCancelOrder = async () => {
+    try {
+      const res = await axios.put(`http://localhost:5000/api/bill-detail/cancel/${confirmModal.orderCode}`);
+      setErrorMessage1(res.data.message || 'Yêu cầu hủy đơn thành công');
+      const updatedOrders = await axios.get(`http://localhost:5000/api/orders/purchase-history/${user.id}`);
+      setOrders(updatedOrders.data);
+    } catch (err) {
+      console.error('Lỗi hủy đơn:', err);
+      setErrorMessage1('Hủy đơn không thành công!');
+    } finally {
+      setConfirmModal({ show: false, orderCode: '' });
+    }
+  };
+
   return (
     <div className="PurchaseHistory_container">
+        {errorMessage1 && (
+            <div className="alert-message">
+              {errorMessage1}
+            </div>
+          )}
+
       <div className="container">
         <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         <div className="purchase-history-content">
@@ -87,15 +105,13 @@ function PurchaseHistory() {
               <h2>
                 {orders.reduce((total, order) => total + order.total_price, 0).toLocaleString()} đ
               </h2>
-              <p>Tổng tiền tích lũy từ {new Date(orders[orders.length-1]?.date).toLocaleDateString()}</p>
-
-
+              <p>Tổng tiền tích lũy từ {new Date(orders[orders.length - 1]?.date).toLocaleDateString()}</p>
             </div>
           </div>
 
           <div className="filter-section">
             <div className="filter-buttons">
-            {filters.map((filter) => (
+              {filters.map((filter) => (
                 <button
                   key={filter}
                   className={activeFilter === filter ? 'active' : ''}
@@ -133,12 +149,10 @@ function PurchaseHistory() {
                       </span>
                     </div>
                     <h4 className="history-order-name">{order.product_name}</h4>
-                    <span
-                      className={'history-order-status ' + statusMap[order.status]?.replace(/\s+/g, '-')}>
+                    <span className={'history-order-status ' + statusMap[order.status]?.replace(/\s+/g, '-')}>
                       {statusMap[order.status] || 'Không xác định'}
                     </span>
-                    <span
-                      className={'history-order-status ' + statusPay[order.paystatus]?.replace(/\s+/g, '-')}>
+                    <span className={'history-order-status ' + statusPay[order.paystatus]?.replace(/\s+/g, '-')}>
                       {statusPay[order.paystatus] || 'Không xác định'}
                     </span>
 
@@ -150,21 +164,7 @@ function PurchaseHistory() {
                       {order.status === 0 && (
                         <button
                           className="history-cancel-button"
-                          onClick={async () => {
-                            if (window.confirm(`Bạn có chắc muốn yêu cầu hủy đơn ${order.code_order}?`)) {
-                              try {
-                                const res = await axios.put(`http://localhost:5000/api/bill-detail/cancel/${order.code_order}`);
-                                alert(res.data.message || 'Yêu cầu hủy thành công');
-                                
-                                // Cập nhật lại danh sách đơn hàng sau khi hủy
-                                const updatedOrders = await axios.get(`http://localhost:5000/api/orders/purchase-history/${user.id}`);
-                                setOrders(updatedOrders.data);
-                              } catch (err) {
-                                console.error('Lỗi hủy đơn:', err);
-                                alert('Hủy đơn không thành công!');
-                              }
-                            }
-                          }}
+                          onClick={() => setConfirmModal({ show: true, orderCode: order.code_order })}
                         >
                           Yêu cầu hủy đơn
                         </button>
@@ -184,6 +184,19 @@ function PurchaseHistory() {
           )}
         </div>
       </div>
+
+      {/* Confirm Modal */}
+      {confirmModal.show && (
+        <div className="custom-confirm-modal">
+          <div className="modal-content">
+            <p>Bạn có chắc muốn yêu cầu hủy đơn {confirmModal.orderCode}?</p>
+            <div className="modal-buttons">
+              <button onClick={handleCancelOrder}>Đồng ý</button>
+              <button onClick={() => setConfirmModal({ show: false, orderCode: '' })}>Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
