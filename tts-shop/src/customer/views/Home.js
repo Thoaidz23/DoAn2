@@ -70,7 +70,6 @@ function Home() {
   
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
-
   if (loading) return <div className="text-center mt-4">Đang tải dữ liệu...</div>;
 
   return (

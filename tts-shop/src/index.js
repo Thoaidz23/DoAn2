@@ -1,9 +1,22 @@
 import React, { useContext } from "react";
 import ReactDOM from "react-dom/client";
+// <<<<<<< HEAD
+// import AppAdmin from "./admin/App";  
+// // import App from "./customer/views/App";
+import "bootstrap/dist/css/bootstrap.min.css";
+// import "./customer/styles/index.scss";
+
+// const root = ReactDOM.createRoot(document.getElementById("root"));
+
+// root.render(
+//   <React.StrictMode>
+//     {/* <App />  */}
+//     <AppAdmin></AppAdmin>
+// =======
 import reportWebVitals from './reportWebVitals';
 import App from "./customer/views/App";
 import AdminApp from "./admin/App";
-import "./customer/styles/index.scss";
+// import "./customer/styles/index.scss";
 import { AuthProvider, AuthContext } from "./customer/context/AuthContext"; // ✅ đúng path
 import "bootstrap/dist/css/bootstrap.min.css"
 
@@ -32,6 +45,7 @@ function RoleBasedApp() {
 root.render(
   <React.StrictMode>
     <RoleBasedApp />
+{/* >>>>>>> 0d7c14b921872557a90b959dc78a0c4d476e0b1e */}
   </React.StrictMode>
 );
 

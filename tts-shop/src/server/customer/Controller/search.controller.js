@@ -4,12 +4,7 @@ const searchProducts = async (req, res) => {
   try {
     const { brand, category, search, price } = req.query;
 
-    let query = `SELECT g.*, p.price ,b.name_category_brand,cp.name_category_product
-                FROM tbl_group_product g 
-                JOIN tbl_product p ON p.id_group_product = g.id_group_product 
-                JOIN tbl_category_brand b ON b.id_category_brand = g.id_category_brand
-                JOIN tbl_category_product cp ON cp.id_category_product = g.id_category_product
-                WHERE 1=1`;
+    let query = "SELECT g.*, p.price FROM tbl_group_product g JOIN tbl_product p ON p.id_group_product = g.id_group_product WHERE 1=1";
     const params = [];
 
     if (brand) {

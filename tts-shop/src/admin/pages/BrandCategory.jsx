@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 
 const BrandCategory = () => {
   const [cagbrands, setCagbrands] = useState([]);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   // Gọi API từ backend khi component mount
     useEffect(() => {
@@ -12,6 +14,29 @@ const BrandCategory = () => {
         .then((data) => setCagbrands(data))
         .catch((err) => console.error("Lỗi khi fetch danh mục thương hiệu:", err));
     }, []);
+
+  // Xóa danh mục
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/cagbrands/${id}`, {
+          method: "DELETE",
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          setSuccess(true);
+          // Cập nhật lại danh sách sản phẩm sau khi xóa
+          setCagbrands(cagbrands.filter((cagbrand) => cagbrand.id_category_brand !== id));
+        } else {
+          setError(result.message || "Lỗi khi xóa danh mục.");
+        }
+      } catch (err) {
+        setError("Lỗi máy chủ.");
+      }
+    }
+  };
 
 
   return (
@@ -37,10 +62,12 @@ const BrandCategory = () => {
                 <td className="text-center align-middle">{index + 1}</td>
                 <td className="text-center align-middle">{cagbrand.name_category_brand}</td>
                 <td className="text-center align-middle">
-                  <Button variant="info" size="sm" className="me-2">
-                    Sửa
-                  </Button>
-                  <Button variant="danger" size="sm">
+                <Button variant="info" size="sm" className="me-2">
+                <Link to={`/admin/edit-brand/${cagbrand.id_category_brand}`} className="text-decoration-none text-white">
+                  Sửa
+                </Link>
+              </Button>
+                  <Button variant="danger" size="sm" onClick={() => handleDelete(cagbrand.id_category_brand)}>
                     Xóa
                   </Button>
                 </td>

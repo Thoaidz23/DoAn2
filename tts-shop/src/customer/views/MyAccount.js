@@ -1,5 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import "../styles/MyAccount.scss";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -8,25 +7,15 @@ import { AuthContext } from "../context/AuthContext";
 
 function AccountOverview() {
   const [activeMenu, setActiveMenu] = useState("Tài khoản của bạn");
-  const { user } = useContext(AuthContext);
-  const [userInfo, setUserInfo] = useState(null);
-  console.log(user )
-  useEffect(() => {
-    if (user && user.id) {
-      const fetchUserInfo = async () => {
-        try {
-          const res = await axios.get(`http://localhost:5000/api/account/${user.id}`);
-          setUserInfo(res.data);
-        } catch (err) {
-          console.error("Lỗi khi lấy thông tin người dùng:", err);
-        }
-      };
 
-      fetchUserInfo();
-    }
-  }, [user]);
+  // Dữ liệu người dùng mẫu
+  const userInfo = {
+    name: "Nguyễn Văn A",
+    email: "nguyenvana@example.com",
+    phone: "0123 456 789",
+    address: "123 Đường ABC, Phường XYZ, Quận 1, TP.HCM",
+  };
 
-  // Trả về giao diện với thông tin tài khoản nếu có userInfo
   return (
     <div className="account-overview-container">
       <div className="container">

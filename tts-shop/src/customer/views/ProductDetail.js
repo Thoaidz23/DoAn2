@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef ,useContext} from "react";
-import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
@@ -25,14 +24,13 @@ const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState("description");
   const [showError, setShowError] = useState(false); 
   const [showSuccess ,setSuccess ] = useState(false)
-  const [showBuy ,setBuy ] = useState(false)
   const [index, setIndex] = useState(0);
 
   const thumbRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const navigate = useNavigate();
+
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
       .then((res) => {
@@ -114,42 +112,8 @@ const ProductDetail = () => {
     }
   };
 
-  const handleBuyNow = async () => {
-    console.log({
-      id_user: user.id,
-      id_product: selectedProduct.id_product,
-      quantity,
-      price: selectedProduct.price * quantity,
-      id_group_product: selectedProduct.id_group_product,
-    });
-    try {
-      const res = await axios.post("http://localhost:5000/api/cart/add", {
-        id_user: user.id,
-        id_product: selectedProduct.id_product,
-        quantity,
-        price:selectedProduct.price*quantity,
-        id_group_product:selectedProduct.id_group_product,
-      }
-
-    );
-
-    navigate(`/cartpage/${user.id}`);
-    } catch (err) {
-      console.error("Lỗi khi thêm vào giỏ hàng:", err);
-      alert("Thêm vào mua thất bại!");
-    }
-  };
-  const handleBuyFaile = () => {
-    if (!user) {
-      setBuy(true); // Nếu chưa đăng nhập, hiển thị thông báo lỗi
-      // Tắt thông báo sau 3 giây
-      setTimeout(() => {
-        setBuy(false); // Ẩn thông báo sau 3 giây
-      }, 3000); // 3000ms = 3 giây
-    } else {
-      // Xử lý thêm vào giỏ hàng
-      alert("Đã thêm sản phẩm vào giỏ hàng!");
-    }
+  const handleBuyNow = () => {
+    alert(`Bạn đã mua ${quantity} sản phẩm!`);
   };
 
 
@@ -236,18 +200,13 @@ const getAvailableOptions = (field) => {
       <Container fluid>
               {/* Nơi bạn muốn hiển thị thông báo lớn */}
             {showError && (
-              <div className="error-message">
-                <p>Vui lòng đăng nhập <p>để thêm vào giỏ hàng.</p></p>
+              <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
+                <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
               </div>
             )}
             {showSuccess && (
               <div className="error-message" style={{background:"green"}}>
                 <p>Đã thêm vào giỏ hàng.</p>
-              </div>
-            )}
-             {showBuy && (
-              <div className="error-message">
-                <p>Vui lòng đăng nhập <p>để mua ngay.</p></p>
               </div>
             )}
             
@@ -354,19 +313,12 @@ const getAvailableOptions = (field) => {
               
               )} 
               </Col>
-             
             </Row>
-            {user? (<div className="d-grid gap-2 mb-4">
+            <div className="d-grid gap-2 mb-4">
               <Button className="buy-btn" size="lg" onClick={handleBuyNow}>
                 <BagCheck className="me-2" /> Mua ngay
               </Button>
-            </div>):(
-              <div className="d-grid gap-2 mb-4">
-              <Button className="buy-btn" size="lg" onClick={handleBuyFaile}>
-                <BagCheck className="me-2" /> Mua ngay
-              </Button>
-            </div>)}
-            
+            </div>
           </Col>
         </Row>
 

@@ -1,7 +1,10 @@
+// AccountPage.jsx
 import React, { useState } from "react";
 import AccountBar from "./AccountBar";
-import AccountOverview from "./AccountOverview";  // Thay "MyAccount" bằng "AccountOverview"
-import ChangePassword from "./ChangePassword";
+import MyAccount from "../views/MyAccount";
+import OrderHistory from "../views/OrderHistory";
+import ChangePassword from "../views/ChangePassword";
+import UpdateAccount from "../views/UpdateAccount";
 
 function AccountPage() {
   const [activeMenu, setActiveMenu] = useState("Tài khoản của bạn");
@@ -9,11 +12,15 @@ function AccountPage() {
   const renderContent = () => {
     switch (activeMenu) {
       case "Tài khoản của bạn":
-        return <AccountOverview />;  // Thay "MyAccount" thành "AccountOverview"
+        return <MyAccount />;
+      case "Lịch sử mua hàng":
+        return <OrderHistory />;
       case "Đổi mật khẩu":
         return <ChangePassword />;
+      case "Cập nhật tài khoản":
+        return <UpdateAccount />;
       default:
-        return <AccountOverview />;
+        return <MyAccount />;
     }
   };
 

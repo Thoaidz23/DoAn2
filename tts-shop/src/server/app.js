@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors'); // Kết nối MySQL
+const cors = require('cors');
 const path = require("path");
 
 const app = express();
@@ -25,8 +25,6 @@ const bannerRoutes = require('./admin/routes/bannerRoutes');
 const postRoutes = require('./admin/routes/postRoutes');
 
 
-
-//customer
 const HProductRoute = require('./customer/Routes/Home.routes')
 const searchRoutes = require("./customer/Routes/search.routes");
 const MenuBar = require("./customer/Routes/MenuBar.route")
@@ -46,9 +44,8 @@ const paymentInfoRoutes = require('./customer/Routes/CartInfo.route');
 const order = require('./customer/Routes/Order.route');
 const bill = require('./customer/Routes/BillDetail.route')
 const resetPasswordRoute = require('./customer/Routes/Newpassword.route');
-const chatRoutes = require('./customer/Routes/chat.route'); 
+const chatRoutes = require('./customer/Routes/chat.route');
 
-// admin
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', groupProductRoutes);
 app.use('/api/cagposts', cagpostRoutes);
@@ -58,7 +55,6 @@ app.use('/api/banners', bannerRoutes);
 app.use('/api/posts', postRoutes);
 
 
-//customer
 app.use('/api/Home',HProductRoute)
 app.use("/api/SearchProduct",searchRoutes );
 app.use('/api/category',MenuBar)
@@ -82,8 +78,8 @@ app.use('/api/bill-detail', bill);
 app.use(resetPasswordRoute);
 app.use('/api/chat', chatRoutes);
 
-// Server lắng nghe
+
+// ======= Khởi động server =======
 app.listen(PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
 });
-

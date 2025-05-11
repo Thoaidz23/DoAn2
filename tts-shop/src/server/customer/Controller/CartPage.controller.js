@@ -18,6 +18,7 @@ const getCart = async (req, res) => {
         WHERE c.id_user = ?
         ORDER BY c.id_cart DESC;
         `,
+
       [userId],
       (err, results) => {
         if (err) return res.status(500).json({ message: 'Lỗi server', error: err });

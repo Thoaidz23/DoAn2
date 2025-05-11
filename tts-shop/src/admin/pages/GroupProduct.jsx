@@ -88,7 +88,7 @@ const Product = () => {
           <tr>
             <th className="text-center align-middle">STT</th>
             <th className="text-center align-middle">Hình ảnh</th>
-            <th className="text-center align-middle">Tên dòng sản phẩm</th>
+            <th className="text-center align-middle">Tên sản phẩm</th>
             <th className="text-center align-middle">Danh mục</th>
             <th className="text-center align-middle">Thương hiệu</th>
             <th className="text-center align-middle">Hành động</th> 

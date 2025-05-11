@@ -1,4 +1,3 @@
-// controllers/productController.js
 const connection = require('../../db');  // Đảm bảo bạn đã có kết nối với MySQL
 
 // Lấy tất cả dòng sản phẩm
@@ -38,11 +37,9 @@ const getGroupProductDetail = (req, res) => {
   connection.query(sql, [id], (err, results) => {
     if (err) return res.status(500).json({ error: err });
     if (results.length === 0) return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
-    res.json(results); // trả về tất cả các sản phẩm của nhóm này
+    res.json(results);
   });
 };
-
-
 
 // Thêm sản phẩm
 const addProduct = (req, res) => {
@@ -65,20 +62,65 @@ const addProduct = (req, res) => {
   });
 };
 
-
 // Lấy tất cả danh mục sản phẩm
 const getProductCag = (req, res) => {
-  const sql = 'SELECT * FROM tbl_danhmucsanpham';
+  const sql = 'SELECT * FROM tbl_category_product';
   connection.query(sql, (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.json(results); // Trả về danh sách danh mục
   });
 };
 
+// Lấy tất cả danh mục thương hiệu
+const getBrandCategory = (req, res) => {
+  const sql = 'SELECT * FROM tbl_category_brand'; // Query lấy tất cả dữ liệu từ bảng tbl_category_brand
+  connection.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: err }); // Xử lý lỗi nếu có
+    res.json(results); // Trả về danh sách danh mục thương hiệu
+  });
+};
+
+
+// Lấy danh sách RAM từ bảng tbl_ram
+const getRamOptions = (req, res) => {
+  const sql = 'SELECT * FROM tbl_ram';
+  connection.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Lỗi khi lấy dữ liệu RAM' });
+    }
+    res.json(results);
+  });
+};
+
+// Lấy danh sách ROM từ bảng tbl_rom
+const getRomOptions = (req, res) => {
+  const sql = 'SELECT * FROM tbl_rom';
+  connection.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Lỗi khi lấy dữ liệu ROM' });
+    }
+    res.json(results);
+  });
+};
+
+// Lấy danh sách Màu từ bảng tbl_color
+const getColorOptions = (req, res) => {
+  const sql = 'SELECT * FROM tbl_color';
+  connection.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Lỗi khi lấy dữ liệu màu sắc' });
+    }
+    res.json(results);
+  });
+};
 
 module.exports = {
   getAllProducts,
-  getGroupProductDetail, // Không cần 'this' ở đây
+  getGroupProductDetail,
   addProduct,
-  getProductCag
+  getProductCag,
+  getRamOptions,
+  getRomOptions,
+  getColorOptions,
+  getBrandCategory
 };

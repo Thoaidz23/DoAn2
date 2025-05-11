@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { Search} from "lucide-react";
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Post = () => {
   const [posts, setPosts] = useState([]);
@@ -12,6 +14,19 @@ const Post = () => {
         .then((data) => setPosts(data))
         .catch((err) => console.error("Lỗi khi fetch sản phẩm:", err));
     }, []);
+
+    const handleDelete = async (id) => {
+        if (window.confirm("Bạn có chắc chắn muốn xóa banner này không?")) {
+          try {
+            await axios.delete(`http://localhost:5000/api/posts/${id}`);
+            alert("Xóa bài viết thành công!");
+            window.location.reload();
+          } catch (err) {
+            console.error("Lỗi khi xóa bài viết:", err);
+            alert("Xóa không thành công");
+          }
+        }
+      };
 
   return (
     <div>
@@ -28,7 +43,9 @@ const Post = () => {
           </InputGroup>
         </Col>
         <Col md={6} className="text-end">
-          <Button variant="primary">Thêm bài viết</Button>
+        <Button as={Link} to="/admin/post/add" variant="primary" className="mt-4 mb-3">
+          Thêm bài viết
+        </Button>
         </Col>
       </Row>
 
@@ -40,18 +57,18 @@ const Post = () => {
             <th className="text-center align-middle">Hình ảnh</th>
             <th className="text-center align-middle">Tiêu đề</th>
             <th className="text-center align-middle">Tác giả</th>
-            <th className="text-center align-middle">Tình trạng</th>
+            <th className="text-center align-middle">Danh mục</th>
             <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
         {posts.length > 0 ? (
           posts.map((post, index) => (
-            <tr key={post.id_baiviet}>
+            <tr key={post.id_post}>
               <td className="text-center align-middle">{index + 1}</td>
               <td className="text-center align-middle">
               <img
-                src={`http://localhost:5000/images/post/${post.hinhanh}`}
+                src={`http://localhost:5000/images/post/${post.image}`}
                 alt={post.title}
                 className="img-thumbnail"
                 style={{
@@ -60,22 +77,25 @@ const Post = () => {
                 }}
                 />
               </td>
-              <td className="text-center align-middle">{post.tieude}</td>
-              <td className="text-center align-middle">{post.tacgia}</td>
-              <td className="text-center align-middle">{post.tinhtrang}</td>
+              <td className="text-center align-middle">{post.title}</td>
+              <td className="text-center align-middle">{post.author}</td>
+              <td className="text-center align-middle">{post.name_category_post}</td>
               <td className="text-center align-middle">
-                <Button variant="warning" size="sm" className="me-2">
-                  Sửa
-                </Button>
-                <Button variant="danger" size="sm">
-                  Xóa
-                </Button>
+                <Link to={`/admin/post/edit/${post.id_post}`}>
+                <Button variant="warning" size="sm" className="me-2">Sửa</Button>
+              </Link>
+                <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDelete(post.id_post)}
+                    >
+                      Xóa
+                    </button>
               </td>
             </tr>
           ))
         ) : (
           <tr>
-            <td colSpan="6" className="text-center">Đang tải sản phẩm...</td>
+            <td colSpan="6" className="text-center">Không có bài viết nào</td>
           </tr>
         )}
         </tbody>

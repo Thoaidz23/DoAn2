@@ -65,6 +65,7 @@ function ChangePassword() {
     confirmPassword: confirmPassword ? "" : "Vui lòng xác nhận mật khẩu mới.",
   };
 
+
   setFieldErrors(newFieldErrors);
   if (Object.values(newFieldErrors).some((msg) => msg !== "")) return;
 
@@ -139,6 +140,7 @@ function ChangePassword() {
     setLoading(false);
   }
 };
+
 
   const renderInput = (label, name, show, toggle) => {
     const handleBlur = () => {

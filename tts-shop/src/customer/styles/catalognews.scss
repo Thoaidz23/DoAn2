@@ -32,7 +32,6 @@
     border-radius: 2px;
   }
 /* bai viet*/   
-
   .content-catalognews {
     display: flex;
     gap: 20px;
@@ -76,11 +75,12 @@
           font-size: 14px;
           margin-bottom: 10px;
         }
+  
         .meta {
           font-size: 12px;
           display: flex;
           gap: 15px;
-          bottom:0;
+      
         }
       }
     }
@@ -106,7 +106,7 @@
   
         h4 {
           font-size: 15px;
-          margin: 0 0 30% 0;
+          margin: 0 0 5px 0;
           cursor: pointer;
           transition: color 0.3s ease, text-decoration 0.3s ease; /* hiệu ứng mượt */
           &:hover{
@@ -130,7 +130,7 @@
     position: relative;
     padding-bottom: 8px;
     font-size: 24px;
-    width: 90%;
+    width: 100%;
   
     &::after {
       content: "";
@@ -148,6 +148,7 @@
     flex-direction: column;
     gap: 5px; /* khoảng cách giữa các bài là 10px */
     margin-top: 10px;
+    padding-bottom: 20px;
 
   }
   
@@ -187,7 +188,8 @@
     margin-top: 5px;
     display: flex;
     flex-wrap: wrap;
-  } 
+  }
+  
   .category-link {
     padding: 0;
     background-color: #f2f2f2;
@@ -196,7 +198,7 @@
     color: #333;
     font-weight: bold;
     transition: background-color 0.3s;
-    
+     
     &:hover {
         color: blue;
     }
