@@ -236,8 +236,8 @@ const getAvailableOptions = (field) => {
       <Container fluid>
               {/* Nơi bạn muốn hiển thị thông báo lớn */}
             {showError && (
-              <div className="error-message">
-                <p>Vui lòng đăng nhập <p>để thêm vào giỏ hàng.</p></p>
+              <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
+                <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
               </div>
             )}
             {showSuccess && (
@@ -247,7 +247,7 @@ const getAvailableOptions = (field) => {
             )}
              {showBuy && (
               <div className="error-message">
-                <p>Vui lòng đăng nhập <p>để mua ngay.</p></p>
+                <p>Vui lòng đăng nhập để mua ngay!</p>
               </div>
             )}
             
