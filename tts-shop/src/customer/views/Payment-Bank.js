@@ -109,10 +109,10 @@ const PaymentBank = () => {
           <strong>Nhà cung cấp</strong> <span>TTS SHOP</span>
         </div>
         <div className="row-bank">
-          <strong>Mã đơn hàng <span style={{fontWeight:"100",color:"red"}}>(Nhập mã đơn hàng vào lời nhắn)</span></strong> <span>{code}</span>
+          <strong>Mã đơn hàng <span style={{fontWeight:"100",color:"red"}}>(Vui lòng nhập mã đơn hàng vào lời nhắn)</span></strong> <span>{code}</span>
         </div>
         <div className="row-bank price-row-bank">
-        <strong>Số tiền:</strong> 
+        <strong>Số tiền <span style={{fontWeight:"100",color:"red",fontSize:"14px"}}>(Vui lòng nhập đúng giá tiền)</span></strong> 
                 <span className="price">
                   {payload?.products?.reduce((sum, item) => sum + item.price * item.quantity, 0)?.toLocaleString()}đ
                 </span>

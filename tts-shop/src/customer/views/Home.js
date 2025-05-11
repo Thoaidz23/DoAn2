@@ -124,8 +124,6 @@ function Home() {
             brandsByCategory={brandsByCategory}
             id_category_product={Number(id_category_product)} 
           />
-          
-
           );
         })}
 

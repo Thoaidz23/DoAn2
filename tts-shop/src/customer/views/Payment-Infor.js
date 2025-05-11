@@ -34,6 +34,7 @@ useEffect(() => {
 
 
   useEffect(() => {
+    
     if (!user) {
       setLoading(false); // Nếu không có user, thoát khỏi loading ngay
       return;
@@ -78,10 +79,11 @@ useEffect(() => {
 
   const handleAddToPay = async () => {
     if (selectedPayment === null) {
-      alert("Vui lòng chọn phương thức thanh toán!");
+      setErrorMessage("Vui lòng chọn phương thức thanh toán!");
       return;
     }
-  
+    setErrorMessage(""); // Xóa lỗi cũ nếu có
+
     if (!user || cartItems.length === 0 || !userInfo) return;
   
     const payload = {
@@ -104,7 +106,7 @@ useEffect(() => {
       const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
       navigate("/PurchaseHistory");
     } else if (selectedPayment === 1) {
-      navigate("/Payment-momo", { state: { payload } });
+      navigate("/Payment-momo", { state: { payload } });  
     } else if (selectedPayment === 2) {
       navigate("/Payment-Bank", { state: { payload } });
     }
