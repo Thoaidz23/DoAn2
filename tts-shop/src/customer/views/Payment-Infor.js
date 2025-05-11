@@ -76,30 +76,7 @@ useEffect(() => {
   const handlePaymentSelect = (method) => {
     setSelectedPayment(method);
   };
-<<<<<<< HEAD
- const handleAddToPay = async () => {
-  if (selectedPayment === null) {
-    setErrorMessage(" Vui lòng chọn phương thức thanh toán!");
-    return;
-  }
 
-  setErrorMessage(""); // Xóa lỗi cũ nếu có
-
-  if (!user || cartItems.length === 0 || !userInfo) return;
-
-  const payload = {
-    id_user: user.id,
-    name_user: userInfo.name,
-    address: userInfo.address,
-    phone: userInfo.phone,
-    method: selectedPayment,
-    products: cartItems.map(item => ({
-      id_product: item.id_product,
-      quantity: item.quantity,
-      price: item.price,
-      id_group_product: item.id_group_product
-    }))
-=======
   const handleAddToPay = async () => {
     if (selectedPayment === null) {
       alert("Vui lòng chọn phương thức thanh toán!");
@@ -121,28 +98,7 @@ useEffect(() => {
         id_group_product: item.id_group_product
       }))
     };
-  
-    try {
-      if (selectedPayment === 0) {
-       
-        // COD - gọi API luôn
-        
-        const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
-        alert("Thanh toán thành công bằng COD!");
-        navigate("/PurchaseHistory");
-      } else if (selectedPayment === 1) {
-        // MoMo - chuyển sang trang xử lý MoMo
-        navigate("/Payment-momo", { state: { payload } });
-      } else if (selectedPayment === 2) {
-        // Bank - chuyển sang trang xử lý Bank
-        navigate("/Payment-Bank", { state: { payload } });
-      }
-    } catch (err) {
-      console.error("Lỗi khi thêm vào đơn hàng:", err);
-      alert("Lỗi khi thanh toán!");
-    }
->>>>>>> a99cf850027bf1233cc26afc403341a8b54aec97
-  };
+
 
   try {
     if (selectedPayment === 0) {
@@ -245,7 +201,7 @@ useEffect(() => {
                           type="text"
                           value={tempPhone}
                           onChange={(e) => setTempPhone(e.target.value)}
-                          className="edit-address-input"
+                          className="edit-address-input"s
                         />
                       ) : (
                         tempPhone || userInfo.phone
