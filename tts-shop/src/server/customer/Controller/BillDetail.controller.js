@@ -15,7 +15,6 @@ const getOrderDetail = (req, res) => {
     JOIN tbl_product p ON d.id_product = p.id_product
     JOIN tbl_group_product gp ON gp.id_group_product = p.id_product
     WHERE d.code_order = ?
-    
   `;
 
   connection.query(queryOrder, [code_order], (err, orderResults) => {

@@ -10,6 +10,7 @@ import "../styles/ProductDetail.scss";
 import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
 import TopHeadBar from "../component/TopHeadBar";
+import { useNavigate } from "react-router-dom";
 const ProductDetail = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
@@ -30,6 +31,8 @@ const ProductDetail = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
@@ -113,7 +116,8 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-    alert(`Bạn đã mua ${quantity} sản phẩm!`);
+    navigate("/cartpage");
+    handleAddToCart();
   };
 
 
@@ -364,10 +368,10 @@ const getAvailableOptions = (field) => {
               post.slice(0, 5).map((article, idx) => (
                 <ListGroup.Item key={article.id} className="d-flex align-items-center">
                   <Image
-                    src={`http://localhost:5000/images/product/${article.image}`}
+                    src={`http://localhost:5000/images/post/${article.image}`}
                     alt={article.title}
                     width={80}
-                    height={80}
+                    height={80} 
                     className="me-3 rounded"
                   />
                   <div>

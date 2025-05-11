@@ -60,6 +60,7 @@ function ProductSection({ title, visibleProducts, handleNext, handlePrev, brands
                 <img
                   src={`http://localhost:5000/images/product/${product.image}`}
                   alt={product.alt || product.name_group_product}
+                  style={{height:"200px"}}
                 />
                 <div className="section-product-one-content-item-text">
                   <ul>
