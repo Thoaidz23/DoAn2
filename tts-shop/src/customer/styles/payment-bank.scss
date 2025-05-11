@@ -26,6 +26,7 @@
   }
   
   .container-bank {
+    height: 80vh;
     width: 90%;
     margin: 0 auto;
     margin-top: -2%;
@@ -38,6 +39,7 @@
   
     .payment-bank-box {
       width: 30%;
+      height: auto;
       background-color: #fff;
       border-radius: 12px;
       padding: 24px;
@@ -93,7 +95,7 @@
       }
     
       .countdown-bank {
-        margin-top: 24px;
+        
         background-color: rgb(85, 149, 105,0.2);
         border-radius: 10px;
         padding: 16px;
@@ -121,10 +123,33 @@
           }
         }
       }
+      
+     .button-pay {
+  border: 2px solid #24805e; /* Màu viền xanh */
+  background-color: #338672;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  margin-left: 25%;
+  margin-top: 20px;
+  width: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  button {
+    border: none;              /* Xóa viền của nút */
+    background-color: transparent;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
     
-      .back-button-bank ,
-      .back-button-mm {
-        margin-top: 24px;
+  }
+}
+
+
+      .back-button-bank 
+       {
+        margin-top: 15px;
         text-align: center;
     
         button {

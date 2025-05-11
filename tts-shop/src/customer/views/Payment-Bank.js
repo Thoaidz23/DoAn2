@@ -122,17 +122,17 @@ const PaymentBank = () => {
       <div className="countdown-bank">
         <div className="label-bank">Đơn hàng sẽ hết hạn sau:</div>
         <div className="time-box-bank">
-        <div><div className="unit-mm">{minutes.toString().padStart(2, '0')}</div><div>Phút</div></div>
-        <div><div className="unit-mm">{seconds.toString().padStart(2, '0')}</div><div>Giây</div></div>
+        <div><div className="unit-bank">{minutes.toString().padStart(2, '0')}</div><div>Phút</div></div>
+        <div><div className="unit-bank">{seconds.toString().padStart(2, '0')}</div><div>Giây</div></div>
         </div>
       </div>
-
+      <div className="button-pay">
+        <button onClick={handleHistory}>Đã thanh toán</button>
+      </div>
       <div className="back-button-bank">
         <button onClick={handleBack}>Quay về</button>
       </div>
-      <div className="back-button-mm">
-        <button onClick={handleHistory}>Đã thanh toán</button>
-      </div>
+      
     </div>
 
     {/* QR code */}

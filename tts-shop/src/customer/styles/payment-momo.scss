@@ -26,6 +26,7 @@
 }
 
 .container-momo {
+  height: 80vh;
   width: 90%;
   margin: 0 auto;
   margin-top: -2%;
@@ -93,7 +94,7 @@
     }
   
     .countdown {
-      margin-top: 24px;
+
       background-color: #ffe6eb;
       border-radius: 10px;
       padding: 16px;
@@ -123,7 +124,7 @@
     }
   
     .back-button-mm {
-      margin-top: 24px;
+      margin-top: 15px;
       text-align: center;
   
       button {
@@ -194,6 +195,29 @@
     }
   }
 }
+    
+     .button-pay {
+  border: 2px solid #ec268f; /* Màu viền xanh */
+  background-color: #ec268f;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  margin-left: 25%;
+  margin-top: 20px;
+  width: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  button {
+    border: none;              /* Xóa viền của nút */
+    background-color: transparent;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    
+  }
+}
+
 @media screen and (max-width: 768px) {
   /* Điều chỉnh header */
   .header-momo {
