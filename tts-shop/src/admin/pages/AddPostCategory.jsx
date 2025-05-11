@@ -50,7 +50,7 @@ const AddPostCategory = () => {
       {success && <Alert variant="success">✅ Thêm danh mục bài viết thành công!</Alert>}
 
       <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-3" style={{marginTop: "-500px"}}>
           <Form.Label>Tên danh mục bài viết</Form.Label>
           <Form.Control
             type="text"

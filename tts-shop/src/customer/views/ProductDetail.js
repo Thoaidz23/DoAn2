@@ -9,7 +9,7 @@ import { CartPlus, BagCheck } from "react-bootstrap-icons";
 import "../styles/ProductDetail.scss";
 import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
-
+import TopHeadBar from "../component/TopHeadBar";
 const ProductDetail = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
@@ -188,12 +188,20 @@ const getAvailableOptions = (field) => {
   
    
   return (
+    <div>
+   <TopHeadBar
+  searchText=""
+  categoryName={selectedProduct?.name_group_product}
+/>
+
+    <div className="Product-detail-content">
     <div className="product-detail">
+      
       <Container fluid>
               {/* Nơi bạn muốn hiển thị thông báo lớn */}
             {showError && (
-              <div className="error-message">
-                <p>Vui lòng đăng nhập <p>để thêm vào giỏ hàng.</p></p>
+              <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
+                <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
               </div>
             )}
             {showSuccess && (
@@ -201,7 +209,6 @@ const getAvailableOptions = (field) => {
                 <p>Đã thêm vào giỏ hàng.</p>
               </div>
             )}
-            
             
         <Row className="mt-4">
           <Col md={7}>
@@ -388,6 +395,8 @@ const getAvailableOptions = (field) => {
         
       </Container>
     </div>
+    </div>
+      </div>
   );
 };
 

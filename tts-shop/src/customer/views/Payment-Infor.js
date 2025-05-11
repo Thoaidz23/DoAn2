@@ -4,6 +4,7 @@ import "../styles/payment-infor.scss";
 import { IoArrowBack } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 const PaymentInfor = () => {
   const { user } = useContext(AuthContext);  // Lấy thông tin người dùng từ context
@@ -13,6 +14,17 @@ const PaymentInfor = () => {
   const [cartItems, setCartItems] = useState([]); // Lưu giỏ hàng
   const [userInfo, setUserInfo] = useState(null); // Lưu thông tin người dùng từ context
   const [loading, setLoading] = useState(true); // Trạng thái loading
+  const [errorMessage, setErrorMessage] = useState("");
+
+useEffect(() => {
+  if (errorMessage) {
+    const timer = setTimeout(() => {
+      setErrorMessage("");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }
+}, [errorMessage]);
 
   useEffect(() => {
     if (!user) {
@@ -55,50 +67,54 @@ const PaymentInfor = () => {
     setSelectedPayment(method);
   };
   const handleAddToPay = async () => {
-    if (selectedPayment === null) {
-      alert("Vui lòng chọn phương thức thanh toán!");
-      return;
-    }
-  
-    if (!user || cartItems.length === 0 || !userInfo) return;
-  
-    const payload = {
-      id_user: user.id,
-      name_user: userInfo.name,
-      address: userInfo.address,
-      phone: userInfo.phone,
-      method: selectedPayment, // Gửi phương thức thanh toán (0, 1, 2)
-      products: cartItems.map(item => ({
-        id_product: item.id_product,
-        quantity: item.quantity,
-        price: item.price,
-        id_group_product: item.id_group_product
-      }))
-    };
-  
-    try {
-      if (selectedPayment === 0) {
-       
-        // COD - gọi API luôn
-        
-        const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
-        alert("Thanh toán thành công bằng COD!");
-        navigate("/PurchaseHistory");
-      } else if (selectedPayment === 1) {
-        // MoMo - chuyển sang trang xử lý MoMo
-        navigate("/Payment-momo", { state: { payload } });
-      } else if (selectedPayment === 2) {
-        // Bank - chuyển sang trang xử lý Bank
-        navigate("/Payment-Bank", { state: { payload } });
-      }
-    } catch (err) {
-      console.error("Lỗi khi thêm vào đơn hàng:", err);
-      alert("Lỗi khi thanh toán!");
-    }
+  if (selectedPayment === null) {
+    setErrorMessage("Vui lòng chọn phương thức thanh toán!");
+    return;
+  }
+
+  setErrorMessage(""); // Xóa lỗi cũ nếu có
+
+  if (!user || cartItems.length === 0 || !userInfo) return;
+
+  const payload = {
+    id_user: user.id,
+    name_user: userInfo.name,
+    address: userInfo.address,
+    phone: userInfo.phone,
+    method: selectedPayment,
+    products: cartItems.map(item => ({
+      id_product: item.id_product,
+      quantity: item.quantity,
+      price: item.price,
+      id_group_product: item.id_group_product
+    }))
   };
-  
+
+  try {
+    if (selectedPayment === 0) {
+      const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
+      navigate("/PurchaseHistory");
+    } else if (selectedPayment === 1) {
+      navigate("/Payment-momo", { state: { payload } });
+    } else if (selectedPayment === 2) {
+      navigate("/Payment-Bank", { state: { payload } });
+    }
+  } catch (err) {
+    console.error("Lỗi khi thêm vào đơn hàng:", err);
+    setErrorMessage("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
+  }
+};
+
   return (
+    
     <div className="payment-infor">
+      {errorMessage && (
+  <p className="error-message">
+    <FaExclamationTriangle className="warning-icon" />
+    {errorMessage}
+  </p>
+)}
+
       <div className="container-infor">
         <div className="title-row">
           <IoArrowBack className="back-icon" onClick={() => window.history.back()} />

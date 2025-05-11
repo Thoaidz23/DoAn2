@@ -2,25 +2,21 @@ const express = require('express');
 const cors = require('cors');
 const path = require("path");
 
-const bodyParser = require("body-parser");
-
 const app = express();
-const PORT = 5000;
-
-// ===== Middleware cơ bản =====
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Thay bodyParser
 
-// Cấu hình Express để phục vụ ảnh từ thư mục src/server/images/banner
+const PORT = 5000;
 
-app.use('/images/banner', express.static(path.join(__dirname, 'images', 'banner')));
-app.use('/images/post', express.static(path.join(__dirname, 'images', 'post')));
+const bodyParser = require("body-parser");
 
+
+// Chen hinh
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// ======= Route Admin =======
-const orderRoutes = require('./admin/routes/orderRoutes');
+
+//admin
+const orderRoutes = require('./admin/routes/orderRoutes'); // Import routes đơn hàng
 const groupProductRoutes = require('./admin/routes/groupProductRoutes');
 const cagpostRoutes = require('./admin/routes/cagpostRoutes');
 const cagbrandRoutes = require('./admin/routes/cagbrandRoutes');
@@ -28,7 +24,7 @@ const cagproductRoutes = require('./admin/routes/cagproductRoutes');
 const bannerRoutes = require('./admin/routes/bannerRoutes');
 const postRoutes = require('./admin/routes/postRoutes');
 
-//customer
+
 const HProductRoute = require('./customer/Routes/Home.routes')
 const searchRoutes = require("./customer/Routes/search.routes");
 const MenuBar = require("./customer/Routes/MenuBar.route")
@@ -50,8 +46,6 @@ const bill = require('./customer/Routes/BillDetail.route')
 const resetPasswordRoute = require('./customer/Routes/Newpassword.route');
 const chatRoutes = require('./customer/Routes/chat.route');
 
-
-// Admin api
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', groupProductRoutes);
 app.use('/api/cagposts', cagpostRoutes);
@@ -60,7 +54,7 @@ app.use('/api/cagproducts', cagproductRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/posts', postRoutes);
 
-// Customer api
+
 app.use('/api/Home',HProductRoute)
 app.use("/api/SearchProduct",searchRoutes );
 app.use('/api/category',MenuBar)

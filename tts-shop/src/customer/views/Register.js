@@ -84,9 +84,10 @@ const Register = () => {
   };
 
   return (
-    <Container className="d-flex justify-content-center vh-100 mt-5">
+    <Container className="d-flex justify-content-center vh-100 mt-5" 
+    >
       <Form className="w-50">
-        <h2 className="text-center mb-5">Đăng Ký</h2>
+        <h2 className="text-center mb-5" >Đăng Ký</h2>
 
         {error && <Alert variant="danger">{error}</Alert>}
         {success && <Alert variant="success">{success}</Alert>}
@@ -177,10 +178,12 @@ const Register = () => {
           )}
         </div>
 
-        <Button className="w-100 mt-3" onClick={handleRegister}>
+        <Button className="w-100 mt-3" style={{ backgroundColor: "#076247", borderColor: "#076247", fontWeight: "bold" }} onClick={handleRegister}>
           Đăng ký
         </Button>
-        <p className="mt-2">Đã có tài khoản? <a href="/Login">Đăng nhập</a></p>
+        <p className="mt-2">Đã có tài khoản? <a href="/Login" 
+        style={{color : "#149f59" , fontWeight: "500"}}
+        >Đăng nhập</a></p>
       </Form>
 
       {/* Modal OTP */}

@@ -6,6 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Link } from "react-router-dom";
+import TopHeadBar from "../component/TopHeadBar.js"; // Cập nhật đường dẫn theo vị trí thực tế
+
 
 function Product() {
   const location = useLocation();
@@ -66,14 +68,14 @@ function Product() {
 
   return (
     <div>
-      <div className="container-detail_bar">
-        <div className="container">
-          <p><i className="bi bi-house-door-fill"></i> Trang chủ</p>
-          <i className="bi bi-chevron-right breadcrumb-icon"></i>
-          <p>Sản phẩm</p>
-        </div>
-      </div>
 
+         <TopHeadBar
+  searchText={searchText}
+  categoryName={filtered[0]?.name_category_brand || filtered[0]?.name_category_product}
+/>
+
+
+   
       <div className="container-search">
         <div className="product-one-content">
           <div className="container">

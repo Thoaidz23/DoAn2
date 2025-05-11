@@ -5,18 +5,20 @@ const getCart = async (req, res) => {
   const { userId } = req.params; // ✅ Dùng đúng tên
   try {
     connection.query(
-        `SELECT c.*,gp.name_group_product, 
-        gp.image,
-        cl.name_color,
-        r1.name_ram,
-        r2.name_rom
-         FROM tbl_cart c
+                `SELECT c.*, gp.name_group_product, gp.image,
+               cl.name_color,
+               r1.name_ram,
+               r2.name_rom
+        FROM tbl_cart c
         JOIN tbl_group_product gp ON gp.id_group_product = c.id_group_product 
         JOIN tbl_product p ON p.id_product = c.id_product
-        JOIN tbl_color cl ON cl.id_color = p.id_color
-        JOIN tbl_ram r1 ON r1.id_ram = p.id_ram
-        JOIN tbl_rom r2 ON r2.id_rom = p.id_rom
-        WHERE id_user =  ?`,
+        LEFT JOIN tbl_color cl ON cl.id_color = p.id_color
+        LEFT JOIN tbl_ram r1 ON r1.id_ram = p.id_ram
+        LEFT JOIN tbl_rom r2 ON r2.id_rom = p.id_rom
+        WHERE c.id_user = ?
+        ORDER BY c.id_cart DESC;
+        `,
+
       [userId],
       (err, results) => {
         if (err) return res.status(500).json({ message: 'Lỗi server', error: err });

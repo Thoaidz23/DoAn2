@@ -95,7 +95,7 @@ function PurchaseHistory() {
 
           <div className="filter-section">
             <div className="filter-buttons">
-              {filters.map((filter) => (
+            {filters.map((filter) => (
                 <button
                   key={filter}
                   className={activeFilter === filter ? 'active' : ''}

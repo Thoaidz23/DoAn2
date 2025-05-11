@@ -70,7 +70,7 @@ const EditPostCategory = () => {
       {success && <Alert variant="success">✅ Chỉnh sửa danh mục thành công!</Alert>}
 
       <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-3" style={{marginTop:"-500px"}}>
           <Form.Label>Tên danh mục bài viết</Form.Label>
           <Form.Control
             type="text"

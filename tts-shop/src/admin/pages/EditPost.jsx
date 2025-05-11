@@ -86,7 +86,7 @@ const EditPost = () => {
   return (
     <div className="container mt-4">
       <h3 className="mb-4">Chỉnh sửa Bài viết</h3>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <form onSubmit={handleSubmit} encType="multipart/form-data" style={{width:"100%", marginTop:"-25px"}}>
         <div className="mb-3">
           <label className="form-label">Tiêu đề</label>
           <input

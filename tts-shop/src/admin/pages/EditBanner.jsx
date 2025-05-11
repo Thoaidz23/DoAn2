@@ -56,7 +56,7 @@ const EditBanner = () => {
   return (
     <div className="container mt-4">
       <h3 className="mb-4">Chỉnh sửa Banner</h3>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <form onSubmit={handleSubmit} encType="multipart/form-data" style={{width:"100%", marginTop:"-250px"}}>
         <div className="mb-3">
           <label className="form-label">Tên banner</label>
           <input

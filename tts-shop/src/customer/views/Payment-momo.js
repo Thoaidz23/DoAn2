@@ -10,6 +10,26 @@ const Paymentmomo = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { payload } = location.state || {}; // Lấy payload từ location
+  const [errorMessage, setErrorMessage] = useState("");
+      
+  useEffect(() => {
+    if (errorMessage && errorMessage !== "Thanh toán thành công qua Vietcombank!") {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+  
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
+
+  const generateCodeOrder = () => {
+    const letters = Array.from({ length: 4 }, () =>
+      String.fromCharCode(65 + Math.floor(Math.random() * 26))
+    ).join('');
+    const numbers = Math.floor(1000 + Math.random() * 9000);
+    return letters + numbers;
+  };
+  const [code] = useState(generateCodeOrder());
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -32,30 +52,42 @@ const Paymentmomo = () => {
     window.history.back();
   };
 
-  const handleHistory = async () => {
-    if (!payload) {
-      alert("Không có dữ liệu đơn hàng!");
-      return;
-    }
+const handleHistory = async () => {
+  if (!payload) {
+    setErrorMessage("Không có dữ liệu đơn hàng!");
+    return;
+  }
 
-    try {
-      const momoPayload = {
-        ...payload,
-        method: 1, // 1 = MoMo
-      };
+  try {
+    const vcbPayload = {
+      ...payload,
+      method: 2,
+      code_order: code,
+    };
 
-      const res = await axios.post("http://localhost:5000/api/pay/addpay", momoPayload);
-      alert("Thanh toán thành công qua MoMo!");
+    const res = await axios.post("http://localhost:5000/api/pay/addpay", vcbPayload);
+    setErrorMessage("Thanh toán thành công qua MoMO!");
+    
+    // ⏳ Chờ 3 giây trước khi chuyển trang
+    setTimeout(() => {
       navigate("/PurchaseHistory");
-    } catch (error) {
-      console.error("Lỗi khi gửi đơn hàng:", error);
-      alert("Gửi đơn hàng thất bại!");
-    }
-  };
+    }, 3000);
+    
+  } catch (error) {
+    console.error("Lỗi khi gửi đơn hàng:", error);
+    setErrorMessage("Gửi đơn hàng thất bại!");
+  }
+};
+
 
   return (
     <div>
       <div className="header-momo">
+         {errorMessage && (
+    <div className="notification-bank">
+      {errorMessage}
+    </div>
+  )}
         <div className="header-momo__logo">
           <img 
             src="https://th.bing.com/th/id/OIP.-DhgkiQDEdoru7CJdZrwEAHaHa?w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.6&pid=3.1&rm=2" 
@@ -69,8 +101,8 @@ const Paymentmomo = () => {
           <div className="payment-momo-box">
             <h3>Thông tin đơn hàng</h3>
             <div className="order-info-momo">
-              <div className="row-momo"><strong>Nhà cung cấp:</strong> <span>TTS SHOP</span></div>
-              <div className="row-momo"><strong>Mã đơn hàng:</strong> <span>Sẽ được tạo</span></div>
+              <div className="row-momo"><strong>Nhà cung cấp</strong> <span>TTS SHOP</span></div>
+              <div className="row-momo"><strong>Mã đơn hàng <span style={{fontWeight:"100",color:"red"}}>(Nhập mã đơn hàng vào lời nhắn)</span></strong> <span>{code}</span></div>
               <div className="row-momo price-row">
                 <strong>Số tiền:</strong> 
                 <span className="price">
@@ -86,13 +118,13 @@ const Paymentmomo = () => {
                 <div><div className="unit-mm">{seconds.toString().padStart(2, '0')}</div><div>Giây</div></div>
               </div>
             </div>
-
+             <div className="button-pay">
+              <button onClick={handleHistory}>Đã thanh toán</button>
+            </div>
             <div className="back-button-mm">
               <button onClick={handleBack}>Quay về</button>
             </div>
-            <div className="back-button-mm">
-              <button onClick={handleHistory}>Đã thanh toán</button>
-            </div>
+           
           </div>
 
           <div className="content-momo">

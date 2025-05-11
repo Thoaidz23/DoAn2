@@ -31,7 +31,7 @@ const Banner = () => {
       <div>
         <h3 className="mb-4">Quản lý Banner</h3>
   
-        <div className="mb-3 text-end" style={{ marginTop: "-8px" }}>
+        <div className="mb-3 text-end" style={{ marginTop: "-100px" }}>
         <Button as={Link} to="/admin/banner/add" variant="primary" className="mb-3">
           Thêm banner
         </Button>

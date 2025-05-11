@@ -70,7 +70,7 @@ const EditBrandCategory = () => {
       {success && <Alert variant="success">✅ Chỉnh sửa thương hiệu thành công!</Alert>}
 
       <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-3" style={{marginTop: "-500px"}}>
           <Form.Label>Tên thương hiệu</Form.Label>
           <Form.Control
             type="text"
