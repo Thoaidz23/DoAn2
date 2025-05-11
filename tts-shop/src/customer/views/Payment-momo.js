@@ -66,7 +66,7 @@ const handleHistory = async () => {
     };
 
     const res = await axios.post("http://localhost:5000/api/pay/addpay", vcbPayload);
-    setErrorMessage("Thanh toán thành công qua MOMO!");
+    setErrorMessage("Thanh toán thành công qua MoMO!");
     
     // ⏳ Chờ 3 giây trước khi chuyển trang
     setTimeout(() => {
@@ -118,13 +118,13 @@ const handleHistory = async () => {
                 <div><div className="unit-mm">{seconds.toString().padStart(2, '0')}</div><div>Giây</div></div>
               </div>
             </div>
-
+             <div className="button-pay">
+              <button onClick={handleHistory}>Đã thanh toán</button>
+            </div>
             <div className="back-button-mm">
               <button onClick={handleBack}>Quay về</button>
             </div>
-            <div className="back-button-mm">
-              <button onClick={handleHistory}>Đã thanh toán</button>
-            </div>
+           
           </div>
 
           <div className="content-momo">
