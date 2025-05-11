@@ -10,6 +10,7 @@ import "../styles/ProductDetail.scss";
 import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
 import TopHeadBar from "../component/TopHeadBar";
+import { useNavigate } from "react-router-dom";
 const ProductDetail = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
@@ -23,14 +24,17 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [showError, setShowError] = useState(false); 
-  const [showSuccess ,setSuccess ] = useState(false)
+  const [showSuccess ,setSuccess ] = useState(false);
+  const [showBuyNowError, setShowBuyNowError] = useState(false);
+
   const [index, setIndex] = useState(0);
 
   const thumbRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-
+  
+  const navigate = useNavigate();
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
       .then((res) => {
@@ -113,8 +117,15 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-    alert(`Bạn đã mua ${quantity} sản phẩm!`);
-  };
+  if (!user) {
+    setShowBuyNowError(true);
+    setTimeout(() => setShowBuyNowError(false), 3000);
+    return;
+  }
+  navigate(`/cartpage`);
+  handleAddToCart();
+};
+
 
 
   const getUniqueOptions = (fieldId, labelField) => {
@@ -198,11 +209,24 @@ const getAvailableOptions = (field) => {
     <div className="product-detail">
       
       <Container fluid>
+        {showBuyNowError && (
+  <div className="error-message" style={{ width: "350px", left: "75%", backgroundColor: "#dc3545" }}>
+    <p>Vui lòng đăng nhập để mua ngay!</p>
+  </div>
+)}
+
               {/* Nơi bạn muốn hiển thị thông báo lớn */}
             {showError && (
               <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
                 <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
               </div>
+              
+            )}
+             {showError && (
+              <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
+                <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
+              </div>
+              
             )}
             {showSuccess && (
               <div className="error-message" style={{background:"green"}}>
