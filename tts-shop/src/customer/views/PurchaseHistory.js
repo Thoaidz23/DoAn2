@@ -71,7 +71,7 @@ function PurchaseHistory() {
         <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         <div className="purchase-history-content">
           <div className="user-info">
-            <img src="/avatar.png" alt="Avatar" className="avatar" />
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsg3Tin2fFUDV0y54btyW_XrZpqXENGJUWw&s" alt="Avatar" className="avatar" />
             <div className="user-details">
               <h3>{user.name || 'THOẠI MINH'}</h3>
               <p>{user.email || '09*****264'} <i className="bi bi-eye"></i></p>

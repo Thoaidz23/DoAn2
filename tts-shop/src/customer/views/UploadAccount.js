@@ -5,7 +5,6 @@ import "../styles/MyAccount.scss";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import AccountBar from "../component/AccountBar";
-import img from "../assets/img/img1.png";
 
 const UploadAccount = () => {
   const [activeMenu, setActiveMenu] = useState("Cập nhật tài khoản");
@@ -142,7 +141,7 @@ const UploadAccount = () => {
         )}
 
         <div className="account-content p-4 bg-white shadow rounded-4">
-          <img src={img} alt="Avatar" className="avatar" />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsg3Tin2fFUDV0y54btyW_XrZpqXENGJUWw&s" alt="Avatar" className="avatar" />
           {renderField("Họ và tên", "name")}
           {renderField("Email", "email", false)}
           {renderField("Số điện thoại", "phone")}
