@@ -1,17 +1,14 @@
-import React, { useState } from "react";
-import "bootstrap/dist/js/bootstrap.bundle.min";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import "../styles/MyAccount.scss";
+import React, { useState, useContext } from "react";
+import axios from "axios";
 import AccountBar from "../component/AccountBar";
 import { Eye, EyeSlash } from "react-bootstrap-icons";
+import "../styles/MyAccount.scss";
+import { AuthContext } from "../context/AuthContext";
 
 function ChangePassword() {
   const [activeMenu, setActiveMenu] = useState("Đổi mật khẩu");
-<<<<<<< HEAD
-=======
   const { user, token } = useContext(AuthContext);
 
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -26,15 +23,12 @@ function ChangePassword() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-<<<<<<< HEAD
-=======
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
 
   const togglePassword = (field) => {
     setShowPassword((prev) => ({
@@ -51,22 +45,20 @@ function ChangePassword() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const clearMessages = () => {
+    setTimeout(() => {
+      setError("");
+      setSuccess("");
+    }, 5000);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
     const { currentPassword, newPassword, confirmPassword } = formData;
 
-<<<<<<< HEAD
-    if (currentPassword !== "123456") {
-      setError("Mật khẩu hiện tại không đúng.");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError("Mật khẩu mới phải có ít nhất 6 ký tự.");
-=======
     const newFieldErrors = {
       currentPassword: currentPassword ? "" : "Vui lòng nhập mật khẩu hiện tại.",
       newPassword: newPassword ? "" : "Vui lòng nhập mật khẩu mới.",
@@ -79,23 +71,11 @@ function ChangePassword() {
     if (newPassword.length < 8) {
       setError("Mật khẩu mới phải có ít nhất 8 ký tự.");
       clearMessages();
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setError("Mật khẩu mới không khớp.");
-<<<<<<< HEAD
-      return;
-    }
-
-    setSuccess("Đổi mật khẩu thành công!");
-    setFormData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-=======
       clearMessages();
       return;
     }
@@ -126,9 +106,7 @@ function ChangePassword() {
     } finally {
       setLoading(false);
     }
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
   };
-
   const renderInput = (label, name, show, toggle) => {
     const handleBlur = () => {
       if (!formData[name]) {
@@ -199,8 +177,8 @@ function ChangePassword() {
             {renderInput("Nhập lại mật khẩu mới", "confirmPassword", showPassword.confirm, () => togglePassword("confirm"))}
 
             <div className="text-end mt-4">
-              <button type="submit" className="btn btn-primary">
-                Đổi mật khẩu
+              <button type="submit" className="btn btn-primary" disabled={loading}>
+                {loading ? "Đang xử lý..." : "Đổi mật khẩu"}
               </button>
             </div>
           </form>

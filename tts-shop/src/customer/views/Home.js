@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import MenuBar from "../component/MenuBar";
 import { Carousel } from "react-bootstrap";
 import "../styles/home.scss";
 import "../styles/index.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import "../styles/newbar.scss"
 import ProductSection from "../component/ProductSetion";
-
+import MenuBar from "../component/MenuBar";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -21,10 +21,6 @@ function Home() {
   const visibleCount = 5;
   const [posts, setPosts] = useState([]);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
   useEffect(() => {
     axios.get("http://localhost:5000/api/Home")
     .then((response) => {
@@ -62,8 +58,18 @@ function Home() {
     const prevIndex = currentIndex > 0 ? currentIndex - 1 : Math.max(0, list.length - visibleCount);
     setIndexMap((prev) => ({ ...prev, [id_category_product]: prevIndex }));
   };
-
-
+  const formatDate = (isoDateStr) => {
+    const date = new Date(isoDateStr);
+    const vnTime = new Date(date.getTime()); // Cộng 7 tiếng
+  
+    const day = vnTime.getDate().toString().padStart(2, '0');
+    const month = (vnTime.getMonth() + 1).toString().padStart(2, '0');
+    const year = vnTime.getFullYear();
+    const hours = vnTime.getHours().toString().padStart(2, '0');
+    const minutes = vnTime.getMinutes().toString().padStart(2, '0');
+  
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
   if (loading) return <div className="text-center mt-4">Đang tải dữ liệu...</div>;
 
   return (
@@ -107,8 +113,6 @@ function Home() {
           const category = categories.find((cat) => cat.id_category_product === Number(id_category_product));
           const title = category ? category.name_category_product : `Danh Mục ${id_category_product}`;
 
-       
-
           return (
             <ProductSection
             key={id_category_product}
@@ -124,27 +128,6 @@ function Home() {
           );
         })}
 
-<<<<<<< HEAD
-        {/* Tin tức */}
-        <div className="container">
-          <div className="section-product-one-content-title-with-buttons">
-            <h2>Bài viết</h2>
-            <Link to="/Catalognews" className="see-all">
-              Xem tất cả
-            </Link>
-          </div>
-          <div className="news-wrapper" style={{ margin: "10px" }}>
-            <div className="row gx-2 gy-2">
-              {posts.map((item) => (
-                <div className="col-md-3" key={item.id_post}>
-                  <div className="card h-100">
-                    <div className="image-wrapper p-1">
-                      <img src={`http://localhost:5000/images/product/${item.image}`} className="card-img-top rounded" alt={item.title} />
-                    </div>
-                    <div className="card-body">
-                      <h5 className="card-title">{item.title}</h5>
-                      <p className="card-text">{item.content.slice(0,100)}...</p>
-=======
         <div className="mb-5">
                 <div className="content-title-newbar mt-4 d-flex justify-content-between align-items-center">
                   <h2>Bài viết mới nhất</h2>
@@ -183,14 +166,10 @@ function Home() {
                           </div>
                         </div>
                       ))}
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
+              </div>
 
         <div className="footer-spacing"></div>
       </div>

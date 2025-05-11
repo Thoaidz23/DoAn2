@@ -25,7 +25,7 @@ const Login = () => {
       const { token, user } = res.data;
       login(user, token); // ✅ Gọi login từ context
 
-      window.location.href = user.role === 1 ? "/admin" : "/";
+      window.location.href = user.role === 1 ? "/admin/dashboard" : "/";
     } catch (error) {
       setErrorMessage("Sai email hoặc mật khẩu");
     }

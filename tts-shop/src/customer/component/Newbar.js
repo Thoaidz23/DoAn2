@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import "../styles/index.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -7,72 +8,32 @@ import "../styles/newbar.scss";
 import 'bootstrap-icons/font/bootstrap-icons.css'; // Để dùng icon tác giả & thời gian
 
 function Newbar() {
-  const newsList = [
-    {
-      id: 1,
-      title: 'Rò rỉ cấu hình chi tiết Galaxy Z...',
-      description: 'Đây là mô tả ngắn cho bài viết số 1.',
-      image: 'https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg',
-      author: 'Giang Nguyễn',
-      date: '30/04/2025 21:23',
-    },
-    {
-      id: 2,
-      title: 'Rò rỉ cấu hình chi tiết Galaxy Z...',
-      description: 'Đây là mô tả ngắn cho bài viết số 2.',
-      image: 'https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg',
-      author: 'Nguyễn Văn A',
-      date: '01/05/2025 10:00',
-    },
-    {
-      id: 3,
-      title: 'Rò rỉ cấu hình chi tiết Galaxy Z...',
-      description: 'Đây là mô tả ngắn cho bài viết số 3.',
-      image: 'https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg',
-      author: 'Lê Thị B',
-      date: '02/05/2025 08:30',
-    },
-    {
-      id: 4,
-      title: 'Rò rỉ cấu hình chi tiết Galaxy Z...',
-      description: 'Đây là mô tả ngắn cho bài viết số 4.',
-      image: 'https://cdn-media.sforum.vn/storage/app/media/thanhdat/2025/danh-gia-huawei-pura-x/danh-gia-huawei-pura-x-thumb.jpg',
-      author: 'Trần Văn C',
-      date: '03/05/2025 14:15',
-    },
-  ];
+  const [newsList, setNewsList] = useState([]);
+  
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/catalognews/all') // Đảm bảo URL chính xác
+      .then(response => {
+        setNewsList(response.data); // Set dữ liệu từ API vào state
+      })
+      .catch(error => {
+        console.error("Lỗi khi lấy dữ liệu bài viết:", error);
+      });
+  }, []);
 
-  const renderNewBarItems = (title) => (
-    <>
-      <div className="content-title-newbar mt-4 d-flex justify-content-between align-items-center">
-        <h2>{title}</h2>
-        <Link to="/Catalognews" className="see-all-newbar">Xem tất cả</Link>
-      </div>
+  // Hàm chuyển ISO string sang định dạng giờ Việt Nam
+        const formatDate = (isoDateStr) => {
+          const date = new Date(isoDateStr);
+          const vnTime = new Date(date.getTime()); // Cộng 7 tiếng
+        
+          const day = vnTime.getDate().toString().padStart(2, '0');
+          const month = (vnTime.getMonth() + 1).toString().padStart(2, '0');
+          const year = vnTime.getFullYear();
+          const hours = vnTime.getHours().toString().padStart(2, '0');
+          const minutes = vnTime.getMinutes().toString().padStart(2, '0');
+        
+          return `${day}/${month}/${year} ${hours}:${minutes}`;
+        };
 
-<<<<<<< HEAD
-      <div className="news-wrapper">
-        <div className="container">
-          <div className="row gx-2 gy-3">
-            {newsList.map((item) => (
-              <div className="col-md-3" key={item.id}>
-                <div className="card h-100 shadow-sm">
-                  <div className="position-relative">
-                    <img
-                      src={item.image}
-                      className="card-img-top rounded"
-                      alt={item.title}
-                      style={{ width: '100%', height: '180px', objectFit: 'cover' }}
-                    />
-                   
-                  </div>
-                  <div className="card-body p-2">
-                    <h6 className="card-title fw-bold">{item.description}</h6>
-                    <div className="text-muted small d-flex flex-wrap align-items-center mt-2">
-                      <i className="bi bi-person-circle me-1"></i>
-                      <span className="me-3">{item.author}</span>
-                      <i className="bi bi-clock me-1"></i>
-                      <span>{item.date}</span>
-=======
 
   // Phân loại bài viết theo id_category_post
   const groupByCategory = (posts) => {
@@ -114,7 +75,7 @@ function Newbar() {
                         alt={item.title}
                         style={{ width: '100%', height: '180px', objectFit: 'cover' }}
                       />
-                    </div>
+                      </div>
                     <div className="card-body p-2 pb-0">
                       <h6 className="card-title fw-bold">{item.title}</h6>
                       <div className="text-muted small d-flex flex-wrap align-items-center mt-3 ">
@@ -129,25 +90,36 @@ function Newbar() {
                         </div>
                         
                       </div>
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
                     </div>
                   </div>
+                  </Link>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </>
-  );
+    );
+  };
+
+  // Lấy tất cả các danh mục duy nhất
+  const categories = [...new Set(newsList.map(item => item.id_category_post))];
 
   return (
     <div className="container">
-      {renderNewBarItems("Bài viết")}
-      {renderNewBarItems("Tin tức")}
-      {renderNewBarItems("Game_S")}
+      {categories.map((categoryId) => {
+        const category = newsList.find(item => item.id_category_post === categoryId);
+        const categoryTitle = category ? category.name_category_post : 'Danh mục không xác định';
+        
+        return (
+          <div key={categoryId} className="mb-4">  {/* Thêm class mb-4 để tạo khoảng cách giữa các mục */}
+            {renderNewBarItems(categoryId, categoryTitle)}
+          </div>
+        );
+      })}
     </div>
   );
+  
 }
 
 export default Newbar;

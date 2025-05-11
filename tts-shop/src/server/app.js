@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require("path");
 
+const bodyParser = require("body-parser");
+
 const app = express();
 const PORT = 5000;
 
@@ -11,8 +13,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Thay bodyParser
 
 // Cấu hình Express để phục vụ ảnh từ thư mục src/server/images/banner
+
 app.use('/images/banner', express.static(path.join(__dirname, 'images', 'banner')));
 app.use('/images/post', express.static(path.join(__dirname, 'images', 'post')));
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // ======= Route Admin =======
 const orderRoutes = require('./admin/routes/orderRoutes');
@@ -43,44 +48,30 @@ const paymentInfoRoutes = require('./customer/Routes/CartInfo.route');
 const order = require('./customer/Routes/Order.route');
 const bill = require('./customer/Routes/BillDetail.route')
 const resetPasswordRoute = require('./customer/Routes/Newpassword.route');
-const chatRoutes = require('./customer/Routes/chat.route'); 
+const chatRoutes = require('./customer/Routes/chat.route');
 
 
+// Admin api
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', groupProductRoutes);
 app.use('/api/cagposts', cagpostRoutes);
 app.use('/api/cagbrands', cagbrandRoutes);
 app.use('/api/cagproducts', cagproductRoutes);
-app.use('/api/banners', bannerRoutes);  // ✅ Đảm bảo đúng path
+app.use('/api/banners', bannerRoutes);
 app.use('/api/posts', postRoutes);
 
-// ======= Route Customer =======
-const HProductRoute = require('./customer/Routes/Home.routes');
-const searchRoutes = require("./customer/Routes/search.routes");
-const MenuBar = require("./customer/Routes/MenuBar.route");
-const groupProductRoute = require("./customer/Routes/ProductDetail.routes");
-const user = require('./customer/Routes/user.route');
-const cartRoutes = require('./customer/Routes/Cart.route');
-const cartPageRoute = require('./customer/Routes/CartPage.route');
-
-app.use('/api/Home', HProductRoute);
-app.use("/api/SearchProduct", searchRoutes);
-app.use('/api/category', MenuBar);
-
-//customer
+// Customer api
 app.use('/api/Home',HProductRoute)
 app.use("/api/SearchProduct",searchRoutes );
 app.use('/api/category',MenuBar)
 app.use('/api/otp', otpRoutes);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use("/api/group-route", groupProductRoute);
 app.use('/api/users', user);
 app.use('/api/cart', cartRoutes);
 app.use('/api/pay', payRoutes);
 app.use('/api/cartpage', cartPageRoute);
-
 app.use("/api/account", MyAccount);
 app.use("/api/change-password", accountRoutes);
 app.use("/api/upload-account", uploadAccountRoutes);

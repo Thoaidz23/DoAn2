@@ -8,8 +8,8 @@ import CartPage from "../views/CartPage"
 import { AuthProvider,AuthContext } from "../context/AuthContext"; // ✅ Thêm dòng này
 import ScrollToTop from "../component/ScrollToTop"; // 👈 thêm dòng này
 import CustomerSupport from "../component/CustomerSP";
-
-
+import CatalogProduct from "./CatalogProduct";
+import PostDetail from "./PostDetail"
 // Tự động import toàn bộ component trong views (trừ App.js)
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);
   
@@ -40,12 +40,9 @@ function AppContent() {
           {routes}
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cartpage/:userId" element={<CartPage />} />
-<<<<<<< HEAD
-=======
           <Route path="/catalogproduct/:id_category" element={<CatalogProduct />} />
           <Route path="/postdetail/:id_post" element={<PostDetail />} />
           <Route path="/bill-detail/:code_order" element={<BillDetail />} />
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
         </Routes>
       </Suspense>
       <Footer />

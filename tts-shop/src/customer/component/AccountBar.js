@@ -1,16 +1,11 @@
-<<<<<<< HEAD
-import React from "react";
-=======
 import React, { useContext, useState } from "react";
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles/AccountBar.scss";
 
 function AccountBar({ activeMenu, setActiveMenu }) {
   const navigate = useNavigate();
-<<<<<<< HEAD
-=======
   const { user, logout } = useContext(AuthContext);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -18,7 +13,6 @@ function AccountBar({ activeMenu, setActiveMenu }) {
     logout();
     navigate("/login");
   };
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
 
   const menuItems = [
     { icon: "bi-person", label: "Tài khoản của bạn", path: "/MyAccount" },
@@ -37,23 +31,14 @@ function AccountBar({ activeMenu, setActiveMenu }) {
             className={activeMenu === item.label ? "active" : ""}
             onClick={() => {
               setActiveMenu(item.label);
-<<<<<<< HEAD
-              if (item.label === "Thoát tài khoản") {
-                // Xử lý logout ở đây
-=======
               if (item.label === "Đăng xuất") {
                 setShowLogoutConfirm(true);
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
               } else {
                 navigate(item.path);
               }
             }}
           >
-<<<<<<< HEAD
-            <i className={`bi ${item.icon}`}></i> 
-=======
             <i className={`bi ${item.icon}`}></i>
->>>>>>> d796181d0ce5157210794b691833585f6e52a437
             <span>{item.label}</span>
           </li>
         ))}
