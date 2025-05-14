@@ -39,8 +39,8 @@ const register = (req, res) => {
       }
 
       connection.execute(
-        'INSERT INTO tbl_user (name, email, phone, address, password, role) VALUES (?, ?, ?, ?, ?, ?)',
-        [name, email, phone, address, hashedPassword, 2],
+        'INSERT INTO tbl_user (name, email, phone, address, password, role, lock_account) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [name, email, phone, address, hashedPassword, 2, 0], // `lock_account = 0` cho phép đăng nhập
         (err, result) => {
           if (err) {
             console.error("Lỗi thêm người dùng:", err);
@@ -70,6 +70,12 @@ const login = (req, res) => {
     }
 
     const user = results[0];
+
+    // Kiểm tra trạng thái tài khoản
+    if (user.lock_account === 1) {
+      return res.status(403).json({ message: 'Tài khoản của bạn đã bị khóa' });
+    }
+
     bcrypt.compare(password, user.password, (err, isMatch) => {
       if (err) {
         return res.status(500).json({ message: 'Lỗi xác thực mật khẩu' });
@@ -98,7 +104,6 @@ const login = (req, res) => {
     });
   });
 };
-
 
 
 module.exports = { register, login };

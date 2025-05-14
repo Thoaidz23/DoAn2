@@ -24,7 +24,7 @@ const cagproductRoutes = require('./admin/routes/cagproductRoutes');
 const bannerRoutes = require('./admin/routes/bannerRoutes');
 const postRoutes = require('./admin/routes/postRoutes');
 
-
+//customercustomer
 const HProductRoute = require('./customer/Routes/Home.routes')
 const searchRoutes = require("./customer/Routes/search.routes");
 const MenuBar = require("./customer/Routes/MenuBar.route")
@@ -45,7 +45,9 @@ const order = require('./customer/Routes/Order.route');
 const bill = require('./customer/Routes/BillDetail.route')
 const resetPasswordRoute = require('./customer/Routes/Newpassword.route');
 const chatRoutes = require('./customer/Routes/chat.route');
+const footer = require('./customer/Routes/Footer.route')
 
+//admin
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', groupProductRoutes);
 app.use('/api/cagposts', cagpostRoutes);
@@ -54,7 +56,7 @@ app.use('/api/cagproducts', cagproductRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/posts', postRoutes);
 
-
+//customer
 app.use('/api/Home',HProductRoute)
 app.use("/api/SearchProduct",searchRoutes );
 app.use('/api/category',MenuBar)
@@ -77,7 +79,7 @@ app.use('/api/orders', order);
 app.use('/api/bill-detail', bill); 
 app.use(resetPasswordRoute);
 app.use('/api/chat', chatRoutes);
-
+app.use('/footer', footer);
 
 // ======= Khởi động server =======
 app.listen(PORT, () => {

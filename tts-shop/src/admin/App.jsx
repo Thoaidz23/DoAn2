@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
+import { AuthProvider,AuthContext } from "../customer/context/AuthContext"; 
 import Sidebar from "./components/Sidebar";
 import Dashboard from './pages/Dashboard';
 import Order from './pages/Order';
@@ -28,6 +28,7 @@ import EditPost from './pages/EditPost';
 
 function App() {
   return (
+    <AuthProvider>
     <Router>
       <div className="d-flex">
         <Sidebar />
@@ -68,7 +69,7 @@ function App() {
         </div>
 
       </div>
-    </Router>
+    </Router></AuthProvider>
   );
 }
 

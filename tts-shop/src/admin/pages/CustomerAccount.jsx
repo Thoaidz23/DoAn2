@@ -6,9 +6,9 @@ const CustomerAccount = () => {
 
   // Dữ liệu mẫu
   const customers = [
-    { id: 1, email: "john@example.com", name: "John Doe", phone: "0123456789" },
-    { id: 2, email: "jane@example.com", name: "Jane Smith", phone: "0987654321" },
-    { id: 3, email: "mike@example.com", name: "Mike Johnson", phone: "0111222333" },
+    { id: 1, email: "john@example.com", name: "John Doe", phone: "0123456789" ,address:""},
+    { id: 2, email: "jane@example.com", name: "Jane Smith", phone: "0987654321",address:""},
+    { id: 3, email: "mike@example.com", name: "Mike Johnson", phone: "0111222333" ,address:""},
   ];
 
   const filteredCustomers = customers.filter(
@@ -31,9 +31,6 @@ const CustomerAccount = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Col>
-        <Col md={6} className="text-end">
-          <Button variant="primary">Add Customer</Button>
-        </Col>
       </Row>
 
       {/* Bảng hiển thị */}
@@ -44,7 +41,7 @@ const CustomerAccount = () => {
             <th className="text-center align-middle">Email</th>
             <th className="text-center align-middle">Full Name</th>
             <th className="text-center align-middle">Phone</th>
-            <th className="text-center align-middle">Actions</th>
+            <th className="text-center align-middle">Address</th>
           </tr>
         </thead>
         <tbody>
@@ -54,12 +51,7 @@ const CustomerAccount = () => {
               <td className="text-center align-middle">{customer.email}</td>
               <td className="text-center align-middle">{customer.name}</td>
               <td className="text-center align-middle">{customer.phone}</td>
-              <td className="text-center align-middle">
-                <Button variant="warning" size="sm" className="me-2">
-                  Sửa
-                </Button>
-                <Button variant="danger" size="sm">Xóa</Button>
-              </td>
+              <td className="text-center align-middle">{customer.address}</td>
             </tr>
           ))}
         </tbody>

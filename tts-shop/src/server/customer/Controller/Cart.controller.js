@@ -16,8 +16,14 @@ const addToCart = (req, res) => {
     }
 
     if (results.length > 0) {
-      // Nếu đã có thì cập nhật số lượng
-      const newQuantity = results[0].quantity + quantity;
+      const currentQuantity = results[0].quantity;
+      const newQuantity = currentQuantity + quantity;
+
+      // Giới hạn số lượng tối đa là 10
+      if (newQuantity > 5) {
+        return res.status(400).json({ message: 'Mỗi sản phẩm chỉ được mua tối đa 10 đơn vị trong giỏ hàng.' });
+      }
+
       const updateQuery = 'UPDATE tbl_cart SET quantity = ? WHERE id_user = ? AND id_product = ?';
       connection.query(updateQuery, [newQuantity, id_user, id_product], (err2) => {
         if (err2) {
@@ -27,7 +33,11 @@ const addToCart = (req, res) => {
         return res.status(200).json({ message: 'Đã cập nhật giỏ hàng' });
       });
     } else {
-      // Nếu chưa có thì thêm mới
+      // Nếu là sản phẩm mới => kiểm tra quantity có vượt quá 10 không
+      if (quantity > 5) {
+        return res.status(400).json({ message: 'Mỗi sản phẩm chỉ được mua tối đa 10 đơn vị trong giỏ hàng.' });
+      }
+
       const insertQuery = 'INSERT INTO tbl_cart (id_user, id_product, id_group_product, quantity, price) VALUES (?, ?, ?, ?, ?)';
       connection.query(insertQuery, [id_user, id_product, id_group_product, quantity, price], (err3) => {
         if (err3) {

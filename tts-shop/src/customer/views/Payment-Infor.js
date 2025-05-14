@@ -14,17 +14,17 @@ const PaymentInfor = () => {
   const [cartItems, setCartItems] = useState([]); // Lưu giỏ hàng
   const [userInfo, setUserInfo] = useState(null); // Lưu thông tin người dùng từ context
   const [loading, setLoading] = useState(true); // Trạng thái loading
- const [errorMessage, setErrorMessage] = useState("");
+ const [errorMessage1, setErrorMessage1] = useState("");
 
 useEffect(() => {
-  if (errorMessage) {
+  if (errorMessage1) {
     const timer = setTimeout(() => {
-      setErrorMessage("");
+      setErrorMessage1("");
     }, 3000);
 
     return () => clearTimeout(timer);
   }
-}, [errorMessage]);
+}, [errorMessage1]);
 
   const [tempAddress, setTempAddress] = useState("");  // Địa chỉ chỉnh sửa
   const [isEditingAddress, setIsEditingAddress] = useState(false); // Trạng thái chỉnh sửa
@@ -79,14 +79,14 @@ useEffect(() => {
 
   const handleAddToPay = async () => {
     if (selectedPayment === null) {
-      setErrorMessage("Vui lòng chọn phương thức thanh toán!");
+      setErrorMessage1("Vui lòng chọn phương thức thanh toán!");
       return;
     }
-    setErrorMessage(""); // Xóa lỗi cũ nếu có
+    setErrorMessage1(""); // Xóa lỗi cũ nếu có
 
     if (!user || cartItems.length === 0 || !userInfo) return;
-  
     const payload = {
+      email:user.email,
       id_user: user.id,
       name_user: userInfo.name,
       address: tempAddress || userInfo.address,
@@ -96,7 +96,9 @@ useEffect(() => {
         id_product: item.id_product,
         quantity: item.quantity,
         price: item.price,
-        id_group_product: item.id_group_product
+        id_group_product: item.id_group_product,
+        name_group_product: item.name_group_product,
+        image: item.image
       }))
     };
 
@@ -112,7 +114,7 @@ useEffect(() => {
     }
   } catch (err) {
     console.error("Lỗi khi thêm vào đơn hàng:", err);
-    setErrorMessage("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
+    setErrorMessage1("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
   }
 };
 
@@ -120,15 +122,14 @@ useEffect(() => {
   return (
     
     <div className="payment-infor">
-       {errorMessage && (
-  <p className="error-message"> 
-    <FaExclamationTriangle className="warning-icon" /> 
-
-    {errorMessage}
-  </p>
-)}
 
       <div className="container-infor">
+        {errorMessage1 && (
+  <p className="error-message1"> 
+    <FaExclamationTriangle className="warning-icon" /> 
+    {errorMessage1}
+  </p>
+)}
         <div className="title-row">
           <IoArrowBack className="back-icon" onClick={() => window.history.back()} />
           <h1 className="title">Thông Tin</h1>
@@ -230,7 +231,7 @@ useEffect(() => {
         {/* Phương thức thanh toán */}
         <h2 className="section-title section-header">PHƯƠNG THỨC THANH TOÁN</h2>
         <div className="info-card payment-options">
-          <div
+          {totalPrice < 10000000 ? (<div
             className={`payment-option ${selectedPayment === 0 ? "active" : ""}`}
             onClick={() => handlePaymentSelect(0)}
           >
@@ -241,6 +242,10 @@ useEffect(() => {
             />
             <p>Thanh toán khi nhận hàng</p>
           </div>
+          ):(
+            <div></div>
+          )}
+          
 
           <div
             className={`payment-option ${selectedPayment === 1 ? "active" : ""}`}

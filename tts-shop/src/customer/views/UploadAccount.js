@@ -5,6 +5,7 @@ import "../styles/MyAccount.scss";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import AccountBar from "../component/AccountBar";
+import { useNavigate } from "react-router-dom"; 
 
 const UploadAccount = () => {
   const [activeMenu, setActiveMenu] = useState("Cập nhật tài khoản");
@@ -12,10 +13,12 @@ const UploadAccount = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [phoneError, setPhoneError] = useState(""); // Thêm biến lỗi số điện thoại
-  const { user } = useContext(AuthContext); // lấy user.id
+  const { user,logout } = useContext(AuthContext); // lấy user.id
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState("success"); // success | danger | warning
+  const [isLocking, setIsLocking] = useState(false);
+ const navigate = useNavigate();
 
   useEffect(() => {
     if (user && user.id) {
@@ -53,6 +56,36 @@ const UploadAccount = () => {
     }
   };
   
+  const handleLockAccount = async () => {
+  const confirmLock = window.confirm("Bạn có chắc muốn khóa tài khoản này? Sau khi khóa, bạn sẽ không thể đăng nhập nữa.");
+
+  if (!confirmLock) return;
+
+  setIsLocking(true); // Bắt đầu loading
+
+  try {
+    await axios.put(`http://localhost:5000/api/upload-account/lock-account/${user.id}`);
+    setAlertMessage("Tài khoản đã bị khóa.");
+    setAlertVariant("warning");
+    setShowAlert(true);
+
+    // Có thể đăng xuất hoặc chuyển hướng sau 2 giây:
+    setTimeout(() => { 
+      logout();
+      navigate(`/Login`)
+    }, 2000);
+  
+  } catch (error) {
+    console.error("Lỗi khi khóa tài khoản:", error);
+    setAlertMessage("Khóa tài khoản thất bại.");
+    setAlertVariant("danger");
+    setShowAlert(true);
+  } finally {
+    setIsLocking(false); // Kết thúc loading (nếu muốn giữ nút "Chờ khóa..." thì không cần dòng này)
+  }
+};
+
+
 
   const renderField = (label, fieldKey, editable = true) => {
     if (!userInfo) return null;
@@ -139,6 +172,8 @@ const UploadAccount = () => {
         </div>
         
         )}
+       
+
 
         <div className="account-content p-4 bg-white shadow rounded-4">
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsg3Tin2fFUDV0y54btyW_XrZpqXENGJUWw&s" alt="Avatar" className="avatar" />
@@ -159,8 +194,28 @@ const UploadAccount = () => {
               >
                 Lưu thay đổi
               </button>
+              
             </div>
+          )} 
+        <div className="mt-3 text-end">
+        <button
+          className="btn btn-danger"
+          onClick={handleLockAccount}
+          disabled={isLocking}
+        >
+          {isLocking ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Chờ khóa...
+            </>
+          ) : (
+            <>
+              <i className="bi bi-lock-fill me-1"></i> Khóa tài khoản
+            </>
           )}
+        </button>
+      </div>
+        
         </div>
       </div>
     </div>

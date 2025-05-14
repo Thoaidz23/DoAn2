@@ -14,8 +14,13 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+ 
+import { AuthContext } from "../../customer/context/AuthContext";
+import { useContext } from "react";
 
 const Dashboard = () => {
+ const { user } = useContext(AuthContext); // Lấy user từ context
+  console.log(user)
   // Dữ liệu doanh thu
   const revenueData = [
     { month: "1", revenue: 10 },

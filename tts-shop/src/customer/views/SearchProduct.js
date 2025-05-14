@@ -104,7 +104,8 @@ function Product() {
                   </div>
                 ))
               ) : (
-                <p>Không tìm thấy sản phẩm phù hợp.</p>
+                <img src="no-products.png" alt="Không có sản phẩm" style={{margin:"0 0 0 15%"}} />
+
               )}
             </div>
           </div>

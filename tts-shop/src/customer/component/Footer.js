@@ -1,43 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "../styles/footer.scss";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { FaFacebook, FaInstagram } from 'react-icons/fa';
-import { SiZalo } from 'react-icons/si';
+
 
 function Footer() {
+  const [footerData, setFooterData] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/footer")
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          setFooterData(res.data);
+        } else {
+          setFooterData([res.data]); // Fallback nếu API chỉ trả 1 object
+        }
+      })
+      .catch((err) => {
+        console.error("Lỗi khi lấy footer:", err);
+      });
+  }, []);
+
   return (
     <footer className="footer">
       <div className="container-footer">
         <div className="footer-row">
-          <div className="footer-col">
-            <h5>TTS SHOP</h5>
-            <p>Địa chỉ: Cần Thơ</p>
-            <p>Email: ttshop@gmail.com</p>
-          </div>
-          <div className="footer-col">
-            <h5>Thông tin và chính sách</h5>
-            <p>Mua hàng và thanh toán Online</p>
-            <p>Chính sách giao hàng</p>
-          </div>
-          <div className="footer-col">
-            <h5>Dịch vụ và thông tin khác</h5>
-            <p>Khách hàng doanh nghiệp (B2B)</p>
-            <p>Ưu đãi thanh toán</p>
-          </div>
-          <div className="footer-col">
-            <h5>Kết nối với Chúng tôi</h5>
-            <div className="social-icons d-flex gap-3 mt-2">
-              <a href="https://zalo.me" target="_blank" rel="noopener noreferrer">
-                <SiZalo size={24} color="#0088cc" />
-              </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                <FaFacebook size={24} color="#4267B2" />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                <FaInstagram size={24} color="#C13584" />
-              </a>
+          {footerData.map((item) => (
+            <div className="footer-col" key={item.id_footer}>
+              <h5>{item.title}</h5>
+              <div
+                className="footer-content"
+                dangerouslySetInnerHTML={{ __html: item.content }}
+              />
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </footer>

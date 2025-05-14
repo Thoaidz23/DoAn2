@@ -24,15 +24,17 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [showError, setShowError] = useState(false); 
-  const [showSuccess ,setSuccess ] = useState(false)
+  const [showSuccess ,setSuccess ] = useState(false);
+  const [showBuyNowError, setShowBuyNowError] = useState(false);
+
   const [index, setIndex] = useState(0);
 
   const thumbRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-
   const navigate = useNavigate();
+
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
@@ -98,7 +100,6 @@ const ProductDetail = () => {
     );
     } catch (err) {
       console.error("Lỗi khi thêm vào giỏ hàng:", err);
-      alert("Thêm vào giỏ hàng thất bại!");
     }
   };
   
@@ -116,9 +117,16 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-    navigate("/cartpage");
-    handleAddToCart();
-  };
+
+  if (!user) {
+    setShowBuyNowError(true);
+    setTimeout(() => setShowBuyNowError(false), 3000);
+    return;
+  }
+  navigate(`/cartpage`);
+  handleAddToCart();
+};
+
 
 
   const getUniqueOptions = (fieldId, labelField) => {
@@ -192,6 +200,7 @@ const getAvailableOptions = (field) => {
   
    
   return (
+    
     <div>
    <TopHeadBar
   searchText=""
@@ -202,11 +211,24 @@ const getAvailableOptions = (field) => {
     <div className="product-detail">
       
       <Container fluid>
+        {showBuyNowError && (
+  <div className="error-message" style={{ width: "350px", left: "75%", backgroundColor: "#dc3545" }}>
+    <p>Vui lòng đăng nhập để mua ngay!</p>
+  </div>
+)}
+
               {/* Nơi bạn muốn hiển thị thông báo lớn */}
             {showError && (
               <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
                 <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
               </div>
+              
+            )}
+             {showError && (
+              <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
+                <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
+              </div>
+              
             )}
             {showSuccess && (
               <div className="error-message" style={{background:"green"}}>
@@ -295,6 +317,7 @@ const getAvailableOptions = (field) => {
                   <Form.Control
                     type="number"
                     min="1"
+                    max="5"
                     value={quantity}
                     onChange={(e) =>
                       setQuantity(Math.max(1, Number(e.target.value)))
@@ -305,18 +328,26 @@ const getAvailableOptions = (field) => {
 
               <Col xs={8}>
               {user ? (
-                <>
-                <Button className="cart-btn" onClick={handleAddToCart}>
+                quantity <= 5 ? (
+                  <>
+                    <Button className="cart-btn" onClick={handleAddToCart}>
+                      <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button className="cart-btn">
+                      <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                    </Button>
+                  </>
+                )
+              ) : (
+                <Button className="cart-btn" onClick={handleAddToCartFaile}>
                   <CartPlus className="me-2" /> Thêm vào giỏ hàng
                 </Button>
-                </>
-              ):(
-                <Button className="cart-btn" onClick={handleAddToCartFaile}>
-               <CartPlus className="me-2" /> Thêm vào giỏ hàng
-              </Button>
-              
-              )} 
-              </Col>
+              )}
+            </Col>
+            
             </Row>
             <div className="d-grid gap-2 mb-4">
               <Button className="buy-btn" size="lg" onClick={handleBuyNow}>

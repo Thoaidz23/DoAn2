@@ -30,7 +30,8 @@ function RoleBasedAppContent() {
     return <App></App>
   }
 
-  return user.role === 1 ? <AdminApp /> : <App />;
+return (user.role === 1 || user.role === 2) ? <AdminApp /> : <App />;
+
   // return <AdminApp></AdminApp>
 }
 

@@ -4,7 +4,6 @@ import "../styles/MyAccount.scss";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import AccountBar from "../component/AccountBar";
-import img from "../assets/img/img1.png";
 import { AuthContext } from "../context/AuthContext";
 
 function AccountOverview() {
@@ -35,7 +34,7 @@ function AccountOverview() {
         <div className="account-content p-4 bg-white shadow rounded-4">
           {userInfo ? (
             <>
-              <img src={img} alt="Avatar" className="avatar" />
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsg3Tin2fFUDV0y54btyW_XrZpqXENGJUWw&s" alt="Avatar" className="avatar" />
               <div className="mb-3">
                 <strong>Họ và tên:</strong> {userInfo.name}
               </div>
