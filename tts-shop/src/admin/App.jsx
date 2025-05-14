@@ -24,8 +24,8 @@ import AddBanner from "./pages/AddBanner";
 import EditBanner from "./pages/EditBanner";
 import AddPost from './pages/AddPost';
 import EditPost from './pages/EditPost';
-
-
+import AdminAccount from './pages/Account'
+import ChangePassword from './pages/AddminChangePW';
 function App() {
   return (
     <AuthProvider>
@@ -62,8 +62,8 @@ function App() {
             <Route path="/admin/banner/edit/:id" element={<EditBanner />} />
             <Route path="/admin/post/add" element={<AddPost />} />
             <Route path="/admin/post/edit/:id" element={<EditPost />} />
-
-
+            <Route path="/admin/Account" element={<AdminAccount />} />
+            <Route path="/admin/AddminChangePW" element={<ChangePassword />} />
             {/* Route khác sau này */}
           </Routes>
         </div>

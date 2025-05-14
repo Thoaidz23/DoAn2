@@ -24,7 +24,7 @@ const cagproductRoutes = require('./admin/routes/cagproductRoutes');
 const bannerRoutes = require('./admin/routes/bannerRoutes');
 const postRoutes = require('./admin/routes/postRoutes');
 
-//customercustomer
+//customer
 const HProductRoute = require('./customer/Routes/Home.routes')
 const searchRoutes = require("./customer/Routes/search.routes");
 const MenuBar = require("./customer/Routes/MenuBar.route")

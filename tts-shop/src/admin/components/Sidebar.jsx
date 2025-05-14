@@ -1,6 +1,5 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import React, { useContext, useEffect } from "react";
-
 import avatar from '../assets/avatar.jpg';
 import { AuthContext } from "../../customer/context/AuthContext";
 
@@ -74,14 +73,19 @@ const handleLogout = () => {
   return (
     <div className="bg-dark text-white vh-100 col-2 d-flex flex-column p-0 border-end border-secondary position-fixed">
       <div className="text-center py-3 border-bottom border-secondary">
+   
         {user.role === 1 ? (
+          <>
           <h5 className="m-0">TTS-SHOP ADMIN</h5>
-        ) : (
-          <h5 className="m-0">TTS-SHOP EMPLOYEE</h5>
+          </>
+        ) : (<>
+            <h5 className="m-0">TTS-SHOP EMPLOYEE</h5>
+          </>
         )}
       </div>
 
       <div className="d-flex align-items-center justify-content-center py-4 border-bottom border-secondary gap-3">
+         <Link to="/admin/Account" className="text-decoration-none text-white d-flex align-items-center gap-3">
         {user.role === 1 ? (
           <>
           <img
@@ -104,7 +108,7 @@ const handleLogout = () => {
             />
             <div className="fw-medium text-white">{getFullName(user.name) || "Employee"}</div>
           </>
-        )}
+        )}</Link>
       </div>
 
       <ul className="nav flex-column mt-3 flex-grow-1">
