@@ -1,8 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Sidebar from "./components/Sidebar";
 import Dashboard from './pages/Dashboard';
 import Order from './pages/Order';
+import DetailOrder from './pages/DetailOrder';
 import Banner from './pages/Banner';
 import GroupProduct from './pages/GroupProduct';
 import GroupProductDetail from './pages/GroupProductDetail';  // Thêm import cho ProductDetail
@@ -24,6 +25,7 @@ import AddBanner from "./pages/AddBanner";
 import EditBanner from "./pages/EditBanner";
 import AddPost from './pages/AddPost';
 import EditPost from './pages/EditPost';
+import Footer from './pages/Footer';
 
 
 function App() {
@@ -40,6 +42,7 @@ function App() {
             {/* <Route path="/" element={<Navigate to="/admin/dashboard" replace />} /> */}
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/order" element={<Order />} />
+            <Route path="/admin/orders/:code" element={<DetailOrder />} />
             <Route path="/admin/banner" element={<Banner />} />
             <Route path="/admin/product" element={<GroupProduct />} />
             <Route path="/admin/product/:id" element={<GroupProductDetail />} /> {/* Route cho trang chi tiết sản phẩm */}
@@ -61,6 +64,8 @@ function App() {
             <Route path="/admin/banner/edit/:id" element={<EditBanner />} />
             <Route path="/admin/post/add" element={<AddPost />} />
             <Route path="/admin/post/edit/:id" element={<EditPost />} />
+            <Route path="/admin/footer" element={<Footer />} />
+
 
 
             {/* Route khác sau này */}

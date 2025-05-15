@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
-
+  console.log(products)
   // Gọi API từ backend khi component mount
   useEffect(() => {
     fetch("http://localhost:5000/api/products")

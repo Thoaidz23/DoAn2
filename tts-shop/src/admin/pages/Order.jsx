@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Row, Col } from "react-bootstrap";
 import { Search } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Post = () => {
   // Dữ liệu giả lập đơn hàng
@@ -13,6 +14,37 @@ const Post = () => {
         .then((data) => setOrders(data))
         .catch((err) => console.error("Lỗi khi fetch sản phẩm:", err));
     }, []);
+
+    const getOrderStatus = (status) => {
+      switch (status) {
+        case 0:
+          return "Chờ xác nhận";
+        case 1:
+          return "Đã xác nhận";
+        case 2:
+          return "Đang vận chuyển";
+        case 4:
+          return "Đang chờ hủy";
+        case 3: 
+          return "Đã giao hàng";
+        case 5:
+          return "Đã hủy";
+        default:
+          return "Không xác định";
+      }
+    };
+
+    const getOrderPayStatus = (status) => {
+      switch (status) {
+        case 0:
+          return "Chưa thanh toán";
+        case 1:
+          return "Đã thanh toán";
+        default:
+          return "Không xác định";
+      }
+    };
+
 
   return (
     <div>
@@ -44,6 +76,7 @@ const Post = () => {
             <th className="text-center align-middle">Tổng tiền</th>
             <th className="text-center align-middle">Ngày đặt</th>
             <th className="text-center align-middle">Trạng thái</th>
+            <th className="text-center align-middle">Thanh toán</th>
             <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
@@ -52,13 +85,34 @@ const Post = () => {
             <tr key={order.id_order}>
               <td className="text-center align-middle">{index + 1}</td>
               <td className="text-center align-middle">{order.code_order}</td>
-              <td className="text-center align-middle">{order.name}</td>
-              <td className="text-center align-middle">{order.total_price}</td>
-              <td className="text-center align-middle">{order.date}</td>
-              <td className="text-center align-middle">{order.status}</td>
+              <td className="text-center align-middle">{order.name_user}</td>
               <td className="text-center align-middle">
-                <Button variant="info" size="sm">Xem</Button>
+                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.total_price)}
               </td>
+              <td className="text-center align-middle">
+                {new Date(order.date).toLocaleString("vi-VN", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: false,
+                  timeZone: "Asia/Ho_Chi_Minh"
+                })}
+              </td>
+              <td className="text-center align-middle">
+                {getOrderStatus(order.status)}
+              </td>
+              <td className="text-center align-middle">
+                {getOrderPayStatus(order.paystatus)}
+              </td>
+
+              <td className="text-center align-middle">
+              <Link to={`/admin/orders/${order.code_order}`}>
+                <Button variant="info" size="sm">Xem</Button>
+              </Link>
+            </td>
             </tr>
           ))}
         </tbody>
