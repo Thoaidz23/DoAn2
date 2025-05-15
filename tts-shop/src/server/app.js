@@ -49,11 +49,8 @@ const resetPasswordRoute = require('./customer/Routes/Newpassword.route');
 const chatRoutes = require('./customer/Routes/chat.route');
 const footer = require('./customer/Routes/Footer.route')
 
-<<<<<<< HEAD
+
 app.use('/api/dashboards', dashboardRoutes);
-=======
-//admin
->>>>>>> feeca5d1e87190f834b6b5a345109092b71f2daf
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', groupProductRoutes);
 app.use('/api/cagposts', cagpostRoutes);

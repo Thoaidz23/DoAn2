@@ -13,12 +13,11 @@ import { AuthContext } from "../../customer/context/AuthContext";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
-<<<<<<< HEAD
+
   console.log(products)
-=======
+
   const {user} = useContext(AuthContext)
 
->>>>>>> feeca5d1e87190f834b6b5a345109092b71f2daf
   // Gọi API từ backend khi component mount
   useEffect(() => {
     fetch("http://localhost:5000/api/products")
