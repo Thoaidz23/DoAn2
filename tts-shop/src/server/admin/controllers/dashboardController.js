@@ -19,24 +19,19 @@ const getDashboardData = async (req, res) => {
   try {
     // Tổng đơn hàng
     const ordersResult = await executeQuery("SELECT COUNT(*) AS totalOrders FROM tbl_order");
-    if (!ordersResult || ordersResult.length === 0) {
-      throw new Error("Không có dữ liệu đơn hàng.");
-    }
     const orders = ordersResult[0]?.totalOrders || 0;
 
     // Tổng khách hàng
     const usersResult = await executeQuery("SELECT COUNT(*) AS totalUsers FROM tbl_user WHERE role = 3");
-    if (!usersResult || usersResult.length === 0) {
-      throw new Error("Không có dữ liệu người dùng.");
-    }
     const users = usersResult[0]?.totalUsers || 0;
 
     // Tổng sản phẩm
     const productsResult = await executeQuery("SELECT COUNT(*) AS totalProducts FROM tbl_product");
-    if (!productsResult || productsResult.length === 0) {
-      throw new Error("Không có dữ liệu sản phẩm.");
-    }
     const products = productsResult[0]?.totalProducts || 0;
+
+    // Tổng bài viết
+    const postsResult = await executeQuery("SELECT COUNT(*) AS totalPosts FROM tbl_post");
+    const posts = postsResult[0]?.totalPosts || 0;
 
     // Doanh thu theo tháng
     const revenuesResult = await executeQuery(`
@@ -48,9 +43,6 @@ const getDashboardData = async (req, res) => {
       GROUP BY MONTH(date)
       ORDER BY month ASC
     `);
-    if (!revenuesResult || revenuesResult.length === 0) {
-      throw new Error("Không có dữ liệu doanh thu.");
-    }
     const revenues = revenuesResult.length ? revenuesResult : [];
 
     // Top sản phẩm bán chạy
@@ -67,9 +59,6 @@ const getDashboardData = async (req, res) => {
       ORDER BY total_sold DESC
       LIMIT 10
     `);
-    if (!topProductsResult || topProductsResult.length === 0) {
-      throw new Error("Không có dữ liệu sản phẩm bán chạy.");
-    }
     const topProducts = topProductsResult.length ? topProductsResult : [];
 
     // 10 sản phẩm ít bán chạy nhất
@@ -86,9 +75,6 @@ const getDashboardData = async (req, res) => {
       ORDER BY total_sold ASC
       LIMIT 10
     `);
-    if (!leastSoldProductsResult || leastSoldProductsResult.length === 0) {
-      throw new Error("Không có dữ liệu sản phẩm ít bán chạy.");
-    }
     const leastSoldProducts = leastSoldProductsResult.length ? leastSoldProductsResult : [];
 
     // Trả về tất cả dữ liệu
@@ -96,9 +82,10 @@ const getDashboardData = async (req, res) => {
       orders,
       users,
       products,
+      posts,           // <--- thêm ở đây
       revenues,
       topProducts,
-      leastSoldProducts, // Gộp luôn vào kết quả trả về
+      leastSoldProducts,
     });
 
   } catch (error) {
@@ -106,5 +93,6 @@ const getDashboardData = async (req, res) => {
     res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };
+
 
 module.exports = { getDashboardData };

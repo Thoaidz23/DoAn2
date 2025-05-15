@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import {
   ShoppingCart,
   Users,
   Package,
+  FileText
 } from "lucide-react";
 import {
   XAxis,
@@ -54,47 +56,72 @@ const Dashboard = () => {
       <h3 className="mb-4">Tổng quan</h3>
 
       {/* Cards thống kê */}
-      <div className="row g-4 mb-4">
-        <div className="col-md-4">
-          <div className="card bg-secondary text-white shadow-sm border-0">
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div>
-                <h6 className="mb-1">Tổng đơn hàng</h6>
-                <h4 className="mb-0">{stats.orders}</h4>
-              </div>
-              <div className="bg-dark rounded-circle p-3 d-flex align-items-center justify-content-center">
-                <ShoppingCart size={28} />
-              </div>
-            </div>
+<div className="row g-4 mb-4">
+  <div className="col-md-3">
+    <Link to="/admin/order" className="text-decoration-none">
+      <div className="card bg-secondary text-white shadow-sm border-0 h-100">
+        <div className="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 className="mb-1">Đơn hàng</h6>
+            <h4 className="mb-0">{stats.orders}</h4>
           </div>
-        </div>
-        <div className="col-md-4">
-          <div className="card bg-secondary text-white shadow-sm border-0">
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div>
-                <h6 className="mb-1">Khách hàng</h6>
-                <h4 className="mb-0">{stats.users}</h4>
-              </div>
-              <div className="bg-dark rounded-circle p-3 d-flex align-items-center justify-content-center">
-                <Users size={28} />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-4">
-          <div className="card bg-secondary text-white shadow-sm border-0">
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div>
-                <h6 className="mb-1">Sản phẩm</h6>
-                <h4 className="mb-0">{stats.products}</h4>
-              </div>
-              <div className="bg-dark rounded-circle p-3 d-flex align-items-center justify-content-center">
-                <Package size={28} />
-              </div>
-            </div>
+          <div className="bg-dark rounded-circle p-3 d-flex align-items-center justify-content-center">
+            <ShoppingCart size={28} />
           </div>
         </div>
       </div>
+    </Link>
+  </div>
+
+  <div className="col-md-3">
+    <Link to="/admin/customeraccount" className="text-decoration-none">
+      <div className="card bg-secondary text-white shadow-sm border-0 h-100">
+        <div className="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 className="mb-1">Khách hàng</h6>
+            <h4 className="mb-0">{stats.users}</h4>
+          </div>
+          <div className="bg-dark rounded-circle p-3 d-flex align-items-center justify-content-center">
+            <Users size={28} />
+          </div>
+        </div>
+      </div>
+    </Link>
+  </div>
+
+  <div className="col-md-3">
+    <Link to="/admin/product" className="text-decoration-none">
+      <div className="card bg-secondary text-white shadow-sm border-0 h-100">
+        <div className="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 className="mb-1">Sản phẩm</h6>
+            <h4 className="mb-0">{stats.products}</h4>
+          </div>
+          <div className="bg-dark rounded-circle p-3 d-flex align-items-center justify-content-center">
+            <Package size={28} />
+          </div>
+        </div>
+      </div>
+    </Link>
+  </div>
+
+  <div className="col-md-3">
+    <Link to="/admin/post" className="text-decoration-none">
+      <div className="card bg-secondary text-white shadow-sm border-0 h-100">
+        <div className="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 className="mb-1">Bài viết</h6>
+            <h4 className="mb-0">{stats.posts}</h4>
+          </div>
+          <div className="bg-dark rounded-circle p-3 d-flex align-items-center justify-content-center">
+            <FileText size={28} />
+          </div>
+        </div>
+      </div>
+    </Link>
+  </div>
+</div>
+
 
       {/* Biểu đồ doanh thu theo ngày */}
       <div className="card bg-dark text-white border-secondary mb-4">
