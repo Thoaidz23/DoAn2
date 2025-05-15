@@ -1,6 +1,8 @@
 const db = require("../../db");
+// BẠN ĐANG QUÊN IMPORT nodemailer
 const { v4: uuidv4 } = require("uuid");
 
+// Lấy thông tin giỏ hàng và người dùngd
 const getPay = async (req, res) => {
   const { id } = req.params;
 
@@ -45,5 +47,5 @@ const getPay = async (req, res) => {
 };
 
 module.exports = {
-    getPay
+  getPay
 };

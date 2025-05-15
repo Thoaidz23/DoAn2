@@ -19,3 +19,21 @@ exports.updateUserInfo = (req, res) => {
     res.json({ message: "Cập nhật thành công" });
   });
 };
+
+exports.lockUserAccount = (req, res) => {
+  const userId = req.params.id;
+  const sql = "UPDATE tbl_user SET lock_account = 1 WHERE id_user = ?";
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error("Lỗi khi khóa tài khoản:", err);
+      return res.status(500).json({ message: "Lỗi server" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    }
+
+    res.json({ message: "Tài khoản đã bị khóa" });
+  });
+};

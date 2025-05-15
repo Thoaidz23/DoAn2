@@ -76,54 +76,51 @@ const CartPage = () => {
   );
 
   return (
-    <>
-    {loading ? (
-      <div>Đang tải...</div>
-    ) : cartItems.length === 0 ? (
-      <div className="empty-cart text-center"   style={{ marginTop: "-60px" ,marginBottom : "100px"}}>
-        <div
-          className="cart-header-empty position-relative mb-0 pb-2 "
-          style={{ borderBottom: "1px solid gray", height: "50px",width:"50%" }}
-        >
-          <i
-            className="bi bi-arrow-left position-absolute start-0 top-50 translate-middle-y ms-2 text-black fs-4"
-            onClick={() => Paynavigate(-1)}
-            style={{ cursor: "pointer" }}
-          ></i>
-
-          <h2 className="mb-0 fw-bold text-center" style={{ fontSize: "1.8rem" }}>
-            Giỏ hàng
-          </h2>
-        </div>
-          <Image
-            src={require("../assets/img/giohangtrong.png")}
-            alt="Giỏ hàng trống"
-            fluid
-            className="empty-cart-img"
-          />
-          <h4 className="mt-3">Giỏ hàng của bạn đang trống</h4>
-        </div>
-      ) : (
-        <Container className="custom-cart-container"  style={{ marginTop: "-60px" ,marginBottom : "150px"}}>
-         
-          <ListGroup className="list-cart">
+      <>
+      {loading ? (
+        <div>Đang tải...</div>
+      ) : cartItems.length === 0 ? (
+        <div className="empty-cart text-center"   style={{ marginTop: "-60px" ,marginBottom : "100px"}}>
           <div
-  className="cart-header position-relative mb-3 pb-2"
-  style={{ borderBottom: "1px solid gray", height: "50px" }}
->
-  <i
-    className="bi bi-arrow-left position-absolute start-0 top-50 translate-middle-y ms-2 text-black fs-4"
-    onClick={() => Paynavigate(-1)}
-    style={{ cursor: "pointer" }}
-  ></i>
+            className="cart-header-empty position-relative mb-0 pb-2 "
+            style={{ borderBottom: "1px solid gray", height: "50px",width:"50%" }}
+          >
+            <i
+              className="bi bi-arrow-left position-absolute start-0 top-50 translate-middle-y ms-2 text-black fs-4"
+              onClick={() => Paynavigate(-1)}
+              style={{ cursor: "pointer" }}
+            ></i>
+  
+            <h2 className="mb-0 fw-bold text-center" style={{ fontSize: "1.8rem" }}>
+              Giỏ hàng
+            </h2>
+          </div>
+            <Image
+              src={require("../assets/img/giohangtrong.png")}
+              alt="Giỏ hàng trống"
+              fluid
+              className="empty-cart-img"
+            />
+            <h4 className="mt-3">Giỏ hàng của bạn đang trống</h4>
+          </div>
+        ) : (
+          <Container className="custom-cart-container"  style={{ marginTop: "-60px" ,marginBottom : "150px"}}>
+          
+            <ListGroup className="list-cart">
+            <div
+            className="cart-header position-relative mb-3 pb-2"
+            style={{ borderBottom: "1px solid gray", height: "50px" }}
+          >
+            <i
+              className="bi bi-arrow-left position-absolute start-0 top-50 translate-middle-y ms-2 text-black fs-4"
+              onClick={() => Paynavigate(-1)}
+              style={{ cursor: "pointer" }}
+            ></i>
 
-  <h2 className="mb-0 fw-bold text-center" style={{ fontSize: "1.8rem" }}>
-    Giỏ hàng
-  </h2>
-</div>
-
-
-
+            <h2 className="mb-0 fw-bold text-center" style={{ fontSize: "1.8rem" }}>
+              Giỏ hàng
+            </h2>
+          </div>
 
             {cartItems.map((item) => (
             <ListGroup.Item key={item.id_cart} className="d-flex align-items-center position-relative cart-item">
@@ -142,6 +139,7 @@ const CartPage = () => {
                     <Form.Control
                       type="number"
                       min="1"
+                      max="5"
                       value={item.quantity}
                       onChange={(e) => handleQuantityChange(item.id_cart, e.target.value)}
                       style={{ width: "70px" }}

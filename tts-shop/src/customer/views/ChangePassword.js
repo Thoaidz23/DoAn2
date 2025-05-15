@@ -202,7 +202,7 @@ function ChangePassword() {
       <div className="container">
         <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         <div className="account-content p-4 bg-white shadow rounded-4">
-          <h4 className="mb-4">Đổi mật khẩu</h4>
+          <h4 className="mb-4 text-center">Đổi mật khẩu</h4>
           {error && <div className="alert alert-danger">{error}</div>}
           {success && <div className="alert alert-success">{success}</div>}
 

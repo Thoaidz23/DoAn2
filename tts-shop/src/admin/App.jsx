@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+=======
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider,AuthContext } from "../customer/context/AuthContext"; 
+>>>>>>> feeca5d1e87190f834b6b5a345109092b71f2daf
 import Sidebar from "./components/Sidebar";
 import Dashboard from './pages/Dashboard';
 import Order from './pages/Order';
@@ -25,11 +30,17 @@ import AddBanner from "./pages/AddBanner";
 import EditBanner from "./pages/EditBanner";
 import AddPost from './pages/AddPost';
 import EditPost from './pages/EditPost';
+<<<<<<< HEAD
 import Footer from './pages/Footer';
 
 
+=======
+import AdminAccount from './pages/Account'
+import ChangePassword from './pages/AddminChangePW';
+>>>>>>> feeca5d1e87190f834b6b5a345109092b71f2daf
 function App() {
   return (
+    <AuthProvider>
     <Router>
       <div className="d-flex">
         <Sidebar />
@@ -64,16 +75,21 @@ function App() {
             <Route path="/admin/banner/edit/:id" element={<EditBanner />} />
             <Route path="/admin/post/add" element={<AddPost />} />
             <Route path="/admin/post/edit/:id" element={<EditPost />} />
+<<<<<<< HEAD
             <Route path="/admin/footer" element={<Footer />} />
 
 
 
+=======
+            <Route path="/admin/Account" element={<AdminAccount />} />
+            <Route path="/admin/AddminChangePW" element={<ChangePassword />} />
+>>>>>>> feeca5d1e87190f834b6b5a345109092b71f2daf
             {/* Route khác sau này */}
           </Routes>
         </div>
 
       </div>
-    </Router>
+    </Router></AuthProvider>
   );
 }
 

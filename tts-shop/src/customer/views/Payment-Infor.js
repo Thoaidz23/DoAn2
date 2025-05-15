@@ -14,29 +14,39 @@ const PaymentInfor = () => {
   const [cartItems, setCartItems] = useState([]); // Lưu giỏ hàng
   const [userInfo, setUserInfo] = useState(null); // Lưu thông tin người dùng từ context
   const [loading, setLoading] = useState(true); // Trạng thái loading
-  const [errorMessage, setErrorMessage] = useState("");
+ const [errorMessage, setErrorMessage] = useState("");
 
 useEffect(() => {
   if (errorMessage) {
     const timer = setTimeout(() => {
       setErrorMessage("");
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }
 }, [errorMessage]);
 
+  const [tempAddress, setTempAddress] = useState("");  // Địa chỉ chỉnh sửa
+  const [isEditingAddress, setIsEditingAddress] = useState(false); // Trạng thái chỉnh sửa
+
+  const [tempPhone , setTempPhone] = useState("");  // Địa chỉ chỉnh sửa
+  const [isEditingPhone, setIsEditingPhone] = useState(false); // Trạng thái chỉnh sửa
+
+
   useEffect(() => {
+    
     if (!user) {
       setLoading(false); // Nếu không có user, thoát khỏi loading ngay
       return;
     }
-
+    
     const fetchCartData = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/payment/${user.id}`);
         console.log("Dữ liệu từ API:", res.data);
         setCartItems(res.data.product); // dùng đúng mảng
+        setTempAddress(res.data.address);
+        setTempPhone(res.data.phone)
       } catch (err) {
         console.error("Lỗi khi lấy giỏ hàng:", err);
       }
@@ -66,36 +76,39 @@ useEffect(() => {
   const handlePaymentSelect = (method) => {
     setSelectedPayment(method);
   };
+
   const handleAddToPay = async () => {
-  if (selectedPayment === null) {
-    setErrorMessage("Vui lòng chọn phương thức thanh toán!");
-    return;
-  }
+    if (selectedPayment === null) {
+      setErrorMessage("Vui lòng chọn phương thức thanh toán!");
+      return;
+    }
+    setErrorMessage(""); // Xóa lỗi cũ nếu có
 
-  setErrorMessage(""); // Xóa lỗi cũ nếu có
+    if (!user || cartItems.length === 0 || !userInfo) return;
+    const payload = {
+      email:user.email,
+      id_user: user.id,
+      name_user: userInfo.name,
+      address: tempAddress || userInfo.address,
+      phone: tempPhone || userInfo.phone,
+      method: selectedPayment, // Gửi phương thức thanh toán (0, 1, 2)
+      products: cartItems.map(item => ({
+        id_product: item.id_product,
+        quantity: item.quantity,
+        price: item.price,
+        id_group_product: item.id_group_product,
+        name_group_product: item.name_group_product,
+        image: item.image
+      }))
+    };
 
-  if (!user || cartItems.length === 0 || !userInfo) return;
-
-  const payload = {
-    id_user: user.id,
-    name_user: userInfo.name,
-    address: userInfo.address,
-    phone: userInfo.phone,
-    method: selectedPayment,
-    products: cartItems.map(item => ({
-      id_product: item.id_product,
-      quantity: item.quantity,
-      price: item.price,
-      id_group_product: item.id_group_product
-    }))
-  };
 
   try {
     if (selectedPayment === 0) {
       const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
       navigate("/PurchaseHistory");
     } else if (selectedPayment === 1) {
-      navigate("/Payment-momo", { state: { payload } });
+      navigate("/Payment-momo", { state: { payload } });  
     } else if (selectedPayment === 2) {
       navigate("/Payment-Bank", { state: { payload } });
     }
@@ -105,12 +118,14 @@ useEffect(() => {
   }
 };
 
+
   return (
     
     <div className="payment-infor">
-      {errorMessage && (
-  <p className="error-message">
-    <FaExclamationTriangle className="warning-icon" />
+       {errorMessage && (
+  <p className="error-message"> 
+    <FaExclamationTriangle className="warning-icon" /> 
+
     {errorMessage}
   </p>
 )}
@@ -159,13 +174,52 @@ useEffect(() => {
                 <div>
                   <p>{userInfo.name}</p>
                   <p>Email: {userInfo.email}</p>
-                  <p>Địa chỉ : {userInfo.address}</p>
+                  <p>
+                    Địa chỉ: {
+                      isEditingAddress ? (
+                        <input
+                          type="text"
+                          value={tempAddress}
+                          onChange={(e) => setTempAddress(e.target.value)}
+                          className="edit-address-input"
+                          style={{width:"200%"}}
+                        />
+                      ) : (
+                        tempAddress || userInfo.address
+                      )
+                    }
+                  <p
+                    className="edit-icon"
+                    onClick={() => setIsEditingAddress((prev) => !prev)}
+                    style={{top:"44%"}}
+                  >
+                    {isEditingAddress ? "✔" : "✎"}
+                  </p>
+
+                  </p>
+                  <p>
+                    Số điện thoại: {
+                      isEditingPhone ? (
+                        <input
+                          type="text"
+                          value={tempPhone}
+                          onChange={(e) => setTempPhone(e.target.value)}
+                          className="edit-address-input"s
+                        />
+                      ) : (
+                        tempPhone || userInfo.phone
+                      )
+                    }
+                    <span
+                    className="edit-icon"
+                    onClick={() => setIsEditingPhone((prev) => !prev)}
+                  >
+                    {isEditingPhone ? "✔" : "✎"}
+                  </span>
+
+                  </p>
                 </div>
                 <div className="right-align">
-                  <p>{userInfo.phone}</p>
-                  <span
-                    className="edit-icon"
-                    onClick={() => navigate('/Home.js')}>✎</span>
                 </div>
               </div>
             </div>
@@ -173,11 +227,12 @@ useEffect(() => {
         ) : (
           <p>Vui lòng đăng nhập để xem thông tin khách hàng.</p>
         )}
+        
 
         {/* Phương thức thanh toán */}
         <h2 className="section-title section-header">PHƯƠNG THỨC THANH TOÁN</h2>
         <div className="info-card payment-options">
-          <div
+          {totalPrice < 10000000 ? (<div
             className={`payment-option ${selectedPayment === 0 ? "active" : ""}`}
             onClick={() => handlePaymentSelect(0)}
           >
@@ -188,6 +243,10 @@ useEffect(() => {
             />
             <p>Thanh toán khi nhận hàng</p>
           </div>
+          ):(
+            <div></div>
+          )}
+          
 
           <div
             className={`payment-option ${selectedPayment === 1 ? "active" : ""}`}
@@ -213,7 +272,7 @@ useEffect(() => {
             <p>Chuyển khoản ngân hàng</p>
           </div>
         </div>
-
+       
         {/* Thanh toán */}
         <div className="checkout-summary">
           <p className="subtotal">

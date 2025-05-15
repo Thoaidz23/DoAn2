@@ -64,7 +64,7 @@ function Newbar() {
         <div className="news-wrapper">
           <div className="container">
             <div className="row gx-2 gy-3">
-              {posts.map((item) => (
+              {posts.slice(0, 4).map((item) => (
                 <div className="col-md-3" key={item.id_post}>
                   <Link to={`/postdetail/${item.id_post}`}>
                   <div className="card h-100 shadow-sm">
@@ -78,13 +78,13 @@ function Newbar() {
                       </div>
                     <div className="card-body p-2 pb-0">
                       <h6 className="card-title fw-bold">{item.title}</h6>
-                      <div className="text-muted small d-flex flex-wrap align-items-center mt-3 ">
+                      <div className="text-muted small d-flex flex-wrap align-items-center mt-2 ">
                         <div className="me-5 " >
                           <i className="bi bi-person-circle me-1"></i>
-                          <span className="me-5">{item.author}</span>
+                          <span className="me-5"> {item.author}</span>
                         </div>
                         
-                        <div>
+                        <div className='me-5'>
                           <i className="bi bi-clock me-1 "></i>
                           <span>{formatDate(item.date)}</span>
                         </div>

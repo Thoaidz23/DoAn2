@@ -66,7 +66,7 @@ const handleHistory = async () => {
     };
 
     const res = await axios.post("http://localhost:5000/api/pay/addpay", vcbPayload);
-    setErrorMessage("Thanh toán thành công qua MoMO!");
+    setErrorMessage("Thanh toán thành công qua MoMo!");
     
     // ⏳ Chờ 3 giây trước khi chuyển trang
     setTimeout(() => {
@@ -104,7 +104,7 @@ const handleHistory = async () => {
               <div className="row-momo"><strong>Nhà cung cấp</strong> <span>TTS SHOP</span></div>
               <div className="row-momo"><strong>Mã đơn hàng <span style={{fontWeight:"100",color:"red"}}>(Nhập mã đơn hàng vào lời nhắn)</span></strong> <span>{code}</span></div>
               <div className="row-momo price-row">
-                <strong>Số tiền:</strong> 
+                <strong>Số tiền <span style={{fontWeight:"100",color:"red",fontSize:"14px"}}>(Vui lòng nhập đúng giá tiền)</span></strong> 
                 <span className="price">
                   {payload?.products?.reduce((sum, item) => sum + item.price * item.quantity, 0)?.toLocaleString()}đ
                 </span>

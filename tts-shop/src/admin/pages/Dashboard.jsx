@@ -14,8 +14,12 @@ import {
   LineChart,
   Line,
 } from "recharts";
+ 
+import { AuthContext } from "../../customer/context/AuthContext";
+import { useContext } from "react";
 
 const Dashboard = () => {
+<<<<<<< HEAD
   const [stats, setStats] = useState({
     orders: 0,
     users: 0,
@@ -24,6 +28,19 @@ const Dashboard = () => {
     topProducts: [],
     leastSoldProducts: [],
   });
+=======
+ const { user } = useContext(AuthContext); // Lấy user từ context
+  console.log(user)
+  // Dữ liệu doanh thu
+  const revenueData = [
+    { month: "1", revenue: 10 },
+    { month: "2", revenue: 12 },
+    { month: "3", revenue: 8 },
+    { month: "4", revenue: 15 },
+    { month: "5", revenue: 20 },
+    { month: "6", revenue: 18 },
+  ];
+>>>>>>> feeca5d1e87190f834b6b5a345109092b71f2daf
 
   useEffect(() => {
     const fetchDashboardData = async () => {

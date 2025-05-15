@@ -143,3 +143,4 @@ exports.deleteOtp = (req, res) => {
     }
   );
 };
+

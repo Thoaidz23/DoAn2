@@ -15,7 +15,7 @@ exports.resetPassword = (req, res) => {
     }
 
     // Cập nhật mật khẩu trong CSDL
-    const sql = 'UPDATE tbl_user SET password = ? WHERE email = ?';
+    const sql = 'UPDATE tbl_user SET password = ?, lock_account = 0 WHERE email = ?';
     db.query(sql, [hashedPassword, email], (err, result) => {
       if (err) {
         console.error("Lỗi SQL:", err);

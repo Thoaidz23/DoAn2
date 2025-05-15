@@ -52,7 +52,7 @@ const PostDetail = () => {
               Đăng bởi <strong>{post.author}</strong> | Ngày: {formatDate(post.date)}
             </small>
           </div>
-          <div style={{ textAlign: "justify", lineHeight: "1.8",fontWeight : "400"}} dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div  className="post-content" style={{ textAlign: "justify", lineHeight: "1.8",fontWeight : "400",width:"100%"}} dangerouslySetInnerHTML={{ __html: post.content }} />
         </Col>
       </Row>
     </Container>
