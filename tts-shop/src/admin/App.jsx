@@ -30,6 +30,7 @@ import EditPost from './pages/EditPost';
 import Footer from "./pages/Footer";
 import AdminAccount from './pages/Account'
 import ChangePassword from './pages/AddminChangePW';
+import ProductImagesPage from './pages/ProductImagesManager'
 
 function App() {
   return (
@@ -71,6 +72,7 @@ function App() {
             <Route path="/admin/footer" element={<Footer />} />
             <Route path="/admin/Account" element={<AdminAccount />} />
             <Route path="/admin/AddminChangePW" element={<ChangePassword />} />
+           <Route path="/admin/product/:id/images" element={<ProductImagesPage />} />
 
             {/* Route khác sau này */}
           </Routes>
