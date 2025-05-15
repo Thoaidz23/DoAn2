@@ -2,31 +2,29 @@ const express = require('express');
 const router = express.Router();
 const upload = require("../middlewares/uploadProduct");  
 const groupProductController = require('../controllers/groupProductController');
+
 // Lấy tất cả dòng sản phẩm
 router.get('/', groupProductController.getAllProducts);
 
 // Lấy chi tiết sản phẩm theo ID
 router.get('/edit/:id', groupProductController.getGroupProductById);
 
-// Thêm route mới để lấy danh mục sản phẩm
+// Lấy danh mục sản phẩm và thương hiệu
 router.get('/categories', groupProductController.getProductCag);
-
-// Lấy danh mục thương hiệu
 router.get('/brands', groupProductController.getBrandCategory);
 
-// Các route cho RAM, ROM, và Color dưới /api/products
-router.get('/ram', groupProductController.getRamOptions); // Lấy dữ liệu RAM
-router.get('/rom', groupProductController.getRomOptions); // Lấy dữ liệu ROM
-router.get('/color', groupProductController.getColorOptions); // Lấy dữ liệu Color
+// Các option cấu hình
+router.get('/ram', groupProductController.getRamOptions);
+router.get('/rom', groupProductController.getRomOptions);
+router.get('/color', groupProductController.getColorOptions);
 
-// Thêm sản phẩm mới
-router.post('/add', upload.single("image"), (req, res) => {
-  groupProductController.addProduct(req, res);
-});
+// Thêm và cập nhật sản phẩm
+router.post('/add', upload.single("image"), groupProductController.addProduct);
+router.post('/update/:id', upload.single("image"), groupProductController.updateProduct);
 
-// Cập nhật thông tin sản phẩm
-router.put('/update/:id', upload.single("image"), (req, res) => {
-  groupProductController.updateProduct(req, res);  // Gọi controller xử lý cập nhật
-});
+// Quản lý ảnh phụ
+router.get('/images/:id', groupProductController.getProductImages);
+router.post('/images/upload/:id', upload.single("image"), groupProductController.uploadProductImage);
+router.delete('/images/delete/:imageId', groupProductController.deleteProductImage);
 
 module.exports = router;
