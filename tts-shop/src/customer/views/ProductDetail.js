@@ -40,17 +40,20 @@ const ProductDetail = () => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
       .then((res) => {
         const data = res.data;        
-        console.log("dataproduct",data)
+        console.log("dataproduct",data.product[0])
         setProducts(data.product);
         setPost(data.post)
         setSpecifications(data.specifications);
         setDefaultProduct(data.product[0]);
         setSelectedProduct(data.product[0]);
+         
       })  
       .catch((err) => {
         console.error("Lỗi khi lấy chi tiết sản phẩm:", err);
       });
   }, [id]);
+
+  
   if (!selectedProduct || !defaultProduct) return <div className="text-center p-5">Đang tải...</div>;
 
   const fullProductInfo = selectedProduct;
@@ -89,7 +92,7 @@ const ProductDetail = () => {
       setSuccess(false); // Ẩn thông báo sau 3 giây
     }, 3000);
     try {
-      const res = await axios.post("http://localhost:5000/api/cart/add", {
+      await axios.post("http://localhost:5000/api/cart/add", {
         id_user: user.id,
         id_product: selectedProduct.id_product,
         quantity,
@@ -159,8 +162,10 @@ const ProductDetail = () => {
   }
 };
 
+
+
 const getAvailableOptions = (field) => {
-  const { id_color, id_ram, id_rom } = selectedProduct;
+  const { id_color, id_ram } = selectedProduct;
 
   return products
     .filter((product) => {
@@ -198,7 +203,8 @@ const getAvailableOptions = (field) => {
   const availableRomOptions = getAvailableOptions("id_rom");
   const availableRomIds = new Set(availableRomOptions.map(o => o.id));
   
-   
+   const isDisabled = quantity > selectedProduct.quantity;
+
   return (
     
     <div>
@@ -273,12 +279,28 @@ const getAvailableOptions = (field) => {
 
           <Col md={5}>
             <h2>{selectedProduct.name_group_product}</h2>
-            <h4 className="text-danger">
+            <h4 className="text-danger" >
               {selectedProduct.price.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
               })}
+              {selectedProduct.quantity === 0 && (
+                  <span
+                    style={{
+                      color: "orange",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      userSelect: "none",
+                      marginLeft:"20px"
+                    }}
+                    onClick={() => alert("Sản phẩm đã hết hàng!")}
+                  >
+                     Hết hàng
+                  </span>
+                )}
             </h4>
+               
+
               
             {selectedProduct.name_color && (
                 <ProductOptionSelector
@@ -326,33 +348,64 @@ const getAvailableOptions = (field) => {
                 </Form.Group>
               </Col>
 
-              <Col xs={8}>
-              {user ? (
-                quantity <= 5 ? (
-                  <>
-                    <Button className="cart-btn" onClick={handleAddToCart}>
-                      <CartPlus className="me-2" /> Thêm vào giỏ hàng
-                    </Button>
-                  </>
+               <Col xs={8}>
+                {user ? (
+                  quantity <= 5 ? (
+                    !isDisabled ? (
+                      <Button className="cart-btn" onClick={handleAddToCart}>
+                        <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                      </Button>
+                    ) : (
+                      <Button className="cart-btn btn-disabled" disabled>
+                        <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                      </Button>
+                    )
+                  ) : (
+                    !isDisabled ? (
+                      <Button className="cart-btn">
+                        <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                      </Button>
+                    ) : (
+                      <Button className="cart-btn btn-disabled" disabled>
+                        <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                      </Button>
+                    )
+                  )
                 ) : (
-                  <>
-                    <Button className="cart-btn">
+                  !isDisabled ? (
+                    <Button className="cart-btn" onClick={handleAddToCartFaile}>
                       <CartPlus className="me-2" /> Thêm vào giỏ hàng
                     </Button>
-                  </>
-                )
-              ) : (
-                <Button className="cart-btn" onClick={handleAddToCartFaile}>
-                  <CartPlus className="me-2" /> Thêm vào giỏ hàng
-                </Button>
-              )}
-            </Col>
+                  ) : (
+                    <Button className="cart-btn btn-disabled" disabled>
+                      <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                    </Button>
+                  )
+                )}
+              </Col>
             
             </Row>
             <div className="d-grid gap-2 mb-4">
-              <Button className="buy-btn" size="lg" onClick={handleBuyNow}>
+              {selectedProduct.quantity === 0 || selectedProduct.quantity < quantity  ? (
+                <Button
+                className="buy-btn"
+                size="lg"
+                onClick={handleBuyNow}
+               style={{opacity: "0.5", pointerEvents: "none" }}
+              >
                 <BagCheck className="me-2" /> Mua ngay
               </Button>
+            ):(
+                <Button
+                className="buy-btn"
+                size="lg"
+                onClick={handleBuyNow}
+              >
+                <BagCheck className="me-2" /> Mua ngay
+              </Button>   
+            )}
+              
+              
             </div>
           </Col>
         </Row>

@@ -74,19 +74,17 @@ function Product() {
   categoryName={filtered[0]?.name_category_brand || filtered[0]?.name_category_product}
 />
 
-
-   
       <div className="container-search">
-        <div className="product-one-content">
+        <div className="product-one-content" style={{maxWidth:"1200px"}}>
           <div className="container">
             <div className="product-one-content-title">
-              <h2>Kết quả tìm kiếm</h2>
+              <h2 style={{marginLeft:"100px"}}>Kết quả tìm kiếm</h2>
             </div>
 
-            <div className="product-one-content-items">
+            <div className="product-one-content-items"style={{width:"100%",margin:"0 0 10% 14%"}}>
               {filtered.length > 0 ? (
                 filtered.map((product) => (
-                  <div className="product-one-content-item" key={product.id_group_product}>
+                  <div className="product-one-content-item" key={product.id_group_product} style={{width:"21.7%"}}>
                     <Link to={`/product/${product.id_group_product}`}>
                       <img src={`http://localhost:5000/images/product/${product.image}`} alt={product.name_group_product} />
                     </Link>

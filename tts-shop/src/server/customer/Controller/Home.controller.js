@@ -3,7 +3,7 @@ const db = require('../../db');
 const getHomeData = async (req, res) => {
   try {
     // Lấy nhóm sản phẩm
-    const [products] = await db.promise().query('SELECT g.*,p.price FROM tbl_group_product g JOIN tbl_product p ON p.id_group_product = g.id_group_product GROUP BY g.name_group_product');
+    const [products] = await db.promise().query('SELECT g.*,p.price FROM tbl_group_product g JOIN tbl_product p ON p.id_group_product = g.id_group_product WHERE g.is_del=0 GROUP BY g.name_group_product');
     
     // Lấy danh mục sản phẩm
     const [categories] = await db.promise().query('SELECT * FROM tbl_category_product');
@@ -13,7 +13,9 @@ const getHomeData = async (req, res) => {
        SELECT DISTINCT dmsp.id_category_product, th.name_category_brand,th.id_category_brand
       FROM tbl_group_product sp
       JOIN tbl_category_brand th ON th.id_category_brand = sp.id_category_brand
-      JOIN tbl_category_product dmsp ON dmsp.id_category_product = sp.id_category_product 
+      JOIN tbl_category_product dmsp ON dmsp.id_category_product = sp.id_category_product
+      JOIN tbl_group_product gp ON gp.id_group_product= sp.id_group_product
+      WHERE gp.is_del = 0
     `);
 
     // Nhóm thương hiệu theo id_dmsp
