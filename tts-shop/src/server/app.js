@@ -10,10 +10,8 @@ const PORT = 5000;
 
 const bodyParser = require("body-parser");
 
-
 // Chen hinh
 app.use('/images', express.static(path.join(__dirname, 'images')));
-
 
 //admin
 const dashboardRoutes = require('./admin/routes/dashboardRoutes');
@@ -25,6 +23,7 @@ const cagproductRoutes = require('./admin/routes/cagproductRoutes');
 const bannerRoutes = require('./admin/routes/bannerRoutes');
 const postRoutes = require('./admin/routes/postRoutes');
 const footerRoutes = require('./admin/routes/footerRoutes');
+const staffaccountRoutes = require('./admin/routes/staffaccountRoutes');
 
 //customer
 const HProductRoute = require('./customer/Routes/Home.routes')
@@ -59,6 +58,8 @@ app.use('/api/cagproducts', cagproductRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/footers', footerRoutes);
+app.use('/api/staffaccounts', staffaccountRoutes);
+
 
 //customer
 app.use('/api/Home',HProductRoute)

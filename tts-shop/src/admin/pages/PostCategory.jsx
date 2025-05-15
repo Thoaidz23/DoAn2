@@ -40,6 +40,7 @@ const PostCategory = () => {
 
   return (
     <div>
+      <h4 className="m-0">Quản lý danh mục bài viết</h4>
       {/* Nút thêm danh mục bài viết */}
       <Button as={Link} to="/admin/postcategory/add" variant="primary" className="mt-4 mb-3">
         Thêm danh mục bài viết

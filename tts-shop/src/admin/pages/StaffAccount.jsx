@@ -1,76 +1,85 @@
-import { Table, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
-import { Search, UserPlus } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
+import { Button } from "react-bootstrap";
+import axios from 'axios';
 
-const StaffAccount = () => {
-  // Dữ liệu mẫu
-  const staffs = [
-    {
-      id: 1,
-      name: "Nguyễn Văn A",
-      email: "a.nguyen@example.com",
-      phone: "0123456789",
-    },
-    {
-      id: 2,
-      name: "Trần Thị B",
-      email: "b.tran@example.com",
-      phone: "0987654321",
-    },
-  ];
+const Staff = () => {
+  const [staffs, setStaffs] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/staffaccounts")
+      .then((res) => res.json())
+      .then((data) => setStaffs(data))
+      .catch((err) => console.error("Lỗi khi fetch nhân viên:", err));
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa nhân viên này không?")) {
+      try {
+        await axios.delete(`http://localhost:5000/api/staffaccounts/${id}`);
+        alert("Xóa nhân viên thành công!");
+        window.location.reload();
+      } catch (err) {
+        console.error("Lỗi khi xóa nhân viên:", err);
+        alert("Xóa không thành công");
+      }
+    }
+  };
 
   return (
     <div>
-      <h4 className="mb-4">Tài khoản nhân viên</h4>
-      {/* Thanh tìm kiếm và nút thêm */}
-      <Row className="align-items-center mt-4 mb-3">
-        <Col md={6}>
-          <InputGroup>
-            <InputGroup.Text>
-              <Search size={18} />
-            </InputGroup.Text>
-            <Form.Control placeholder="Tìm tài khoản nhân viên..." />
-          </InputGroup>
-        </Col>
-        <Col md={6} className="text-end">
-          <Button variant="primary">
-            <UserPlus size={18} className="me-2" />
-            Thêm tài khoản nhân viên
-          </Button>
-        </Col>
-      </Row>
+      <h3 className="mb-4">Quản lý nhân viên</h3>
 
-      {/* Bảng tài khoản nhân viên */}
-      <Table striped bordered hover responsive variant="dark">
-        <thead>
-          <tr>
-            <th className="text-center align-middle">STT</th>
-            <th className="text-center align-middle">Email</th>
-            <th className="text-center align-middle">Họ tên</th>
-            <th className="text-center align-middle">Số điện thoại</th>
-            <th className="text-center align-middle">Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {staffs.map((staff, index) => (
-            <tr key={staff.id}>
-              <td className="text-center align-middle">{index + 1}</td>
-              <td className="text-center align-middle">{staff.email}</td>
-              <td className="text-center align-middle">{staff.name}</td>
-              <td className="text-center align-middle">{staff.phone}</td>
-              <td className="text-center align-middle">
-                <Button variant="warning" size="sm" className="me-2">
-                  Sửa
-                </Button>
-                <Button variant="danger" size="sm">
-                  Xóa
-                </Button>
-              </td>
+      <div className="mb-3 text-end" style={{ marginTop: "-100px" }}>
+        <Button as={Link} to="/admin/staffaccount/add" variant="primary" className="mb-3">
+          Thêm nhân viên
+        </Button>
+      </div>
+
+      <div className="table-responsive">
+        <table className="table table-bordered table-dark table-hover align-middle">
+          <thead>
+            <tr>
+              <th className="text-center align-middle">STT</th>
+              <th className="text-center align-middle">Tên</th>
+              <th className="text-center align-middle">Email</th>
+              <th className="text-center align-middle">Số điện thoại</th>
+              <th className="text-center align-middle">Địa chỉ</th>
+              <th className="text-center align-middle">Hành động</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {staffs.length > 0 ? (
+              staffs.map((staff, index) => (
+                <tr key={staff.id_user}>
+                  <td className="text-center">{index + 1}</td>
+                  <td className="text-center">{staff.name}</td>
+                  <td className="text-center">{staff.email}</td>
+                  <td className="text-center">{staff.phone}</td>
+                  <td className="text-center">{staff.address}</td>
+                  <td className="text-center">
+                    <Link to={`/admin/staffaccount/edit/${staff.id_user}`}>
+                      <button className="btn btn-sm btn-warning me-2">Sửa</button>
+                    </Link>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDelete(staff.id_user)}
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center">Danh sách nhân viên trống</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export default StaffAccount;
+export default Staff;

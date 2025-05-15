@@ -30,6 +30,8 @@ import EditPost from './pages/EditPost';
 import Footer from "./pages/Footer";
 import AdminAccount from './pages/Account'
 import ChangePassword from './pages/AddminChangePW';
+import AddStaffaccount from './pages/AddStaffaccount';
+import EditStaffaccount from './pages/EditStaffaccount';
 
 function App() {
   return (
@@ -57,6 +59,8 @@ function App() {
             <Route path="/admin/post" element={<Post />} />
             <Route path="/admin/postcategory" element={<PostCategory />} />
             <Route path="/admin/staffaccount" element={<StaffAccount />} />
+            <Route path="/admin/staffaccount/add" element={<AddStaffaccount />} />
+            <Route path="/admin/staffaccount/edit/:id" element={<EditStaffaccount />} />
             <Route path="/admin/customeraccount" element={<CustomerAccount />} />
             <Route path="/admin/categories/add" element={<AddProductCategory />} />
             <Route path="/admin/categories/edit/:id" element={<EditProductCategory />} />
@@ -65,6 +69,7 @@ function App() {
             <Route path="/admin/postcategory/add" element={<AddPostCategory />} />
             <Route path="/admin/postcategory/edit/:id" element={<EditPostCategory />} />
             <Route path="/admin/banner/add" element={<AddBanner />} />
+            <Route path="/admin/staffaccount/add" element={<AddBanner />} />
             <Route path="/admin/banner/edit/:id" element={<EditBanner />} />
             <Route path="/admin/post/add" element={<AddPost />} />
             <Route path="/admin/post/edit/:id" element={<EditPost />} />
