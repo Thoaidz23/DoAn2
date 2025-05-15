@@ -13,25 +13,36 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // ✅ Thêm state cho loading
 
   const handleLogin = async () => {
-    setLoading(true);
-    setErrorMessage("");
+  setLoading(true);
+  setErrorMessage("");
 
-    try {
-      const res = await axios.post("http://localhost:5000/api/users/login", {
-        email,
-        password,
-      });
+  try {
+    const res = await axios.post("http://localhost:5000/api/users/login", {
+      email,
+      password,
+    });
 
-      const { token, user } = res.data;
-      login(user, token); // ✅ Gọi login từ context
-
-      window.location.href = user.role === 1 ? "/admin/dashboard" : "/";
-    } catch (error) {
-      setErrorMessage("Sai email hoặc mật khẩu");
+    const { token, user } = res.data;
+    login(user, token); // ✅ Gọi login từ context
+    window.location.href = user.role === 1 ? "/admin/dashboard" : "/";
+  } catch (error) {
+    // Xử lý các lỗi riêng biệt
+    if (error.response) {
+      if (error.response.status === 403) {
+        setErrorMessage("Tài khoản của bạn đã bị khóa, vui lòng chọn Quên mật khẩu để cấp lại");
+      } else if (error.response.status === 400) {
+        setErrorMessage("Sai email hoặc mật khẩu");
+      } else {
+        setErrorMessage("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      }
+    } else {
+      setErrorMessage("Lỗi kết nối tới server");
     }
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+};
+
 
   return (
     <Container className="d-flex justify-content-center vh-100 mt-5">

@@ -10,7 +10,7 @@ function BillDetail() {
   const { code_order } = useParams();
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
-
+  console.log(products)
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
 
   useEffect(() => {

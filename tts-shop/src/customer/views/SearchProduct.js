@@ -87,13 +87,13 @@ function Product() {
               {filtered.length > 0 ? (
                 filtered.map((product) => (
                   <div className="product-one-content-item" key={product.id_group_product}>
-                    <Link to={`/ProductDetail/${product.id_group_product}`}>
+                    <Link to={`/product/${product.id_group_product}`}>
                       <img src={`http://localhost:5000/images/product/${product.image}`} alt={product.name_group_product} />
                     </Link>
                     <div className="product-one-content-item-text">
                       <ul>
                         <li>
-                          <Link to={`/ProductDetail/${product.id_group_product}`} style={{ textDecoration: "none", color: "inherit" }}>
+                          <Link to={`/product/${product.id_group_product}`} style={{ textDecoration: "none", color: "inherit" }}>
                             {product.name_group_product}
                           </Link>
                         </li>
@@ -104,7 +104,8 @@ function Product() {
                   </div>
                 ))
               ) : (
-                <p>Không tìm thấy sản phẩm phù hợp.</p>
+                <img src="no-products.png" alt="Không có sản phẩm" style={{margin:"0 0 0 15%"}} />
+
               )}
             </div>
           </div>

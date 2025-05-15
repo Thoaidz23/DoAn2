@@ -66,7 +66,7 @@ const handleHistory = async () => {
     };
 
     const res = await axios.post("http://localhost:5000/api/pay/addpay", vcbPayload);
-    setErrorMessage("Thanh toán thành công qua MoMO!");
+    setErrorMessage("Thanh toán thành công qua MoMo!");
     
     // ⏳ Chờ 3 giây trước khi chuyển trang
     setTimeout(() => {

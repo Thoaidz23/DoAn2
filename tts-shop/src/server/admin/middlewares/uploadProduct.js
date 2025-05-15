@@ -1,45 +1,35 @@
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
 
-// Thư mục lưu ảnh
-const uploadDir = path.join(__dirname, "../../images/product");
-
-// Tạo thư mục nếu chưa tồn tại
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Cấu hình nơi lưu file và tên file
+// Định nghĩa nơi lưu ảnh và tên ảnh
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDir); // Lưu trong public/images/product
+    cb(null, "./images/product");  // Đường dẫn lưu trữ ảnh
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const originalName = path.parse(file.originalname).name.replace(/\s+/g, '-'); // Xử lý khoảng trắng
     const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + ext); // ví dụ: hinhanh-123456789.png
+    const timestamp = Date.now();
+    cb(null, `${originalName}_${timestamp}${ext}`);
+  }
+});
+
+// Tạo middleware upload với multer
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 },  // Giới hạn kích thước file 10MB
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png|gif|webp/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error("Chỉ hỗ trợ các định dạng ảnh: jpeg, jpg, png, gif"));
+    }
   },
 });
 
-// Bộ lọc file (chỉ cho phép ảnh)
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-
-  if (extname && mimetype) {
-    cb(null, true);
-  } else {
-    cb(new Error("Chỉ cho phép upload hình ảnh (jpeg, jpg, png, gif)"));
-  }
-};
-
-// Khởi tạo middleware upload
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Giới hạn 5MB
-});
-
+// Expose middleware để sử dụng trong các route
 module.exports = upload;

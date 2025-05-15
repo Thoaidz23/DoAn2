@@ -55,11 +55,12 @@ function ProductSection({ title, visibleProducts, handleNext, handlePrev, brands
                 className="section-product-one-content-item"
                 key={`${title}-${index}`}
                 onClick={() => navigate(`/product/${product.id_group_product}`)}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer",width:"230px",margin:"0 5px 0 5px" }}
               >
                 <img
                   src={`http://localhost:5000/images/product/${product.image}`}
                   alt={product.alt || product.name_group_product}
+                  style={{height:"200px"}}
                 />
                 <div className="section-product-one-content-item-text">
                   <ul>

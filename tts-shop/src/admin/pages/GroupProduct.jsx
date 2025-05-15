@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { Table, Button, Form, Row, Col, Card } from "react-bootstrap";
 import {
   Box,
@@ -9,8 +9,14 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { AuthContext } from "../../customer/context/AuthContext";
+
 const Product = () => {
   const [products, setProducts] = useState([]);
+
+  console.log(products)
+
+  const {user} = useContext(AuthContext)
 
   // Gọi API từ backend khi component mount
   useEffect(() => {
@@ -76,9 +82,15 @@ const Product = () => {
             <Search size={16} />
           </Button>
         </Form>
-          <Button as={Link} to="/admin/product/add" variant="success" className="mb-3">
-            Thêm sản phẩm
-          </Button>
+           {user.role === 1 ? (
+                    <>
+                      <Button as={Link} to="/admin/product/add" variant="success" className="mb-3">
+                       Thêm sản phẩm
+                      </Button></>
+                  ):(<></>)}
+
+
+        
 
       </div>
 
@@ -112,9 +124,17 @@ const Product = () => {
                 <td className="text-center align-middle">{product.name_category_product}</td>
                 <td className="text-center align-middle">{product.name_category_brand}</td>
                 <td className="text-center align-middle">
-                  <Button as={Link} to={`/admin/product/${product.id_group_product}`}  variant="info" size="sm" className="me-2">Xem</Button>
-                  <Button as={Link} to={`/admin/product/edit/${product.id_group_product}`} variant="warning" size="sm" className="me-2">Sửa</Button>
-                  <Button variant="danger" size="sm">Xóa</Button>
+                  {user.role === 1 ? (
+                    <>
+                    <Button as={Link} to={`/admin/product/${product.id_group_product}`}  variant="info" size="sm" className="me-2">Xem</Button>
+                    <Button as={Link} to={`/admin/product/edit/${product.id_group_product}`} variant="warning" size="sm" className="me-2">Sửa</Button>
+                    <Button variant="danger" size="sm">Xóa</Button></>
+                  ):(
+                    <>
+                    <Button as={Link} to={`/admin/product/${product.id_group_product}`}  variant="info" size="sm" className="me-2">Xem</Button>
+                    </>
+                  )}
+                  
                 </td>
               </tr>
             ))

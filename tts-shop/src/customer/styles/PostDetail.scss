@@ -6,3 +6,10 @@
     padding-top: 1%;
     border-radius: 10px;
 }
+
+.post-content img {
+  max-width: 80%;
+  height: auto;
+  display: block;
+  margin: 10px auto; /* tuỳ chỉnh thêm nếu muốn căn giữa */
+}

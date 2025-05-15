@@ -85,8 +85,8 @@ useEffect(() => {
     setErrorMessage(""); // Xóa lỗi cũ nếu có
 
     if (!user || cartItems.length === 0 || !userInfo) return;
-  
     const payload = {
+      email:user.email,
       id_user: user.id,
       name_user: userInfo.name,
       address: tempAddress || userInfo.address,
@@ -96,7 +96,9 @@ useEffect(() => {
         id_product: item.id_product,
         quantity: item.quantity,
         price: item.price,
-        id_group_product: item.id_group_product
+        id_group_product: item.id_group_product,
+        name_group_product: item.name_group_product,
+        image: item.image
       }))
     };
 
@@ -230,7 +232,7 @@ useEffect(() => {
         {/* Phương thức thanh toán */}
         <h2 className="section-title section-header">PHƯƠNG THỨC THANH TOÁN</h2>
         <div className="info-card payment-options">
-          <div
+          {totalPrice < 10000000 ? (<div
             className={`payment-option ${selectedPayment === 0 ? "active" : ""}`}
             onClick={() => handlePaymentSelect(0)}
           >
@@ -241,6 +243,10 @@ useEffect(() => {
             />
             <p>Thanh toán khi nhận hàng</p>
           </div>
+          ):(
+            <div></div>
+          )}
+          
 
           <div
             className={`payment-option ${selectedPayment === 1 ? "active" : ""}`}

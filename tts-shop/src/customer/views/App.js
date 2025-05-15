@@ -31,7 +31,7 @@ const routes = pages.keys().map((key) => {
 function AppContent() {
   const location = useLocation();
   const hideLayout = location.pathname === "/Payment-momo" || location.pathname === "/Payment-Bank"; // 👈 kiểm tra đường dẫn
-
+  
   return (
     <>
       <ScrollToTop />

@@ -5,7 +5,7 @@ exports.getAllPosts = (req, res) => {
     SELECT p.*, c.*
     FROM tbl_post p
     JOIN tbl_category_post c ON p.id_category_post = c.id_category_post
-    ORDER BY p.date DESC
+    ORDER BY p.date DESC 
   `;
   db.query(sql, (err, results) => {
     if (err) {

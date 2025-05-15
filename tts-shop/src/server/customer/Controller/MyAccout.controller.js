@@ -16,3 +16,4 @@ exports.getUserById = (req, res) => {
     res.json(results[0]);
   });
 };
+
