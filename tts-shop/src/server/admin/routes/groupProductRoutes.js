@@ -27,4 +27,7 @@ router.get('/images/:id', groupProductController.getProductImages);
 router.post('/images/upload/:id', upload.single("image"), groupProductController.uploadProductImage);
 router.delete('/images/delete/:imageId', groupProductController.deleteProductImage);
 
+// Cập nhật trạng thái isDel
+router.put('/update-isdel/:id', groupProductController.updateIsDel);
+
 module.exports = router;

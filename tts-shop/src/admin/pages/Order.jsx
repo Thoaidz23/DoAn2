@@ -165,8 +165,6 @@ const countByPaymentStatus = (value) => {
   </Card>
 </div>
 
-
-
       {/* Bảng đơn hàng */}
       <Table striped bordered hover responsive variant="dark">
         <thead>
