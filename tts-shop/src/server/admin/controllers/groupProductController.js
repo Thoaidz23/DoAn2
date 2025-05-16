@@ -109,8 +109,8 @@ const addProduct = async (req, res) => {
     await conn.beginTransaction();
 
     const [groupResult] = await conn.execute(
-      `INSERT INTO tbl_group_product (name_group_product, content, image, id_category_product, id_category_brand) 
-       VALUES (?, ?, ?, ?, ?)`,
+      `INSERT INTO tbl_group_product (name_group_product, content, image, id_category_product, id_category_brand, is_del) 
+       VALUES (?, ?, ?, ?, ?, 0)`,
       [name_group_product, content, image, id_category_product, id_category_brand]
     );
     const id_group_product = groupResult.insertId;
@@ -269,6 +269,18 @@ const deleteProductImage = async (req, res) => {
   }
 };
 
+// Hàm cập nhật trạng thái is_del cho nhóm sản phẩm
+const updateIsDel = (req, res) => {
+  const id = req.params.id;
+  const is_del = 1;
+
+  const sql = "UPDATE tbl_group_product SET is_del = ? WHERE id_group_product = ?";
+  connection.query(sql, [is_del, id], (err, result) => {
+    if (err) return res.status(500).json({ message: "Lỗi server khi cập nhật trạng thái" });
+    res.json({ message: "Cập nhật trạng thái thành công" });
+  });
+};
+
 
 module.exports = {
   getAllProducts,
@@ -282,5 +294,6 @@ module.exports = {
   updateProduct,
   getProductImages,
   uploadProductImage,
-  deleteProductImage
+  deleteProductImage,
+  updateIsDel, 
 };

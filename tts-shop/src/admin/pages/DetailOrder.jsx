@@ -22,8 +22,9 @@ const DetailOrder = () => {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      oldStatus: order.oldStatus || order.status,  // mặc định là status hiện tại nếu chưa có
       status: order.status,
-      paystatus: order.paystatus
+      paystatus: order.paystatus,
     }),
   })
     .then((res) => res.json())
@@ -36,6 +37,7 @@ const DetailOrder = () => {
       alert("Cập nhật thất bại!");
     });
 };
+
 
 
   console.log(order)
@@ -172,8 +174,9 @@ const DetailOrder = () => {
         className="form-select"
         value={order.status}
         onChange={(e) =>
-          setOrder({ ...order, status: parseInt(e.target.value) })
-        }
+  setOrder({ ...order, oldStatus: order.status, status: parseInt(e.target.value) })
+}
+
       >
         {(() => {
           const status = order.status;

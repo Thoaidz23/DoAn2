@@ -86,23 +86,92 @@ const getOrderByCode = (req, res) => {
 
 const updateOrder = (req, res) => {
   const { code } = req.params;
-  const { status, paystatus } = req.body; // Lấy thêm paystatus
+  const { status, paystatus } = req.body;
 
-  const query = 'UPDATE tbl_order SET status = ?, paystatus = ? WHERE code_order = ?';
-
-  connection.query(query, [status, paystatus, code], (err, results) => {
+  // 1. Lấy trạng thái hiện tại của đơn hàng
+  const getStatusQuery = 'SELECT status FROM tbl_order WHERE code_order = ?';
+  connection.query(getStatusQuery, [code], (err, statusResult) => {
     if (err) {
-      console.error("Lỗi truy vấn:", err);
+      console.error("Lỗi truy vấn trạng thái:", err);
       return res.status(500).json({ error: "Lỗi máy chủ" });
     }
 
-    if (results.affectedRows === 0) {
+    if (statusResult.length === 0) {
       return res.status(404).json({ message: "Đơn hàng không tồn tại" });
     }
 
-    res.json({ message: "Cập nhật trạng thái thành công" });
+    const currentStatus = statusResult[0].status;
+
+    // 2. Nếu từ trạng thái 0 -> 1 thì trừ số lượng
+    if (currentStatus === 0 && status === 1) {
+      const getProductsQuery = `
+        SELECT od.id_product, od.quantity_product 
+FROM tbl_order_detail od
+JOIN tbl_order o ON od.code_order = o.code_order
+WHERE o.code_order = ?
+      `;
+      connection.query(getProductsQuery, [code], (err, products) => {
+        if (err) {
+          console.error("Lỗi truy vấn sản phẩm:", err);
+          return res.status(500).json({ error: "Lỗi máy chủ khi lấy sản phẩm" });
+        }
+
+        // Trừ số lượng sản phẩm
+        const updateQuantityPromises = products.map(product => {
+          return new Promise((resolve, reject) => {
+            const updateQtyQuery = `
+              UPDATE tbl_product 
+              SET quantity = quantity - ? 
+              WHERE id_product = ? AND quantity >= ?
+            `;
+            connection.query(updateQtyQuery, [product.quantity_product, product.id_product, product.quantity_product], (err, result) => {
+              if (err) return reject(err);
+              resolve();
+            });
+          });
+        });
+
+        Promise.all(updateQuantityPromises)
+          .then(() => {
+            // Sau khi trừ xong thì cập nhật trạng thái đơn hàng
+            const updateOrderQuery = `
+              UPDATE tbl_order 
+              SET status = ?, paystatus = ? 
+              WHERE code_order = ?
+            `;
+            connection.query(updateOrderQuery, [status, paystatus, code], (err, result) => {
+              if (err) {
+                console.error("Lỗi cập nhật đơn hàng:", err);
+                return res.status(500).json({ error: "Lỗi máy chủ khi cập nhật đơn hàng" });
+              }
+
+              return res.json({ message: "Cập nhật trạng thái và trừ số lượng thành công" });
+            });
+          })
+          .catch((err) => {
+            console.error("Lỗi khi trừ số lượng sản phẩm:", err);
+            return res.status(500).json({ error: "Lỗi khi cập nhật số lượng sản phẩm" });
+          });
+      });
+    } else {
+      // Nếu không cần trừ số lượng thì chỉ cập nhật trạng thái
+      const updateOrderQuery = `
+        UPDATE tbl_order 
+        SET status = ?, paystatus = ? 
+        WHERE code_order = ?
+      `;
+      connection.query(updateOrderQuery, [status, paystatus, code], (err, result) => {
+        if (err) {
+          console.error("Lỗi cập nhật đơn hàng:", err);
+          return res.status(500).json({ error: "Lỗi máy chủ khi cập nhật đơn hàng" });
+        }
+
+        return res.json({ message: "Cập nhật trạng thái thành công" });
+      });
+    }
   });
 };
+
 
 
 module.exports = { getOrders, getOrderByCode, updateOrder };
