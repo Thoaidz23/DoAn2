@@ -418,7 +418,7 @@ const getAvailableOptions = (field) => {
               className="mb-3"
             >
               <Tab eventKey="description" title="Mô tả sản phẩm">
-                <p>{selectedProduct.content}</p>
+                <div dangerouslySetInnerHTML={{ __html: selectedProduct.content }} />
               </Tab>
               <Tab eventKey="specifications" title="Thông số kỹ thuật">
                 <Table striped bordered hover>
