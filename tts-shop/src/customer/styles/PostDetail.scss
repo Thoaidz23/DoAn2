@@ -2,7 +2,7 @@
     width:80%;
     background-color: white;
     margin-bottom: 10%;
-    margin-top: -5%;
+    margin-top: -10%;
     padding-top: 1%;
     border-radius: 10px;
 }
@@ -12,4 +12,14 @@
   height: auto;
   display: block;
   margin: 10px auto; /* tuỳ chỉnh thêm nếu muốn căn giữa */
+}
+.breadcrumb-item a {
+  text-decoration: none !important;
+  color: inherit;
+  transition: color 0.2s;
+}
+
+.breadcrumb-item a:hover {
+  color: red !important; // Màu đỏ khi hover
+  text-decoration: none !important;
 }

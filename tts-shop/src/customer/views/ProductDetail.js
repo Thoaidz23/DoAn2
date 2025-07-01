@@ -212,7 +212,7 @@ const getAvailableOptions = (field) => {
       
       <Container fluid>
         {showBuyNowError && (
-  <div className="error-message" style={{ width: "350px", left: "75%", backgroundColor: "#dc3545" }}>
+  <div className="error-message" style={{width: "350px", left: "75%", backgroundColor: "#dc3545" }}>
     <p>Vui lòng đăng nhập để mua ngay!</p>
   </div>
 )}

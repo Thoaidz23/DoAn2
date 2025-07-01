@@ -6,10 +6,10 @@ function TopHeadBar({ searchText, categoryName }) {
     <div className="container-detail_bar pt-2">
       <div className="container d-flex align-items-center gap-2">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          <i className="bi bi-house-door-fill"></i> Trang chủ
+          <i className="bi bi-house-door-fill"style={{paddingBottom: "5px"}} ></i> Trang chủ
         </Link>
         <i className="bi bi-chevron-right breadcrumb-icon"></i>
-        <p className="mb-0">{searchText || categoryName}</p>
+        <p className="mb-0" style={{paddingBottom: "5px"}}>{searchText || categoryName}</p>
       </div>
     </div>
   );
