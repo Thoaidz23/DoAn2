@@ -243,7 +243,7 @@ const EditProduct = () => {
       fetchOptions();
     }, []);
   return (
-    <div className="container mt-4">
+    <div className="container mt-4" style={{height:"auto"}}>
       <h3 className="mb-4">Chỉnh sửa sản phẩm</h3>
       <Button 
         onClick={() => navigate(`/admin/product/${id}/images`)}

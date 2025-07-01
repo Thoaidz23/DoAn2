@@ -13,12 +13,11 @@ function Product() {
   const location = useLocation();
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
-
+  
   const query = new URLSearchParams(location.search);
   const brandId = query.get("brand");
   const categoryId = query.get("category");
   const searchText = query.get("search");
-  const price = query.get("price");
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -70,12 +69,12 @@ function Product() {
     <div>
 
          <TopHeadBar
-  searchText={searchText}
-  categoryName={filtered[0]?.name_category_brand || filtered[0]?.name_category_product}
-/>
+          searchText={searchText}
+          categoryName={filtered[0]?.name_category_brand || filtered[0]?.name_category_product}
+          />
 
       <div className="container-search">
-        <div className="product-one-content" style={{maxWidth:"1200px"}}>
+        <div className="product-one-content" style={{maxWidth:"1800px",margin:"auto"}}>
           <div className="container">
             <div className="product-one-content-title">
               <h2 style={{marginLeft:"100px"}}>Kết quả tìm kiếm</h2>

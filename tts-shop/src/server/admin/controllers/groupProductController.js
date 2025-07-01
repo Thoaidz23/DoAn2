@@ -272,7 +272,7 @@ const deleteProductImage = async (req, res) => {
 // Hàm cập nhật trạng thái is_del cho nhóm sản phẩm
 const updateIsDel = (req, res) => {
   const id = req.params.id;
-  const is_del = 1;
+  const { is_del } = req.body; // lấy từ body gửi lên
 
   const sql = "UPDATE tbl_group_product SET is_del = ? WHERE id_group_product = ?";
   connection.query(sql, [is_del, id], (err, result) => {
@@ -280,6 +280,7 @@ const updateIsDel = (req, res) => {
     res.json({ message: "Cập nhật trạng thái thành công" });
   });
 };
+
 
 
 module.exports = {

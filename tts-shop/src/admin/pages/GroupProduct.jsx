@@ -31,6 +31,7 @@ const [brandFilter, setBrandFilter] = useState(null);
   (brandFilter ? product.name_category_brand === brandFilter : true)
 );
 
+
 const uniqueCategories = [...new Set(products.map(p => p.name_category_product))];
 const uniqueBrands = [...new Set(products.map(p => p.name_category_brand))];
 
@@ -44,8 +45,12 @@ const countByBrand = (brand) => {
   return products.filter(p => p.name_category_brand === brand).length;
 };
 
-const handleDelete = async (id_group_product) => {
-  if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này không?")) return;
+const handleToggleDelete = async (id_group_product, is_del) => {
+  const confirmText = is_del === 1
+    ? "Bạn có muốn khôi phục sản phẩm này không?"
+    : "Bạn có chắc muốn xóa sản phẩm này không?";
+
+  if (!window.confirm(confirmText)) return;
 
   try {
     const response = await fetch(`http://localhost:5000/api/products/update-isdel/${id_group_product}`, {
@@ -53,18 +58,21 @@ const handleDelete = async (id_group_product) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ is_del: 1 }),
+      body: JSON.stringify({ is_del: is_del === 1 ? 0 : 1 }),
     });
 
     if (response.ok) {
-      // Cập nhật lại danh sách sản phẩm trên client
-      setProducts(prev => prev.filter(p => p.id_group_product !== id_group_product));
-      alert("Xóa thành công!");
+      setProducts(prev =>
+        prev.map(p =>
+          p.id_group_product === id_group_product ? { ...p, is_del: is_del === 1 ? 0 : 1 } : p
+        )
+      );
+      alert(is_del === 1 ? "Khôi phục thành công!" : "Xóa thành công!");
     } else {
-      alert("Xóa thất bại!");
+      alert("Thao tác thất bại!");
     }
   } catch (error) {
-    console.error("Lỗi khi xóa sản phẩm:", error);
+    console.error("Lỗi khi cập nhật trạng thái is_del:", error);
     alert("Lỗi mạng hoặc server!");
   }
 };
@@ -177,7 +185,7 @@ const handleDelete = async (id_group_product) => {
             <th className="text-center align-middle">Tên sản phẩm</th>
             <th className="text-center align-middle">Danh mục</th>
             <th className="text-center align-middle">Thương hiệu</th>
-            <th className="text-center align-middle">Hành động</th> 
+            <th className="text-center align-middle">Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -197,24 +205,44 @@ const handleDelete = async (id_group_product) => {
                 <td className="text-center align-middle">{product.name_group_product}</td>
                 <td className="text-center align-middle">{product.name_category_product}</td>
                 <td className="text-center align-middle">{product.name_category_brand}</td>
-                <td className="text-center align-middle">
-                  {user.role === 1 ? (
-                    <>
-                    <Button as={Link} to={`/admin/product/edit/${product.id_group_product}`} variant="warning" size="sm" className="me-2">Sửa</Button>
-                    <Button 
-  variant="danger" 
-  size="sm" 
-  onClick={() => handleDelete(product.id_group_product)}
->
-  Xóa
-</Button></>
-                  ):(
-                    <>
-                    <Button as={Link} to={`/admin/product/${product.id_group_product}`}  variant="info" size="sm" className="me-2">Xem</Button>
-                    </>
-                  )}
+               
+                 <td className="text-center align-middle">
+  {user.role === 1 && (
+    <>
+      <Button
+        as={Link}
+        to={`/admin/product/edit/${product.id_group_product}`}
+        variant="warning"
+        size="sm"
+        className="me-2"
+      >
+        Sửa
+      </Button>
+
+      {product.is_del === 1 ? (
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => handleToggleDelete(product.id_group_product, 1)}
+        >
+          Khôi phục
+        </Button>
+      ) : (
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => handleToggleDelete(product.id_group_product, 0)}
+        >
+          Xóa
+        </Button>
+      )}
+    </>
+  )}
+</td>
+
+
                   
-                </td>
+                
               </tr>
             ))
           ) : (
