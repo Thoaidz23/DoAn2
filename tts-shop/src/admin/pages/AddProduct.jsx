@@ -140,9 +140,10 @@ const AddProduct = () => {
     fetchOptions();
   }, []);
 
-  return (
+  return (  
     <Card className="p-4 bg-dark text-white">
       <h3 className="mb-4">Thêm sản phẩm mới</h3>
+      
       <Form onSubmit={handleSubmit} encType="multipart/form-data">
         <Form.Group className="mb-3">
           <Form.Label>Tên sản phẩm</Form.Label>
@@ -318,7 +319,6 @@ const AddProduct = () => {
             )}
           </div>
         ))}
-
         <Button variant="success" type="submit">Thêm sản phẩm</Button>
       </Form>
     </Card>

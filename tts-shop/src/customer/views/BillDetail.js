@@ -19,6 +19,7 @@ function BillDetail() {
       .then(res => {
         setOrder(res.data.order);
         setProducts(res.data.products);
+        console.log(res.data.order)
       })
       .catch(err => {
         console.error("Lỗi lấy chi tiết đơn hàng:", err);

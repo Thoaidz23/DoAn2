@@ -39,7 +39,9 @@ const ProductCategory = () => {
   };
 
   return (
+    
     <div>
+      <h4 className="m-0">Quản lý danh mục sản phẩm</h4>
       {/* Nút thêm danh mục */}
       <Button as={Link} to="/admin/categories/add" variant="primary" className="mt-4 mb-3">
         Thêm danh mục

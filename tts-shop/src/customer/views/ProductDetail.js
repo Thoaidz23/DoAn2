@@ -7,10 +7,12 @@ import {
 } from "react-bootstrap";
 import { CartPlus, BagCheck } from "react-bootstrap-icons";
 import "../styles/ProductDetail.scss";
+import ProductReview from "../component/ProductReview";
 import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
 import TopHeadBar from "../component/TopHeadBar";
 import { useNavigate } from "react-router-dom";
+import "../styles/ProductReview.scss"
 const ProductDetail = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
@@ -18,7 +20,7 @@ const ProductDetail = () => {
   const [defaultProduct, setDefaultProduct] = useState(null);
   const [specifications, setSpecifications] = useState([]);
   const [post, setPost] = useState([]);
-
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const { user} = useContext(AuthContext);
 
   const [quantity, setQuantity] = useState(1);
@@ -34,23 +36,99 @@ const ProductDetail = () => {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const navigate = useNavigate();
+  const [filter, setFilter] = useState('Tất cả');
+ const totalReviews = 6;
+  const rating = 4.8;
+  const ratingCounts = [5, 1, 0, 0, 0]; // 5→1 sao
+  const criteria = [
+    { label: 'Hiệu năng', rating: 4.7, count: 3 },
+    { label: 'Thời lượng pin', rating: 4.7, count: 3 },
+    { label: 'Chất lượng camera', rating: 5.0, count: 3 },
+  ];
+    const reviews = [
+  {
+    name: 'Tăng Quốc Anh',
+    initials: 'T',
+    rating: 5,
+    comment: 'Dạ cho em hỏi là bản đã kích hoạt thì bị lỗi so với chưa kích hoạt k ạ',
+    tags: [
+      'Hiệu năng Siêu mạnh mẽ',
+      'Thời lượng pin Cực khủng',
+      'Chất lượng camera Chụp đẹp, chuyên nghiệp',
+    ],
+    time: '6 tháng trước',
+  },
+  {
+    name: 'Nhan',
+    initials: 'N',
+    rating: 5,
+    comment: 'Rất hài lòng!',
+    tags: [],
+    time: '8 tháng trước',
+  },
+  {
+    name: 'Lê Hoàng',
+    initials: 'L',
+    rating: 4,
+    comment: 'Máy đẹp, hiệu năng ổn định nhưng hơi nóng khi chơi game lâu.',
+    tags: ['Hiệu năng ổn', 'Thiết kế đẹp'],
+    time: '3 tháng trước',
+  },
+  {
+    name: 'Nguyễn Thị Mai',
+    initials: 'M',
+    rating: 3,
+    comment: 'Chất lượng camera chưa đúng kỳ vọng, pin dùng được 1 ngày.',
+    tags: ['Camera trung bình', 'Pin tạm ổn'],
+    time: '2 tháng trước',
+  },
+  {
+    name: 'Phạm Văn Bình',
+    initials: 'B',
+    rating: 2,
+    comment: 'Mua về được 1 tuần thì máy bị đơ, phải mang bảo hành.',
+    tags: ['Hiệu năng kém', 'Lỗi phần mềm'],
+    time: '1 tháng trước',
+  },
+];
+const getFilteredReviews = () => {
+  switch (filter) {
+    case 'Có hình ảnh':
+      return reviews.filter((r) => r.hasImage);
+    case 'Đã mua hàng':
+      return reviews.filter((r) => r.purchased);
+    case '5 sao':
+    case '4 sao':
+    case '3 sao':
+    case '2 sao':
+    case '1 sao':
+      return reviews.filter((r) => r.rating === parseInt(filter));
+    default:
+      return reviews;
+  }
+};
 
+const filteredReviews = getFilteredReviews();
+const displayedReviews = showAllReviews ? filteredReviews : filteredReviews.slice(0, 3);
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
       .then((res) => {
         const data = res.data;        
-        console.log("dataproduct",data)
+        console.log("dataproduct",data.product[0])
         setProducts(data.product);
         setPost(data.post)
         setSpecifications(data.specifications);
         setDefaultProduct(data.product[0]);
         setSelectedProduct(data.product[0]);
+         
       })  
       .catch((err) => {
         console.error("Lỗi khi lấy chi tiết sản phẩm:", err);
       });
   }, [id]);
+
+  
   if (!selectedProduct || !defaultProduct) return <div className="text-center p-5">Đang tải...</div>;
 
   const fullProductInfo = selectedProduct;
@@ -89,7 +167,7 @@ const ProductDetail = () => {
       setSuccess(false); // Ẩn thông báo sau 3 giây
     }, 3000);
     try {
-      const res = await axios.post("http://localhost:5000/api/cart/add", {
+      await axios.post("http://localhost:5000/api/cart/add", {
         id_user: user.id,
         id_product: selectedProduct.id_product,
         quantity,
@@ -159,8 +237,10 @@ const ProductDetail = () => {
   }
 };
 
+
+
 const getAvailableOptions = (field) => {
-  const { id_color, id_ram, id_rom } = selectedProduct;
+  const { id_color, id_ram } = selectedProduct;
 
   return products
     .filter((product) => {
@@ -198,7 +278,8 @@ const getAvailableOptions = (field) => {
   const availableRomOptions = getAvailableOptions("id_rom");
   const availableRomIds = new Set(availableRomOptions.map(o => o.id));
   
-   
+   const isDisabled = quantity > selectedProduct.quantity;
+
   return (
     
     <div>
@@ -273,12 +354,28 @@ const getAvailableOptions = (field) => {
 
           <Col md={5}>
             <h2>{selectedProduct.name_group_product}</h2>
-            <h4 className="text-danger">
+            <h4 className="text-danger" >
               {selectedProduct.price.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
               })}
+              {selectedProduct.quantity === 0 && (
+                  <span
+                    style={{
+                      color: "orange",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      userSelect: "none",
+                      marginLeft:"20px"
+                    }}
+                    onClick={() => alert("Sản phẩm đã hết hàng!")}
+                  >
+                     Hết hàng
+                  </span>
+                )}
             </h4>
+               
+
               
             {selectedProduct.name_color && (
                 <ProductOptionSelector
@@ -326,33 +423,64 @@ const getAvailableOptions = (field) => {
                 </Form.Group>
               </Col>
 
-              <Col xs={8}>
-              {user ? (
-                quantity <= 5 ? (
-                  <>
-                    <Button className="cart-btn" onClick={handleAddToCart}>
-                      <CartPlus className="me-2" /> Thêm vào giỏ hàng
-                    </Button>
-                  </>
+               <Col xs={8}>
+                {user ? (
+                  quantity <= 5 ? (
+                    !isDisabled ? (
+                      <Button className="cart-btn" onClick={handleAddToCart}>
+                        <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                      </Button>
+                    ) : (
+                      <Button className="cart-btn btn-disabled" disabled>
+                        <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                      </Button>
+                    )
+                  ) : (
+                    !isDisabled ? (
+                      <Button className="cart-btn">
+                        <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                      </Button>
+                    ) : (
+                      <Button className="cart-btn btn-disabled" disabled>
+                        <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                      </Button>
+                    )
+                  )
                 ) : (
-                  <>
-                    <Button className="cart-btn">
+                  !isDisabled ? (
+                    <Button className="cart-btn" onClick={handleAddToCartFaile}>
                       <CartPlus className="me-2" /> Thêm vào giỏ hàng
                     </Button>
-                  </>
-                )
-              ) : (
-                <Button className="cart-btn" onClick={handleAddToCartFaile}>
-                  <CartPlus className="me-2" /> Thêm vào giỏ hàng
-                </Button>
-              )}
-            </Col>
+                  ) : (
+                    <Button className="cart-btn btn-disabled" disabled>
+                      <CartPlus className="me-2" /> Thêm vào giỏ hàng
+                    </Button>
+                  )
+                )}
+              </Col>
             
             </Row>
             <div className="d-grid gap-2 mb-4">
-              <Button className="buy-btn" size="lg" onClick={handleBuyNow}>
+              {selectedProduct.quantity === 0 || selectedProduct.quantity < quantity  ? (
+                <Button
+                className="buy-btn"
+                size="lg"
+                onClick={handleBuyNow}
+               style={{opacity: "0.5", pointerEvents: "none" }}
+              >
                 <BagCheck className="me-2" /> Mua ngay
               </Button>
+            ):(
+                <Button
+                className="buy-btn"
+                size="lg"
+                onClick={handleBuyNow}
+              >
+                <BagCheck className="me-2" /> Mua ngay
+              </Button>   
+            )}
+              
+              
             </div>
           </Col>
         </Row>
@@ -365,7 +493,7 @@ const getAvailableOptions = (field) => {
               className="mb-3"
             >
               <Tab eventKey="description" title="Mô tả sản phẩm">
-                <p>{selectedProduct.content}</p>
+                <div dangerouslySetInnerHTML={{ __html: selectedProduct.content }} />
               </Tab>
               <Tab eventKey="specifications" title="Thông số kỹ thuật">
                 <Table striped bordered hover>
@@ -390,6 +518,10 @@ const getAvailableOptions = (field) => {
         </Row>
 
         <Row className="mt-5 mb-5 position-relative">
+        <ProductReview></ProductReview>
+
+
+           <Row className="mt-5 mb-5 position-relative"></Row>
   <Col>
     <h4>Bài viết liên quan</h4>
     <div className="position-relative">

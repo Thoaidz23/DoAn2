@@ -41,6 +41,7 @@ const BrandCategory = () => {
 
   return (
     <div>
+      <h4 className="m-0">Quản lý danh mục thương hiệu</h4>
       {/* Nút thêm thương hiệu */}
       <Button as={Link} to="/admin/brands/add" variant="primary" className="mt-4 mb-3">
         Thêm thương hiệu

@@ -1,19 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Form, Row, Col } from "react-bootstrap";
+import { Table, Button, Form, InputGroup, Card, ButtonGroup} from "react-bootstrap";
 import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Post = () => {
   // Dữ liệu giả lập đơn hàng
   const [orders, setOrders] = useState([]);
+  const [searchCode, setSearchCode] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [deliveryStatusFilter, setDeliveryStatusFilter] = useState(null);
+const [paymentStatusFilter, setPaymentStatusFilter] = useState(null);
+
+
+
+  
   // Gọi API từ backend khi component mount
 
     useEffect(() => {
-      fetch("http://localhost:5000/api/orders")
-        .then((res) => res.json())
-        .then((data) => setOrders(data))
-        .catch((err) => console.error("Lỗi khi fetch sản phẩm:", err));
-    }, []);
+  fetch("http://localhost:5000/api/orders")
+    .then((res) => res.json())
+    .then((data) => {
+      setOrders(data);
+      setFilteredOrders(data); // thêm dòng này
+    })
+    .catch((err) => console.error("Lỗi khi fetch đơn hàng:", err));
+}, []);
+
+useEffect(() => {
+  const filtered = orders.filter((order) => {
+    const matchCode = order.code_order.toLowerCase().includes(searchCode.toLowerCase());
+    const matchDelivery = deliveryStatusFilter === null || order.status === deliveryStatusFilter;
+    const matchPayment = paymentStatusFilter === null || order.paystatus === paymentStatusFilter;
+    return matchCode && matchDelivery && matchPayment;
+  });
+  setFilteredOrders(filtered);
+}, [searchCode, orders, deliveryStatusFilter, paymentStatusFilter]);
+
+
+
+
+
 
     const getOrderStatus = (status) => {
       switch (status) {
@@ -45,6 +71,19 @@ const Post = () => {
       }
     };
 
+    // Đếm số đơn theo trạng thái giao hàng
+const countByDeliveryStatus = (value) => {
+  if (value === null) return orders.length;
+  return orders.filter(order => order.status === value).length;
+};
+
+// Đếm số đơn theo trạng thái thanh toán
+const countByPaymentStatus = (value) => {
+  if (value === null) return orders.length;
+  return orders.filter(order => order.paystatus === value).length;
+};
+
+
 
   return (
     <div>
@@ -52,19 +91,79 @@ const Post = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h4 className="m-0">Quản lý đơn hàng</h4>
         <Form inline="true">
-          <Row className="align-items-center">
-            <Col xs="auto">
-              <Form.Control type="text" placeholder="Tìm theo mã đơn..." />
-            </Col>
-            <Col xs="auto">
-              <Button variant="primary">
-                <Search size={16} className="me-1" />
-                Tìm
-              </Button>
-            </Col>
-          </Row>
+          {/* Thanh tìm kiếm bên trái */}
+<InputGroup style={{ maxWidth: "500px" }}>
+  <InputGroup.Text>
+    <Search size={18} />
+  </InputGroup.Text>
+  <Form.Control
+    placeholder="Tìm theo mã đơn hàng..."
+    value={searchCode}
+    onChange={(e) => setSearchCode(e.target.value)}
+  />
+</InputGroup>
+
         </Form>
       </div>
+
+{/* Loc */}
+      <div className="mb-4">
+  <Card className="bg-dark text-white border-secondary">
+    <Card.Body>
+      <strong className="d-block mb-2">Lọc theo trạng thái giao hàng:</strong>
+      <ButtonGroup className="flex-wrap">
+        {[
+          { label: "Tất cả", value: null },
+          { label: "Chờ xác nhận", value: 0 },
+          { label: "Đã xác nhận", value: 1 },
+          { label: "Đang vận chuyển", value: 2 },
+          { label: "Đang chờ hủy", value: 4 },
+          { label: "Đã giao hàng", value: 3 },
+          { label: "Đã hủy", value: 5 },
+        ].map((item) => (
+          <Button
+            key={item.value ?? "all"}
+            variant={deliveryStatusFilter === item.value ? "primary" : "outline-light"}
+            className="mb-2 me-2 d-flex align-items-center"
+            onClick={() => setDeliveryStatusFilter(item.value)}
+          >
+            <span>{item.label}</span>
+            <span className="badge bg-secondary ms-2" style={{ fontSize: '0.8rem' }}>
+              {countByDeliveryStatus(item.value)}
+            </span>
+          </Button>
+        ))}
+      </ButtonGroup>
+    </Card.Body>
+  </Card>
+</div>
+
+<div className="mb-4">
+  <Card className="bg-dark text-white border-secondary">
+    <Card.Body>
+      <strong className="d-block mb-2">Lọc theo trạng thái thanh toán:</strong>
+      <ButtonGroup className="flex-wrap">
+        {[
+          { label: "Tất cả", value: null },
+          { label: "Chưa thanh toán", value: 0 },
+          { label: "Đã thanh toán", value: 1 },
+        ].map((item) => (
+          <Button
+            key={item.value ?? "all"}
+            variant={paymentStatusFilter === item.value ? "success" : "outline-light"}
+            className="mb-2 me-2 d-flex align-items-center"
+            onClick={() => setPaymentStatusFilter(item.value)}
+          >
+            <span>{item.label}</span>
+            <span className="badge bg-secondary ms-2" style={{ fontSize: '0.8rem' }}>
+              {countByPaymentStatus(item.value)}
+            </span>
+          </Button>
+        ))}
+      </ButtonGroup>
+    </Card.Body>
+  </Card>
+</div>
 
       {/* Bảng đơn hàng */}
       <Table striped bordered hover responsive variant="dark">
@@ -81,7 +180,7 @@ const Post = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order, index) => (
+          {filteredOrders.map((order, index) => (
             <tr key={order.id_order}>
               <td className="text-center align-middle">{index + 1}</td>
               <td className="text-center align-middle">{order.code_order}</td>

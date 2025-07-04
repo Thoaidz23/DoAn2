@@ -2,7 +2,6 @@ const connection = require('../../db');
 
 const getOrderDetail = (req, res) => {
   const { code_order } = req.params;
-    console.log(code_order)
   const queryOrder = `
     SELECT o.*, DATE_FORMAT(o.date, '%d/%m/%Y') as date_formatted,
            TIME_FORMAT(o.date, '%H giờ %i phút') as time_formatted
@@ -13,8 +12,8 @@ const getOrderDetail = (req, res) => {
     SELECT d.*, gp.name_group_product, gp.image, p.price
     FROM tbl_order_detail d
     JOIN tbl_product p ON d.id_product = p.id_product
-    JOIN tbl_group_product gp ON gp.id_group_product = p.id_product
-    WHERE d.code_order = ?
+    JOIN tbl_group_product gp ON gp.id_group_product = p.id_group_product
+    WHERE d.code_order =  ?
   `;
 
   connection.query(queryOrder, [code_order], (err, orderResults) => {
@@ -40,7 +39,7 @@ const getOrderDetail = (req, res) => {
 
       order.status_text = statusMap[order.status] || 'Không xác định';
       order.paystatus_text = order.paystatus === 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
-
+      console.log(productResults)
       res.json({
         order,
         products: productResults

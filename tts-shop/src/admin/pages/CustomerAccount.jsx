@@ -1,15 +1,22 @@
-import { useState } from "react";
-import { Table, Button, Form, Row, Col } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Table, Form, Row, Col } from "react-bootstrap";
+import axios from "axios";
 
 const CustomerAccount = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [customers, setCustomers] = useState([]);
 
-  // Dữ liệu mẫu
-  const customers = [
-    { id: 1, email: "john@example.com", name: "John Doe", phone: "0123456789" ,address:""},
-    { id: 2, email: "jane@example.com", name: "Jane Smith", phone: "0987654321",address:""},
-    { id: 3, email: "mike@example.com", name: "Mike Johnson", phone: "0111222333" ,address:""},
-  ];
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/customers")
+      .then((res) => {
+        setCustomers(res.data);
+        console.log(res.data)
+      })
+      .catch((err) => {
+        console.error("Error fetching customer data:", err);
+      });
+  }, []);
 
   const filteredCustomers = customers.filter(
     (customer) =>
@@ -21,7 +28,6 @@ const CustomerAccount = () => {
     <div>
       <h4 className="mb-4">Tài khoản khách hàng</h4>
 
-      {/* Tìm kiếm + Thêm */}
       <Row className="align-items-center mb-3">
         <Col md={6}>
           <Form.Control
@@ -33,7 +39,6 @@ const CustomerAccount = () => {
         </Col>
       </Row>
 
-      {/* Bảng hiển thị */}
       <Table striped bordered hover responsive variant="dark">
         <thead>
           <tr>

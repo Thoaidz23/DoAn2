@@ -237,8 +237,7 @@
       margin: 0;
       font-weight: 500;
     }
-  }
-  .error-message {
+  }.error-message {
   position: fixed;
   top: 100px;
   right: 50px;
@@ -256,7 +255,6 @@
   border-radius: 5px;
   animation: fadeInOnly 3s ease forwards;
 }
-
 .warning-icon {
   margin-right: 10px;
   color: rgb(222, 215, 32);
