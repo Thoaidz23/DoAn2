@@ -290,6 +290,18 @@
       }
     }
   }
+  /* mau nut thanh toan*/ 
+.history-order-status.Đã-thanh-toán {
+  background-color: #198754 !important;
+  color: #198754;
+  border: 1px solid #198754;
+}
+
+.history-order-status.Chưa-thanh-toán {
+  background-color: #dc3545 !important;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
   .alert-message {
   position: fixed;
   top: 100px;

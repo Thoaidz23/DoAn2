@@ -84,7 +84,8 @@ function Navbar() {
              
           {/* Logo */}
           <Link to="/" className="navbar-brand">
-            <img src={logo} alt="Shop Logo" width="150px" height="60px" />
+            <img src={logo} alt="Shop Logo" width="150px" height="60px" 
+             style={{paddingBottom: "10px"}} />
           </Link>
 
           {/* Thanh tìm kiếm */}

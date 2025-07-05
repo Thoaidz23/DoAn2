@@ -18,6 +18,8 @@ const UploadAccount = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState("success"); // success | danger | warning
   const [isLocking, setIsLocking] = useState(false);
+  const [showConfirmPanel, setShowConfirmPanel] = useState(false);
+
  const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +30,29 @@ const UploadAccount = () => {
         .catch((err) => console.error("Lỗi lấy thông tin:", err));
     }
   }, [user]);
+    const confirmLockAccount = async () => {
+  setIsLocking(true);
+
+  try {
+    await axios.put(`http://localhost:5000/api/upload-account/lock-account/${user.id}`);
+    setAlertMessage("Tài khoản đã bị khóa.");
+    setAlertVariant("warning");
+    setShowAlert(true);
+    setShowConfirmPanel(false);
+
+    setTimeout(() => {
+      logout();
+      navigate(`/Login`);
+    }, 2000);
+  } catch (error) {
+    console.error("Lỗi khi khóa tài khoản:", error);
+    setAlertMessage("Khóa tài khoản thất bại.");
+    setAlertVariant("danger");
+    setShowAlert(true);
+  } finally {
+    setIsLocking(false);
+  }
+};
 
   const handleSave = async () => {
     try {
@@ -200,7 +225,8 @@ const UploadAccount = () => {
         <div className="mt-3 text-end">
         <button
           className="btn btn-danger"
-          onClick={handleLockAccount}
+          onClick={() => setShowConfirmPanel(true)}
+
           disabled={isLocking}
         >
           {isLocking ? (
@@ -218,6 +244,49 @@ const UploadAccount = () => {
         
         </div>
       </div>
+    {showConfirmPanel && (
+  <div
+    className="confirm-panel-backdrop"
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "rgba(0, 0, 0, 0.4)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1060
+    }}
+  >
+    <div
+      className="confirm-panel"
+      style={{
+        backgroundColor: "white",
+        borderRadius: "8px",
+        padding: "24px",
+        maxWidth: "400px",
+        width: "100%",
+        boxShadow: "0 5px 15px rgba(0, 0, 0, 0.3)"
+      }}
+    >
+      <h5 className="mb-3">Xác nhận khóa tài khoản</h5>
+      <p>
+        Bạn có chắc muốn khóa tài khoản này? Sau khi khóa, bạn sẽ không thể đăng nhập nữa.
+      </p>
+      <div className="d-flex justify-content-end gap-2">
+        <button className="btn btn-secondary" onClick={() => setShowConfirmPanel(false)}>
+          Hủy
+        </button>
+        <button className="btn btn-danger" onClick={confirmLockAccount}>
+          Đồng ý
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
