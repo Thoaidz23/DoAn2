@@ -220,7 +220,7 @@
   .section-product-one-content-item {
     width: 19%;
     background-color: #ffffff; //g
-    padding: 30px 12px 40px;
+    padding: 30px 12px 20px;
     border-radius: 10px; 
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
     cursor: pointer;
@@ -490,6 +490,8 @@
       }
     }
   }
+
+
   /* Đảm bảo khi màn hình nhỏ hơn 768px, bài viết sẽ chỉ hiển thị 1 bài */
   @media (max-width: 768px) {
     .news-wrapper .row {
@@ -538,6 +540,28 @@
       color: #555;
     }
   }
+    .old-price {
+  text-decoration: line-through;
+  color: #999 !important;
+  font-size: 14px !important;
+}
+
+.new-price {
+  color: #e60000; // đỏ tươi
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+.sale-badge {
+  background-color: #ffcc00;
+  color: #e60000;
+  font-weight: bold;
+  padding: 2px 6px;
+  display: inline-block;
+  border-radius: 5px;
+  margin-top: 4px;
+  font-size: 14px;
+}
   
   /* Màn hình lớn hơn 768px, giữ nguyên layout mặc định */
   @media (min-width: 768px) {

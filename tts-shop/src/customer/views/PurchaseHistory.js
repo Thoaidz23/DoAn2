@@ -157,7 +157,8 @@ function PurchaseHistory() {
                     </span>
 
                     <p className="history-order-price">
-                      {order.total_price.toLocaleString()} đ
+                      {Math.round(order.total_price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
+                      
                     </p>
 
                     <div className="history-order-actions">

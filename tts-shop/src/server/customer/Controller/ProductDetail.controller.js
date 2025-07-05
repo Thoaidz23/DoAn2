@@ -7,8 +7,11 @@ const getProductDetail = async (req, res) => {
   try {
     // Lấy chi tiết sản phẩm
     const productQuery = `
-      SELECT p.*, 
-             gp.name_group_product, 
+      SELECT p.*, p.price-((p.price/100)*gp.sale) as saleprice,
+             gp.name_group_product,
+             gp.id_category_product,
+             gp.sale,
+             cp.name_category_product,
              gp.content,
              c.name_color, 
              r1.name_ram, 
@@ -20,6 +23,7 @@ const getProductDetail = async (req, res) => {
       LEFT JOIN tbl_ram r1 ON p.id_ram = r1.id_ram
       LEFT JOIN tbl_rom r2 ON p.id_rom = r2.id_rom  
       LEFT JOIN tbl_product_images i ON i.id_group_product = gp.id_group_product
+      LEFT JOIN tbl_category_product cp ON cp.id_category_product = gp.id_category_product
       WHERE p.id_group_product = ?
       GROUP BY p.id_product;
     `;

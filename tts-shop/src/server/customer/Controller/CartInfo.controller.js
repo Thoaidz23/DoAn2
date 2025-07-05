@@ -9,7 +9,7 @@ const getPay = async (req, res) => {
   try {
     // Lấy chi tiết sản phẩm trong giỏ hàng
     const productQuery = `
-      SELECT c.*, gp.image, gp.name_group_product, p.price
+      SELECT c.*, gp.image, gp.name_group_product,c.price-((c.price/100)*gp.sale) as saleprice
       FROM tbl_cart c 
       JOIN tbl_product p ON c.id_product = p.id_product 
       JOIN tbl_group_product gp ON gp.id_group_product = c.id_group_product

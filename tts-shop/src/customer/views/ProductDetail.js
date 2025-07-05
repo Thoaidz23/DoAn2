@@ -11,10 +11,16 @@ import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
 import TopHeadBar from "../component/TopHeadBar";
 import { useNavigate } from "react-router-dom";
+import CompareModal from './../component/CompareModal';
+
 const ProductDetail = () => {
+  const [compareSelected, setCompareSelected] = useState([]);
+   const [showModal, setShowModal] = useState(false);
+
   const { id } = useParams();
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
   const [defaultProduct, setDefaultProduct] = useState(null);
   const [specifications, setSpecifications] = useState([]);
   const [post, setPost] = useState([]);
@@ -46,7 +52,6 @@ const ProductDetail = () => {
         setSpecifications(data.specifications);
         setDefaultProduct(data.product[0]);
         setSelectedProduct(data.product[0]);
-         
       })  
       .catch((err) => {
         console.error("Lỗi khi lấy chi tiết sản phẩm:", err);
@@ -204,7 +209,7 @@ const getAvailableOptions = (field) => {
   const availableRomIds = new Set(availableRomOptions.map(o => o.id));
   
    const isDisabled = quantity > selectedProduct.quantity;
-
+console.log(selectedProduct)
   return (
     
     <div>
@@ -225,12 +230,6 @@ const getAvailableOptions = (field) => {
 
               {/* Nơi bạn muốn hiển thị thông báo lớn */}
             {showError && (
-              <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
-                <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
-              </div>
-              
-            )}
-             {showError && (
               <div className="error-message" style={{width : "350px" ,left: "75%"  }}>
                 <p>Vui lòng đăng nhập để thêm vào giỏ hàng!</p>
               </div>
@@ -279,29 +278,69 @@ const getAvailableOptions = (field) => {
 
           <Col md={5}>
             <h2>{selectedProduct.name_group_product}</h2>
-            <h4 className="text-danger" >
-              {selectedProduct.price.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })}
+            <div className="price_compare">
+           <h4>
+              {selectedProduct.sale > 0 ? (
+                <>
+                  <span className="old-price">
+                    {selectedProduct.price.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </span>{" "}
+                  <span className="new-price">
+                    {selectedProduct.saleprice.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </span>{" "}
+                  <span className="sale-badge">Giảm {selectedProduct.sale}%</span>
+                </>
+              ) : (
+                <span className="new-price">
+                  {selectedProduct.price.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  })}
+                </span>
+              )}
+            
               {selectedProduct.quantity === 0 && (
-                  <span
-                    style={{
-                      color: "orange",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      userSelect: "none",
-                      marginLeft:"20px"
-                    }}
-                    onClick={() => alert("Sản phẩm đã hết hàng!")}
-                  >
-                     Hết hàng
-                  </span>
-                )}
+                <span
+                  className="sold-out-badge"
+                  onClick={() => alert("Sản phẩm đã hết hàng!")}
+                >
+                  Hết hàng
+                </span>
+              )}
             </h4>
-               
+            
+              <div onClick={() => setShowModal(true)}  style={{ cursor: "pointer" }}>
+                    <svg id="Compare--Streamline-Carbon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="20" width="20">
+                      <desc>
+                        Compare Streamline Icon: https://streamlinehq.com
+                      </desc>
+                      <defs></defs>
+                      <title>compare</title>
+                      <path d="M17.5 3.75H11.25V2.5a1.25 1.25 0 0 0 -1.25 -1.25H2.5a1.25 1.25 0 0 0 -1.25 1.25v12.5a1.25 1.25 0 0 0 1.25 1.25h6.25v1.25a1.25 1.25 0 0 0 1.25 1.25h7.5a1.25 1.25 0 0 0 1.25 -1.25V5a1.25 1.25 0 0 0 -1.25 -1.25ZM2.5 9.375h3.85625l-1.6125 1.61875L5.625 11.875l3.125 -3.125 -3.125 -3.125 -0.88125 0.88125L6.35625 8.125H2.5V2.5h7.5v12.5H2.5Zm7.5 8.125v-1.25a1.25 1.25 0 0 0 1.25 -1.25V5h6.25v5.625h-3.85625l1.6125 -1.61875L14.375 8.125l-3.125 3.125 3.125 3.125 0.88125 -0.88125L13.643749999999999 11.875H17.5v5.625Z" fill="#0000ff" stroke-width="0.625"></path>
+                      <path id="_Transparent_Rectangle_" d="M0 0h20v20H0Z" fill="none" stroke-width="0.625"></path>
+                    </svg>
+                <p>So sánh</p>
+                
 
-              
+              </div>
+            </div>
+        {showModal && (
+  <CompareModal
+    onClose={() => setShowModal(false)}
+    selected={compareSelected}
+    setSelected={setCompareSelected}
+    currentGroupId={selectedProduct.id_group_product}
+    currentCategoryId={selectedProduct.name_category_product} // ✅ thêm dòng này
+  />
+)}
+
+
             {selectedProduct.name_color && (
                 <ProductOptionSelector
                   label="Màu sắc"

@@ -1,8 +1,16 @@
+
+
+.product-one-content-items {
+  margin-bottom: 80px;
+}
+
+
 .container-detail_bar {
     margin-top: -5.3%;
     background-color: rgba(0, 0, 0, 0.1);
     padding-left: 5px;
     padding-right: 5px;
+
     .container{
       gap: 0 !important; 
       display: flex;
@@ -46,7 +54,7 @@
     padding: 12px;
     border-radius: 8px;
     padding: 0;
-  }
+    }
   
   .product-one-content-item-text li{
     list-style: none;
@@ -61,8 +69,9 @@
   .product-one-content-item {
     width: calc((100% - 4 * 10px) / 5); // 5 items mỗi hàng, 4 khoảng cách giữa
     background-color: #ffffff;
-    padding: 30px 12px 40px;
+    padding: 30px 12px;
     border-radius: 10px;
+    box-sizing: border-box;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;

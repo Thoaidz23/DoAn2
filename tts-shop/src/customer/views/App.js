@@ -10,6 +10,8 @@ import ScrollToTop from "../component/ScrollToTop"; // 👈 thêm dòng này
 import CustomerSupport from "../component/CustomerSP";
 import CatalogProduct from "./CatalogProduct";
 import PostDetail from "./PostDetail"
+import ComparePage from "./ComparePage"; // ✅ đường dẫn tới file ComparePage.js
+
 import "../styles/App.scss"
 // Tự động import toàn bộ component trong views (trừ App.js)
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);
@@ -45,6 +47,8 @@ function AppContent() {
           <Route path="/catalogproduct/:id_category" element={<CatalogProduct />} />
           <Route path="/postdetail/:id_post" element={<PostDetail />} />
           <Route path="/bill-detail/:code_order" element={<BillDetail />} />
+          <Route path="/compare" element={<ComparePage />} />
+
         </Routes>
       </Suspense>
       <Footer />

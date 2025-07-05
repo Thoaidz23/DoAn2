@@ -66,7 +66,23 @@ function ProductSection({ title, visibleProducts, handleNext, handlePrev, brands
                   <ul>
                     <li>{product.name_group_product}</li>
                     <li>Online giá rẻ</li>
-                    <li>{Number(product.price).toLocaleString()}<sup>đ</sup></li>
+                     {product.sale > 0 ? (
+                        <>
+                          <li className="old-price">
+                            {Math.round(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                          </li>
+                          <li className="new-price">
+                            {Math.round(product.saleprice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                          </li>
+                          <li className="sale-badge">Giảm {product.sale}%</li>
+                        </>
+                      ) : (
+                        <li className="new-price">
+                          {Math.round(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                        </li>
+                      )}
+
+
                   </ul>
                 </div>
               </div>
