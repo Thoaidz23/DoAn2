@@ -15,7 +15,9 @@ const ProductReview = ({productId}) => {
   const [submitting, setSubmitting] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [hasPurchased, setHasPurchased] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
+  const [existingReview, setExistingReview] = useState(null);
   const { user } = useContext(AuthContext);
 
   // Hàm chuyển ngày tạo thành "3 tháng trước"
@@ -52,6 +54,46 @@ const ProductReview = ({productId}) => {
     fetchReviews();
   }, [productId]);
 
+  useEffect(() => {
+  const fetchPurchaseStatus = async () => {
+    try {
+      if (user?.id) {
+        const res = await axios.get(`http://localhost:5000/api/reviews/check-purchased`, {
+          params: {
+            userId: user.id,
+            groupProductId: productId
+          }
+        });
+        setHasPurchased(res.data.hasPurchased);
+      }
+    } catch (err) {
+      console.error("Lỗi kiểm tra đã mua sản phẩm:", err);
+    }
+  };
+  console.log("📤 Gửi request kiểm tra mua hàng với:", {
+  userId: user?.id,
+  groupProductId: productId,
+});
+  fetchPurchaseStatus();
+}, [user, productId]);
+
+useEffect(() => {
+  const checkReviewed = async () => {
+    if (user?.id) {
+      const res = await axios.get(`http://localhost:5000/api/reviews/check-reviewed`, {
+        params: {
+          userId: user.id,
+          groupProductId: productId
+        }
+      });
+      setHasReviewed(res.data.reviewed);
+      setExistingReview(res.data.review || null);
+    }
+  };
+
+  checkReviewed();
+}, [user, productId]);
+
   const totalReviews = reviews.length;
   const rating = totalReviews > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1) : 0;
   const ratingCounts = [0, 0, 0, 0, 0];
@@ -76,61 +118,81 @@ const ProductReview = ({productId}) => {
   const filteredReviews = getFilteredReviews();
   const displayedReviews = showAllReviews ? filteredReviews : filteredReviews.slice(0, 2);
 
-  const handleSubmitReview = async () => {
-    if (comment.trim().length < 10) {
-      alert("Vui lòng nhập tối thiểu 10 ký tự.");
-      return;
-    }
+ const handleSubmitReview = async () => {
+  if (comment.trim().length < 10) {
+    alert("Vui lòng nhập tối thiểu 10 ký tự.");
+    return;
+  }
 
-    if (selectedRating === 0) {
-      alert("Vui lòng chọn số sao đánh giá.");
-      return;
-    }
+  if (selectedRating === 0) {
+    alert("Vui lòng chọn số sao đánh giá.");
+    return;
+  }
 
-    setSubmitting(true);
+  setSubmitting(true);
 
-    try {
-     await axios.post("http://localhost:5000/api/reviews", {
-      id_group_product: productId,
-      id_user: user?.id || 0,
-      initials: user?.name?.charAt(0).toUpperCase() || "K",
-      rating: selectedRating,
-      comment,
-      tags,
+  try {
+      if (hasReviewed && existingReview?.id) {
+      // GỌI UPDATE
+      await axios.put(`http://localhost:5000/api/reviews/${existingReview.id}`, {
+        rating: selectedRating,
+        comment,
+        tags,
       });
+    } else {
+      // GỌI CREATE
+      await axios.post("http://localhost:5000/api/reviews", {
+        id_group_product: productId,
+        id_user: user?.id || 0,
+        initials: user?.name?.charAt(0).toUpperCase() || "K",
+        rating: selectedRating,
+        comment,
+        tags,
+      });
+    }
 
-      alert("Đánh giá đã được gửi!");
-      setShowModal(false);
-      setComment("");
-      setSelectedRating(0);
-      setTags([]);
 
-      // Reload đánh giá
-      const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
-     const data = res.data.map((item) => ({
+
+    alert(hasReviewed ? "Đánh giá đã được cập nhật!" : "Đánh giá đã được gửi!");
+    setShowModal(false);
+    setComment("");
+    setSelectedRating(0);
+    setTags([]);
+
+    // Reload đánh giá
+    const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
+    const data = res.data.map((item) => ({
       ...item,
       tags: Array.isArray(item.tags)
         ? item.tags
         : item.tags
         ? JSON.parse(item.tags)
-        : [], // Nếu không có tag thì gán mảng rỗng
+        : [],
       time: convertToTimeAgo(item.created_at),
     }));
 
-      setReviews(data);
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi khi gửi đánh giá.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    setReviews(data);
+
+    // Cập nhật lại trạng thái đã đánh giá
+    setHasReviewed(true);
+    setExistingReview(data.find((r) => r.id_user === user?.id) || null);
+  } catch (err) {
+    console.error(err);
+    alert("Lỗi khi gửi đánh giá.");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   const tagSuggestions = ["Chất lượng tốt", "Giá cả hợp lý", "Dễ sử dụng", "Hiệu năng mượt mà", "Thiết kế đẹp", "Kết nối ổn định"];
 
   if (loading) {
     return <p>Đang tải đánh giá...</p>;
   }
+  console.log("🔎 productId (group):", productId);
+console.log("👤 userId:", user?.id);
+console.log("🟩 hasPurchased:", hasPurchased);
 
   return (
     <div className="product-review-container">
@@ -148,7 +210,23 @@ const ProductReview = ({productId}) => {
               ))}
             </div>
             <p className="total-reviews">{totalReviews} lượt đánh giá</p>
-            <button className="write-btn-review" onClick={() => setShowModal(true)}>Viết đánh giá</button>
+           {hasPurchased && (
+              <button
+                className="write-btn-review"
+                onClick={() => {
+                  if (hasReviewed && existingReview) {
+                    // nếu đã đánh giá thì prefill
+                    setComment(existingReview.comment);
+                    setSelectedRating(existingReview.rating);
+                    setTags(existingReview.tags || []);
+                  }
+                  setShowModal(true);
+                }}
+              >
+                {hasReviewed ? "Sửa đánh giá" : "Viết đánh giá"}
+              </button>
+            )}
+
           </div>
 
           <div className="center-review">

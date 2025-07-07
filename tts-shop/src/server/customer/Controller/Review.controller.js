@@ -60,9 +60,67 @@ const addReview = async (req, res) => {
   }
 };
 
+// Kiểm tra người dùng đã mua sản phẩm chưa
+const hasPurchasedProduct = (req, res) => {
+  const { userId, groupProductId } = req.query;
+  const sql = `
+    SELECT 1 FROM tbl_order_detail od
+    JOIN tbl_order o ON o.code_order = od.code_order
+    JOIN tbl_product p ON p.id_product = od.id_product
+    WHERE o.id_user = ? AND p.id_group_product = ? AND o.status = 3
+    LIMIT 1
+  `;
+
+
+  db.query(sql, [userId, groupProductId], (err, result) => {
+    if (err) {
+      console.error("❌ Lỗi kiểm tra mua hàng:", err);
+      return res.status(500).json({ error: "Lỗi server" });
+    }
+
+    return res.json({ hasPurchased: result.length > 0 });
+  });
+};
+// Controller
+const checkAlreadyReviewed = (req, res) => {
+  const { userId, groupProductId } = req.query;
+
+  const sql = `
+    SELECT id, id_user, comment, rating, tags
+    FROM tbl_reviews 
+    WHERE id_user = ? AND id_group_product = ? 
+    LIMIT 1
+  `;
+
+  db.query(sql, [userId, groupProductId], (err, result) => {
+    if (err) return res.status(500).json({ error: "Lỗi server" });
+    return res.json({ reviewed: result.length > 0, review: result[0] });
+  });
+};
+
+// PUT /api/reviews/:id
+const updateReview = (req, res) => {
+  const { id } = req.params;
+  const { rating, comment, tags } = req.body;
+
+  const sql = `
+    UPDATE tbl_reviews 
+    SET rating = ?, comment = ?, tags = ?, created_at = NOW()
+    WHERE id = ?
+  `;
+  const tagStr = typeof tags === 'string' ? tags : JSON.stringify(tags || []);
+
+  db.query(sql, [rating, comment, tagStr, id], (err) => {
+    if (err) return res.status(500).json({ error: "Lỗi khi cập nhật đánh giá" });
+    return res.json({ message: "Đánh giá đã được cập nhật" });
+  });
+};
 
 
 module.exports = {
   getReviewsByProduct,
-  addReview
+  addReview,
+  hasPurchasedProduct, // <-- xuất thêm
+  checkAlreadyReviewed,
+  updateReview
 };
