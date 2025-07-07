@@ -9,6 +9,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "../styles/newbar.scss"
 import ProductSection from "../component/ProductSetion";
 import MenuBar from "../component/MenuBar";
+import ChatWidget from "../component/chatai";
+
 
 
 function Home() {
@@ -206,6 +208,7 @@ const handlePrev = (id_category_product) => {
 
         <div className="footer-spacing"></div>
       </div>
+      <ChatWidget />
     </div>
   );
 }

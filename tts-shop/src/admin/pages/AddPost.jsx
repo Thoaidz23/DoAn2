@@ -9,6 +9,7 @@ const AddPost = () => {
   const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState("");
@@ -123,16 +124,41 @@ const AddPost = () => {
             required
           />
         </Form.Group>
+{preview && (
+  <div className="mb-3">
+    <img
+      src={preview}
+      alt="Ảnh xem trước"
+      style={{
+        maxWidth: "100%",
+        maxHeight: "300px",
+        marginTop: "10px",
+        borderRadius: "8px",
+        border: "1px solid #ccc",
+      }}
+    />
+  </div>
+)}
 
         <Form.Group className="mb-3">
-          <Form.Label>Ảnh bài viết</Form.Label>
-          <Form.Control
-            type="file"
-            onChange={(e) => setImage(e.target.files[0])}
-            accept="image/*"
-            required
-          />
-        </Form.Group>
+  <Form.Label>Ảnh bài viết</Form.Label>
+  <Form.Control
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files[0];
+      setImage(file);
+
+      if (file) {
+        setPreview(URL.createObjectURL(file));
+      } else {
+        setPreview(null);
+      }
+    }}
+    required
+  />
+</Form.Group>
+
 
         <Form.Group className="mb-3">
   <Form.Label>Nội dung</Form.Label>
