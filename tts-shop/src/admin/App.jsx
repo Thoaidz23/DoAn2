@@ -32,7 +32,8 @@ import AdminAccount from './pages/Account'
 import ChangePassword from './pages/AddminChangePW';
 import AddStaffaccount from './pages/AddStaffaccount';
 import EditStaffaccount from './pages/EditStaffaccount';
-import ProductImagesPage from './pages/ProductImagesManager'
+import ProductImagesPage from './pages/ProductImagesManager';
+import PrintOrder from "./pages/PrintOrder";
 
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
             <Route path="/admin/Account" element={<AdminAccount />} />
             <Route path="/admin/AddminChangePW" element={<ChangePassword />} />
            <Route path="/admin/product/:id/images" element={<ProductImagesPage />} />
+           <Route path="/admin/order/print/:code" element={<PrintOrder />} />
 
             {/* Route khác sau này */}
           </Routes>
@@ -88,5 +90,6 @@ function App() {
     </Router></AuthProvider>
   );
 }
+
 
 export default App;

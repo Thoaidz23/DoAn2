@@ -8,6 +8,8 @@ const AddBanner = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+const [previewImage, setPreviewImage] = useState(null);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,16 +78,35 @@ const AddBanner = () => {
             required
           />
         </Form.Group>
+        
+{previewImage && (
+  <div className="mb-3">
+    <img
+      src={previewImage}
+      alt="Preview"
+      style={{ maxWidth: "100%", maxHeight: "300px", marginTop: "10px", borderRadius: "8px" }}
+    />
+  </div>
+)}
 
         <Form.Group className="mb-3">
-          <Form.Label>Ảnh banner</Form.Label>
-          <Form.Control
-            type="file"
-            onChange={(e) => setImage(e.target.files[0])}
-            accept="image/*"
-            required
-          />
-        </Form.Group>
+  <Form.Label>Ảnh banner</Form.Label>
+  <Form.Control
+    type="file"
+    onChange={(e) => {
+      const file = e.target.files[0];
+      setImage(file);
+      if (file) {
+        setPreviewImage(URL.createObjectURL(file)); // tạo link ảnh tạm
+      } else {
+        setPreviewImage(null);
+      }
+    }}
+    accept="image/*"
+    required
+  />
+</Form.Group>
+
 
         <Button variant="primary" type="submit">
           Thêm banner
