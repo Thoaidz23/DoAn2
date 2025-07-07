@@ -29,7 +29,6 @@ const customerRoutes = require("./admin/routes/customerRoute");
 
 
 //customer
-
 const HProductRoute = require('./customer/Routes/Home.routes')
 const searchRoutes = require("./customer/Routes/search.routes");
 const MenuBar = require("./customer/Routes/MenuBar.route")
@@ -53,6 +52,7 @@ const chatRoutes = require('./customer/Routes/chat.route');
 const footer = require('./customer/Routes/Footer.route')
 const compareRoute = require("./customer/Routes/Compare.route");
 const searchSG = require("./customer/Routes/searchSuggestion.route")
+const reviewRoute = require("./customer/Routes/Review.route");
 
 //admin
 app.use('/api/dashboards', dashboardRoutes);
@@ -64,9 +64,9 @@ app.use('/api/cagproducts', cagproductRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/footers', footerRoutes);
-
 app.use('/api/staffaccounts', staffaccountRoutes);
 app.use("/api", customerRoutes);
+
 //customer
 app.use('/api/Home',HProductRoute)
 app.use("/api/SearchProduct",searchRoutes );
@@ -93,6 +93,8 @@ app.use('/api/chat', chatRoutes);
 app.use('/footer', footer);
 app.use("/api", compareRoute);
 app.use('/api',searchSG)
+app.use("/api/reviews", reviewRoute);
+
 
 // ======= Khởi động server =======
 app.listen(PORT, () => {

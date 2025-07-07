@@ -32,16 +32,16 @@ const Dashboard = () => {
   });
 
  const { user } = useContext(AuthContext); // Lấy user từ context
-  console.log(user)
+
 
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/dashboards");
-        console.log(res.data.leastSoldProducts);
+
         setStats(res.data);
-        // console.log(res.data);
+
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu dashboard:", error);
         alert("Lỗi khi tải dữ liệu, vui lòng thử lại sau.");

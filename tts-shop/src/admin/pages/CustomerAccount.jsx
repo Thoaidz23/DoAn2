@@ -11,7 +11,7 @@ const CustomerAccount = () => {
       .get("http://localhost:5000/api/customers")
       .then((res) => {
         setCustomers(res.data);
-        console.log(res.data)
+
       })
       .catch((err) => {
         console.error("Error fetching customer data:", err);

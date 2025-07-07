@@ -13,7 +13,7 @@ const [brandFilter, setBrandFilter] = useState(null);
 
 
 
-  console.log(products)
+ 
 
   const {user} = useContext(AuthContext)
 

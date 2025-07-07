@@ -18,16 +18,21 @@ function ProductSection({ title, visibleProducts, handleNext, handlePrev, brands
       navigate(`/SearchProduct?brand=${id_category_brand}&category=${id_category_product}`);
     }, 300);
   };
+  
 
   return (
     <div className="section-product-one-content">
-      <div className="section-product-one-content-btn section-prev-btn" onClick={handlePrev}>
-        <FaChevronLeft />
-      </div>
-      <div className="section-product-one-content-btn section-next-btn" onClick={handleNext}>
-        <FaChevronRight />
-      </div>
-
+      {handlePrev && (
+          <div className="section-product-one-content-btn section-prev-btn" onClick={handlePrev}>
+            <FaChevronLeft />
+          </div>
+        )}
+        {handleNext && (
+          <div className="section-product-one-content-btn section-next-btn" onClick={handleNext}>
+            <FaChevronRight />
+          </div>
+        )}
+        
       <div className="container">
         <div className="section-product-one-content-title-with-buttons">
           <h2>{title}</h2>
@@ -43,7 +48,7 @@ function ProductSection({ title, visibleProducts, handleNext, handlePrev, brands
                 </button>
               ))
             ) : (
-              <p>Không có thương hiệu nào</p>
+              <p></p>
             )}
           </div>
         </div>

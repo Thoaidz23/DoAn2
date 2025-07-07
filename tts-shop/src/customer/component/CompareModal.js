@@ -23,11 +23,10 @@ export default function CompareModal({
           id_group_product: Number(p.id_group_product),
           name_category_product: (p.name_category_product), // 👈 đảm bảo có
         }));
-          console.log("✅ Dữ liệu từ API:", cleaned);
+
         // ✅ Lọc theo id_category_product
         const filtered = cleaned.filter(p => p.name_category_product === currentCategoryId);
-        console.log("currentCategoryId", currentCategoryId);
-        console.log("filtered", filtered);
+
 
         // ✅ Lấy duy nhất 1 sản phẩm cho mỗi group
         const uniqueGroups = Array.from(

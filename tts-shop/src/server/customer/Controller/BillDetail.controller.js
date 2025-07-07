@@ -39,7 +39,7 @@ const getOrderDetail = (req, res) => {
 
       order.status_text = statusMap[order.status] || 'Không xác định';
       order.paystatus_text = order.paystatus === 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
-      console.log(productResults)
+
       res.json({
         order,
         products: productResults

@@ -232,9 +232,6 @@ const EditProduct = () => {
     const romsData = await romRes.json();
     const colorsData = await colorRes.json();
 
-    console.log("RAMs:", ramsData);
-    console.log("ROMs:", romsData);
-    console.log("Colors:", colorsData);
     setRams(Array.isArray(ramsData) ? ramsData : []);
   setRoms(Array.isArray(romsData) ? romsData : []);
   setColors(Array.isArray(colorsData) ? colorsData : []);

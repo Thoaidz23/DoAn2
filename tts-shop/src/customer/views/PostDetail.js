@@ -11,7 +11,6 @@ import TopHeadBar from '../component/TopHeadBar';
 const PostDetail = () => {
   const { id_post } = useParams(); // Lấy id từ URL
   const [post, setPost] = useState(null); // state để lưu bài viết
-  console.log(id_post)
   useEffect(() => {
     // Kiểm tra id_post có hợp lệ trước khi gọi API
     if (id_post) {

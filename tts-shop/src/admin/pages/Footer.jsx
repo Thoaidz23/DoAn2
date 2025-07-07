@@ -28,7 +28,7 @@ const Footer = () => {
   };
 
   const handleSave = () => {
-  console.log('Dữ liệu gửi đi:', editedItems); // Check if data is correct
+  
 
   Promise.all(editedItems.map(item =>
     axios.put(`http://localhost:5000/api/footers/${item.id_footer}`, item)

@@ -3,6 +3,34 @@
   border-radius: 12px;
 }
 
+.tag-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tag-button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.tag-button:hover {
+  background-color: #e0f7e9;
+  border-color: #5cb85c;
+}
+
+.tag-button.selected {
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
 .review-summary-container {
   margin-bottom: 32px;
 }
@@ -36,7 +64,7 @@
 }
 
 .left-review .main-rating-review .out-of-review {
-  font-size: 20px;
+  font-size: 30px;
   color: #888888;
   margin-left: 4px;
 }
