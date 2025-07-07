@@ -12,12 +12,9 @@ import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
 import TopHeadBar from "../component/TopHeadBar";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
 import CompareModal from './../component/CompareModal';
-
-=======
 import "../styles/ProductReview.scss"
->>>>>>> eb6d0a1216612994b6f9eccd0846a7cfc15baaa6
+
 const ProductDetail = () => {
   const [compareSelected, setCompareSelected] = useState([]);
    const [showModal, setShowModal] = useState(false);

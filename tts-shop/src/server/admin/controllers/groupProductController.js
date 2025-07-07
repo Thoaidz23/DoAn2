@@ -21,7 +21,7 @@ const getGroupProductById = (req, res) => {
 
   const sql = `
     SELECT p.*, 
-          gp.name_group_product, gp.content,
+          gp.name_group_product, gp.content, gp.sale,
           c.name_color, r1.name_ram, r2.name_rom,
           gp.image,
           gp.id_category_product,
@@ -90,7 +90,7 @@ const getColorOptions = (req, res) => {
 
 // 8. Thêm nhóm sản phẩm mới cùng cấu hình và thông số kỹ thuật
 const addProduct = async (req, res) => {
-  const { name_group_product, content, id_category_product, id_category_brand } = req.body;
+  const { name_group_product, content, id_category_product, id_category_brand, discount } = req.body;
 
    console.log("📦 req.body:", req.body);
   console.log("👉 classifications thô:", req.body.classifications);
@@ -255,7 +255,8 @@ const updateProduct = async (req, res) => {
     id_category_product,
     id_category_brand,
     classifications,
-    parameters
+    parameters,
+    discount // 👈 Thêm dòng này
   } = req.body;
 
   let parsedConfigurations = [];
@@ -277,14 +278,14 @@ const updateProduct = async (req, res) => {
 
     let updateGroupQuery = `
       UPDATE tbl_group_product
-      SET name_group_product = ?, content = ?, id_category_product = ?, id_category_brand = ?
+      SET name_group_product = ?, content = ?, id_category_product = ?, id_category_brand = ?, sale = ?
       ${image ? ', image = ?' : ''}
       WHERE id_group_product = ?
     `;
 
     const updateGroupParams = image
-      ? [name_group_product, content, id_category_product, id_category_brand, image, id]
-      : [name_group_product, content, id_category_product, id_category_brand, id];
+      ? [name_group_product, content, id_category_product, id_category_brand, discount, image, id]
+      : [name_group_product, content, id_category_product, id_category_brand, discount, id];
 
     await conn.execute(updateGroupQuery, updateGroupParams);
 
@@ -333,6 +334,7 @@ const updateProduct = async (req, res) => {
     await conn.end();
   }
 };
+
 
 const getProductImages = async (req, res) => {
   const { id } = req.params;
