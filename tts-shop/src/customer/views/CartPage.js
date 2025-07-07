@@ -21,6 +21,7 @@ const CartPage = () => {
       axios.get(`http://localhost:5000/api/cartpage/${user.id}`)
         .then((response) => {
           setCartItems(response.data);
+          console.log(response.data)
           setLoading(false);
         })
         .catch((error) => {
@@ -71,7 +72,7 @@ const CartPage = () => {
 
   // Tính tổng tiền
   const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.saleprice * item.quantity,
     0
   );
 
@@ -148,7 +149,7 @@ const CartPage = () => {
                 </div>
                 <div className="text-end">
                   <strong className="text-danger">
-                    {(item.price * item.quantity).toLocaleString("vi-VN", {
+                    {(item.saleprice * item.quantity).toLocaleString("vi-VN", {
                       style: "currency",
                       currency: "VND",
                     })}

@@ -40,7 +40,8 @@ const register = (req, res) => {
 
       connection.execute(
         'INSERT INTO tbl_user (name, email, phone, address, password, role, lock_account) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [name, email, phone, address, hashedPassword, 3, 0],
+        [name, email, phone, address, hashedPassword, 3, 0], // `lock_account = 0` cho phép đăng nhập
+
         (err, result) => {
           if (err) {
             console.error("Lỗi thêm người dùng:", err);

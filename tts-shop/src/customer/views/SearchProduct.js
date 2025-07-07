@@ -80,10 +80,10 @@ function Product() {
               <h2 style={{marginLeft:"100px"}}>Kết quả tìm kiếm</h2>
             </div>
 
-            <div className="product-one-content-items"style={{width:"100%",margin:"0 0 10% 14%"}}>
+            <div className="product-one-content-items">
               {filtered.length > 0 ? (
                 filtered.map((product) => (
-                  <div className="product-one-content-item" key={product.id_group_product} style={{width:"21.7%"}}>
+                  <div className="product-one-content-item" key={product.id_group_product} >
                     <Link to={`/product/${product.id_group_product}`}>
                       <img src={`http://localhost:5000/images/product/${product.image}`} alt={product.name_group_product} />
                     </Link>
@@ -95,7 +95,21 @@ function Product() {
                           </Link>
                         </li>
                         <li>Online giá rẻ</li>
-                        <li>{product.price}<sup>đ</sup></li>
+                         {product.sale > 0 ? (
+                        <>
+                          <li className="old-price">
+                            {Math.round(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                          </li>
+                          <li className="new-price">
+                            {Math.round(product.saleprice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                          </li>
+                          <li className="sale-badge">Giảm {product.sale}%</li>
+                        </>
+                      ) : (
+                        <li className="new-price">
+                          {Math.round(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                        </li>
+                      )}
                       </ul>
                     </div>
                   </div>

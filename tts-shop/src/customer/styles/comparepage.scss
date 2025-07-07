@@ -1,0 +1,9 @@
+.compare-2 td:not(:first-child),
+.compare-2 th:not(:first-child) {
+  width: 40%; // 2 sản phẩm
+}
+
+.compare-3 td:not(:first-child),
+.compare-3 th:not(:first-child) {
+  width: calc(80% / 3); // 3 sản phẩm
+}

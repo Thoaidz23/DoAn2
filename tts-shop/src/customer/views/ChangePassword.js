@@ -202,7 +202,7 @@ function ChangePassword() {
       <div className="container">
         <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         <div className="account-content p-4 bg-white shadow rounded-4">
-          <h4 className="mb-4 text-center">Đổi mật khẩu</h4>
+          <h4 className="mb-4 text-center" >Đổi mật khẩu</h4>
           {error && <div className="alert alert-danger">{error}</div>}
           {success && <div className="alert alert-success">{success}</div>}
 
@@ -211,9 +211,9 @@ function ChangePassword() {
             {renderInput("Mật khẩu mới", "newPassword", showPassword.new, () => togglePassword("new"))}
             {renderInput("Nhập lại mật khẩu mới", "confirmPassword", showPassword.confirm, () => togglePassword("confirm"))}
 
-            <div className="text-end mt-4">
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? "Đang xử lý..." : "Đổi mật khẩu"}
+            <div className="text-end mt-4" >
+              <button type="submit" className="btn btn-primary" disabled={loading} style={{backgroundColor: "#076247"}}>
+                {loading ? "Đang xử lý..." : "Đổi mật khẩu" }
               </button>
             </div>
           </form>

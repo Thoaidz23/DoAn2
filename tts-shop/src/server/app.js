@@ -29,6 +29,7 @@ const customerRoutes = require("./admin/routes/customerRoute");
 
 
 //customer
+
 const HProductRoute = require('./customer/Routes/Home.routes')
 const searchRoutes = require("./customer/Routes/search.routes");
 const MenuBar = require("./customer/Routes/MenuBar.route")
@@ -50,6 +51,8 @@ const bill = require('./customer/Routes/BillDetail.route')
 const resetPasswordRoute = require('./customer/Routes/Newpassword.route');
 const chatRoutes = require('./customer/Routes/chat.route');
 const footer = require('./customer/Routes/Footer.route')
+const compareRoute = require("./customer/Routes/Compare.route");
+const searchSG = require("./customer/Routes/searchSuggestion.route")
 
 //admin
 app.use('/api/dashboards', dashboardRoutes);
@@ -88,6 +91,8 @@ app.use('/api/bill-detail', bill);
 app.use(resetPasswordRoute);
 app.use('/api/chat', chatRoutes);
 app.use('/footer', footer);
+app.use("/api", compareRoute);
+app.use('/api',searchSG)
 
 // ======= Khởi động server =======
 app.listen(PORT, () => {
