@@ -11,7 +11,7 @@ const DetailOrder = () => {
     fetch(`http://localhost:5000/api/orders/${code}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
+
         setOrder(data)})
       .catch((err) => console.error("Lỗi khi lấy chi tiết đơn hàng:", err));
      
@@ -39,8 +39,6 @@ const DetailOrder = () => {
 };
 
 
-
-  console.log(order)
   if (!order) return <p>Đang tải đơn hàng...</p>;
   return (
     <div className="p-3 text-light" style={{ backgroundColor: "#1e1e2f", borderRadius: "12px" }}>

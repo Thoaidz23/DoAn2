@@ -109,9 +109,6 @@ function ChangePassword() {
   setLoading(true);
 
   try {
-    console.log("Đang gửi dữ liệu đổi mật khẩu:", { currentPassword, newPassword });
-    console.log("User ID:", user?.id);
-    console.log("Token:", token);
 
     const res = await axios.post(
       `http://localhost:5000/api/change-password/${user.id}`,

@@ -10,16 +10,13 @@ function BillDetail() {
   const { code_order } = useParams();
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
-  console.log(products)
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
 
   useEffect(() => {
-    console.log("Mã đơn hàng:", code_order);
     axios.get(`http://localhost:5000/api/bill-detail/${code_order}`)
       .then(res => {
         setOrder(res.data.order);
         setProducts(res.data.products);
-        console.log(res.data.order)
       })
       .catch(err => {
         console.error("Lỗi lấy chi tiết đơn hàng:", err);

@@ -13,11 +13,14 @@ function Product() {
   const location = useLocation();
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  
+  const [categoryName, setCategoryName] = useState("");
+  const [brandName, setBrandName] = useState("");
+  const [searchText, setSearchText] = useState("");
+
   const query = new URLSearchParams(location.search);
   const brandId = query.get("brand");
   const categoryId = query.get("category");
-  const searchText = query.get("search");
+
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -25,8 +28,7 @@ function Product() {
     const category = query.get("category");
     const search = query.get("search");
     const price = query.get("price");
-    
-    console.log("Request params:", { brand, category, search, price }); 
+     setSearchText(search || ""); 
 
     axios.get(`http://localhost:5000/api/searchproduct`, {
       params: {
@@ -35,8 +37,17 @@ function Product() {
         search,
         price,
       },
-    })
-      .then((res) => setProducts(Array.isArray(res.data) ? res.data : []))
+    } )
+      .then((res) => {
+  const data = Array.isArray(res.data) ? res.data : [];
+  setProducts(data);
+
+  if (data.length > 0) {
+    if (category) setCategoryName(data[0]?.name_category_product || "");
+    if (brand) setBrandName(data[0]?.name_category_brand || "");
+  }
+})
+
       .catch((err) => {
         console.error(err);
         setProducts([]);
@@ -47,7 +58,6 @@ function Product() {
 
   useEffect(() => {
     let result = [...products];
-
     if (brandId) {
       result = result.filter((p) => String(p.id_category_brand) === brandId);
     }
@@ -70,16 +80,25 @@ function Product() {
 
          <TopHeadBar
           searchText={searchText}
-          categoryName={filtered[0]?.name_category_brand || filtered[0]?.name_category_product}
-          />
+          categoryName={categoryName}
+          brandName={brandName}
+        />
 
       <div className="container-search">
         <div className="product-one-content" style={{maxWidth:"1800px",margin:"auto"}}>
           <div className="container">
             <div className="product-one-content-title">
-              <h2 style={{marginLeft:"100px"}}>Kết quả tìm kiếm</h2>
+              {searchText === "" ?(
+                <>
+                   <h2 style={{margin:"10px 0 20px 0",width:"1200px",textAlign:"center"}}>Tìm thấy {products.length} sản phẩm "<strong>{categoryName} {brandName}</strong>"</h2>
+                </>
+              ) : (
+                <>
+                  <h2 style={{margin:"10px 0 20px 0",width:"1200px",textAlign:"center"}}>Tìm thấy {products.length} sản phẩm cho từ khóa "<strong>{searchText}</strong>"</h2>
+                </>
+              )}
+              
             </div>
-
             <div className="product-one-content-items">
               {filtered.length > 0 ? (
                 filtered.map((product) => (

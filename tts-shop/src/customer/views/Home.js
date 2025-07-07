@@ -10,6 +10,7 @@ import "../styles/newbar.scss"
 import ProductSection from "../component/ProductSetion";
 import MenuBar from "../component/MenuBar";
 
+
 function Home() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -25,17 +26,22 @@ function Home() {
     axios.get("http://localhost:5000/api/Home")
     .then((response) => {
       setProducts(response.data.products || []);
+     
       setCategories(response.data.categories || []);
       setBrands(response.data.brands || []);
       setBrandsByCategory(response.data.brandsByCategory || {});
       setPosts(response.data.posts || []); 
       setBanner(response.data.banner || [])
-      console.log("brandsByCategory >>>", response.data.brandsByCategory); // 👈 THÊM DÒNG NÀY
   
       setLoading(false);  
     })
   ;
   }, []);
+   const newProducts = [...products]
+      .sort((a, b) => b.id_group_product - a.id_group_product)
+      .slice(0, 5);
+      // Lọc sản phẩm đang giảm giá (sale > 0)
+      const saleProducts = products.filter((p) => p.sale > 0).slice(0, 5);
 
   const groupedProducts = products.reduce((acc, product) => {
     if (!acc[product.id_category_product]) {
@@ -46,18 +52,25 @@ function Home() {
   }, {});
 
   const handleNext = (id_category_product) => {
-    const list = groupedProducts[id_category_product];
-    const currentIndex = indexMap[id_category_product] || 0;
-    const nextIndex = currentIndex + visibleCount < list.length ? currentIndex + 1 : 0;
-    setIndexMap((prev) => ({ ...prev, [id_category_product]: nextIndex }));
-  };
+  const list = id_category_product === -1 ? newProducts
+              : id_category_product === -2 ? saleProducts
+              : groupedProducts[id_category_product] || [];
 
-  const handlePrev = (id_category_product) => {
-    const list = groupedProducts[id_category_product] || [];
-    const currentIndex = indexMap[id_category_product] || 0;
-    const prevIndex = currentIndex > 0 ? currentIndex - 1 : Math.max(0, list.length - visibleCount);
-    setIndexMap((prev) => ({ ...prev, [id_category_product]: prevIndex }));
-  };
+  const currentIndex = indexMap[id_category_product] || 0;
+  const nextIndex = currentIndex + visibleCount < list.length ? currentIndex + 1 : 0;
+  setIndexMap((prev) => ({ ...prev, [id_category_product]: nextIndex }));
+};
+
+const handlePrev = (id_category_product) => {
+  const list = id_category_product === -1 ? newProducts
+              : id_category_product === -2 ? saleProducts
+              : groupedProducts[id_category_product] || [];
+
+  const currentIndex = indexMap[id_category_product] || 0;
+  const prevIndex = currentIndex > 0 ? currentIndex - 1 : Math.max(0, list.length - visibleCount);
+  setIndexMap((prev) => ({ ...prev, [id_category_product]: prevIndex }));
+};
+
   const formatDate = (isoDateStr) => {
     const date = new Date(isoDateStr);
     const vnTime = new Date(date.getTime()); // Cộng 7 tiếng
@@ -103,7 +116,29 @@ function Home() {
             </Carousel>
           </div>
         </div>
+                {/* Sản phẩm mới nhất */}
 
+          <ProductSection
+            title="Sản phẩm mới nhất"
+            visibleProducts={newProducts}
+            handleNext={null}
+            handlePrev={null}
+            brandsByCategory={{}}
+            id_category_product={-1}
+          />
+         <ProductSection
+            title="Sản phẩm khuyến mãi"
+            visibleProducts={
+              saleProducts.length > 5
+                ? saleProducts.slice(indexMap[-2] || 0, (indexMap[-2] || 0) + visibleCount)
+                : saleProducts
+            }
+            handleNext={saleProducts.length > 5 ? () => handleNext(-2) : null}
+            handlePrev={saleProducts.length > 5 ? () => handlePrev(-2) : null}
+            brandsByCategory={{}}
+            id_category_product={-2}
+          />
+          
         {/* Hiển thị từng danh mục sản phẩm */}
         {Object.entries(groupedProducts).map(([id_category_product, productList]) => {
           if (!productList || productList.length === 0) return null;
@@ -114,6 +149,7 @@ function Home() {
           const title = category ? category.name_category_product : `Danh Mục ${id_category_product}`;
 
           return (
+                  
             <ProductSection
             key={id_category_product}
             title={title}

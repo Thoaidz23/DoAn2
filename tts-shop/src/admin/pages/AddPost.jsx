@@ -72,7 +72,7 @@ const AddPost = () => {
       });
 
       const text = await response.text();  // Đọc phản hồi dưới dạng văn bản
-      console.log(text);  // In ra phản hồi (có thể là HTML nếu gặp lỗi)
+
 
       try {
         const result = JSON.parse(text);  // Cố gắng chuyển sang JSON

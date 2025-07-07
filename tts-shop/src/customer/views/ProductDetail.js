@@ -12,12 +12,9 @@ import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
 import TopHeadBar from "../component/TopHeadBar";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
 import CompareModal from './../component/CompareModal';
-
-=======
 import "../styles/ProductReview.scss"
->>>>>>> eb6d0a1216612994b6f9eccd0846a7cfc15baaa6
+
 const ProductDetail = () => {
   const [compareSelected, setCompareSelected] = useState([]);
    const [showModal, setShowModal] = useState(false);
@@ -46,14 +43,7 @@ const ProductDetail = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const navigate = useNavigate();
   const [filter, setFilter] = useState('Tất cả');
- const totalReviews = 6;
-  const rating = 4.8;
-  const ratingCounts = [5, 1, 0, 0, 0]; // 5→1 sao
-  const criteria = [
-    { label: 'Hiệu năng', rating: 4.7, count: 3 },
-    { label: 'Thời lượng pin', rating: 4.7, count: 3 },
-    { label: 'Chất lượng camera', rating: 5.0, count: 3 },
-  ];
+
     const reviews = [
   {
     name: 'Tăng Quốc Anh',
@@ -124,7 +114,6 @@ const displayedReviews = showAllReviews ? filteredReviews : filteredReviews.slic
     axios.get(`http://localhost:5000/api/group-route/${id}`)
       .then((res) => {
         const data = res.data;        
-        console.log("dataproduct",data.product[0])
         setProducts(data.product);
         setPost(data.post)
         setSpecifications(data.specifications);
@@ -162,13 +151,7 @@ const displayedReviews = showAllReviews ? filteredReviews : filteredReviews.slic
   };
 
   const handleAddToCart = async () => {
-    console.log({
-      id_user: user.id,
-      id_product: selectedProduct.id_product,
-      quantity,
-      price: selectedProduct.price * quantity,
-      id_group_product: selectedProduct.id_group_product,
-    });
+    
     setSuccess(true); // Nếu chưa đăng nhập, hiển thị thông báo lỗi
     // Tắt thông báo sau 3 giây
     setTimeout(() => {
@@ -287,7 +270,7 @@ const getAvailableOptions = (field) => {
   const availableRomIds = new Set(availableRomOptions.map(o => o.id));
   
    const isDisabled = quantity > selectedProduct.quantity;
-console.log(selectedProduct)
+
   return (
     
     <div>
@@ -405,18 +388,17 @@ console.log(selectedProduct)
                     </svg>
                 <p>So sánh</p>
                 
-
               </div>
             </div>
         {showModal && (
-  <CompareModal
-    onClose={() => setShowModal(false)}
-    selected={compareSelected}
-    setSelected={setCompareSelected}
-    currentGroupId={selectedProduct.id_group_product}
-    currentCategoryId={selectedProduct.name_category_product} // ✅ thêm dòng này
-  />
-)}
+            <CompareModal
+              onClose={() => setShowModal(false)}
+              selected={compareSelected}
+              setSelected={setCompareSelected}
+              currentGroupId={selectedProduct.id_group_product}
+              currentCategoryId={selectedProduct.name_category_product} // ✅ thêm dòng này
+            />
+          )}
 
 
             {selectedProduct.name_color && (
@@ -560,10 +542,8 @@ console.log(selectedProduct)
         </Row>
 
         <Row className="mt-5 mb-5 position-relative">
-        <ProductReview></ProductReview>
-
-
-           <Row className="mt-5 mb-5 position-relative"></Row>
+       <ProductReview productId={selectedProduct.id_group_product} />
+        <Row className="mt-5 mb-5 position-relative"></Row>
   <Col>
     <h4>Bài viết liên quan</h4>
     <div className="position-relative">

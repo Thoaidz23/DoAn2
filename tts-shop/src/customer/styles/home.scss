@@ -1,9 +1,10 @@
   .container {
-    padding: 0;
+    padding: 0 0;
     display: flex;
     gap: 15px !important;
     margin: auto; /* Căn giữa container */
     flex-wrap: wrap; /* Cho phép phần tử xuống dòng khi không đủ không gian */
+
   }
   .Home{
     margin-top: -5.3%;
@@ -204,7 +205,7 @@
     background-color: whitesmoke;
     padding: 12px;
     border-radius: 8px;
-    padding: 0;
+    padding: 0 0 5px 0;
   }
 
   .section-product-one-content-item-text li{
@@ -215,11 +216,11 @@
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap; /* Cho phép các mục tự động xuống dòng nếu không đủ chỗ */
+    padding-bottom: 10px;
   }
 
   .section-product-one-content-item {
-    width: 19%;
-    background-color: #ffffff; //g
+     background-color: #ffffff; //g
     padding: 30px 12px 20px;
     border-radius: 10px; 
     cursor: pointer;
@@ -227,8 +228,7 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
-
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); 
+       box-shadow: 0 0 20px 6px rgba(0, 128, 0, 0.5);
 
       img {
         transform: scale(1.05);
@@ -443,6 +443,7 @@
       gap: 15px;
       margin-left: 10px;
       margin-right: 10px;
+
     }
   
     .section-product-one-content-item {

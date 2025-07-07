@@ -13,10 +13,11 @@ function Navbar() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showError, setShowError] = useState(false); 
+
   // Xử lý sự kiện tìm kiếm
   const handleSearch = (event) => {
   event.preventDefault();
-  onSearch(searchQuery, navigate);
+  onSearch(searchQuery, navigate, setSearchQuery);
 };
  // Fetch gợi ý khi người dùng gõ
   useEffect(() => {
@@ -26,7 +27,6 @@ function Navbar() {
         params: { query: searchQuery },
         })
         .then((res) => {
-          console.log("Suggestions: ", res.data);
           setSuggestions(res.data.slice(0, 5));
           setShowSuggestions(true);
         })
@@ -107,10 +107,15 @@ function Navbar() {
 
               {showSuggestions && suggestions.length > 0 && (
                 <ul className="search-suggestions">
-                  {suggestions.map((item) => (
+                  {suggestions.slice(0, 4).map((item) => (
                     <li
                       key={item.id_group_product}
-                      onClick={() =>  navigate(`/product/${item.id_group_product}`)}
+                     onClick={() => {
+            navigate(`/product/${item.id_group_product}`);
+            setShowSuggestions(false);
+            setSearchQuery(""); // ✅ reset ô input
+          }}
+          
                     >
                       <img
                         src={`http://localhost:5000/images/product/${item.image}`}
@@ -160,11 +165,14 @@ function Navbar() {
   );
 }
 
-const onSearch = (searchQuery, navigate) => {
+const onSearch = (searchQuery, navigate, setSearchQuery) => {
   if (searchQuery.trim()) {
-    navigate(`/SearchProduct?search=${encodeURIComponent(searchQuery)}`);
+    navigate(`/SearchProduct?search=${encodeURIComponent(searchQuery)}`
+);
+    setSearchQuery(""); // ✅ reset sau khi chuyển trang
   }
 };
+
 
 
 export default Navbar;

@@ -10,7 +10,6 @@ function AccountOverview() {
   const [activeMenu, setActiveMenu] = useState("Tài khoản của bạn");
   const { user } = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState(null);
-  console.log(user )
   useEffect(() => {
     if (user && user.id) {
       const fetchUserInfo = async () => {

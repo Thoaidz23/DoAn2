@@ -45,7 +45,6 @@ const register = (req, res) => {
         (err, result) => {
           if (err) {
             console.error("Lỗi thêm người dùng:", err);
-            console.log("Chi tiết lỗi SQL:", err.sqlMessage);
             return res.status(500).json({ message: 'Lỗi server khi thêm người dùng' });
           }
 

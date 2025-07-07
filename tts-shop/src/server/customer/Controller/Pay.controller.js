@@ -144,7 +144,6 @@ const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) 
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log('✅ Email xác nhận đã được gửi thành công!');
   } catch (err) {
     console.error('❌ Lỗi khi gửi email:', err);
     throw new Error('Không thể gửi email xác nhận.');
