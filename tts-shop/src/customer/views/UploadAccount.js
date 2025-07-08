@@ -169,8 +169,7 @@ const UploadAccount = () => {
       </div>
     );
   };
-    const nameParts = user?.name.split(' ');
-  const firstName = nameParts?.[nameParts.length - 1];
+  console.log(userInfo)
   return (
     <div className="account-overview-container">
       <div className="container">
@@ -202,7 +201,7 @@ const UploadAccount = () => {
 
 
         <div className="account-content p-4 bg-white shadow rounded-4">
-          <img  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=random&color=fff&rounded=true&size=40`} alt="Avatar" className="avatar" />
+          <img src={userInfo?.avatar} alt="Avatar" className="avatar" />
           {renderField("Họ và tên", "name")}
           {renderField("Email", "email", false)}
           {renderField("Số điện thoại", "phone")}

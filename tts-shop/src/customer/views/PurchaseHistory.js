@@ -15,9 +15,26 @@ function PurchaseHistory() {
   const [orders, setOrders] = useState([]);
   const [errorMessage1, setErrorMessage1] = useState('');
   const [confirmModal, setConfirmModal] = useState({ show: false, orderCode: '' });
+  const [userInfo, setUserInfo] = useState(null);
 
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  console.log(user)
+
+
+useEffect(() => {
+  if (user && user.id) {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/account/${user.id}`);
+        setUserInfo(res.data);
+      } catch (err) {
+        console.error("Lỗi khi lấy thông tin người dùng:", err);
+      }
+    };
+    fetchUserInfo();
+  }
+}, [user]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -76,8 +93,7 @@ function PurchaseHistory() {
       setConfirmModal({ show: false, orderCode: '' });
     }
   };
-  const nameParts = user?.name.split(' ');
-  const firstName = nameParts?.[nameParts.length - 1];
+
   return (
     <div className="PurchaseHistory_container">
         {errorMessage1 && (
@@ -90,12 +106,17 @@ function PurchaseHistory() {
         <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         <div className="purchase-history-content">
           <div className="user-info">
-            <img  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=random&color=fff&rounded=true&size=40`} alt="Avatar" className="avatar" />
+            <img
+              src={userInfo?.avatar || "https://ui-avatars.com/api/?name=U&background=random&color=fff"}
+              alt="Avatar"
+              className="avatar"
+            />
             <div className="user-details">
-              <h3>{user.name || 'THOẠI MINH'}</h3>
-              <p>{user.email || '09*****264'} <i className="bi bi-eye"></i></p>
+              <h3>{userInfo?.name || "Người dùng"}</h3>
+              <p>{userInfo?.email || "email@..."}</p>
             </div>
           </div>
+
 
           <div className="order-summary">
             <div className="summary-item">

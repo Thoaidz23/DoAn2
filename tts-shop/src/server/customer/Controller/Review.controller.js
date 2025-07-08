@@ -4,7 +4,7 @@ const getReviewsByProduct = (req, res) => {
   const { productId } = req.params;
 
   const sql = `
-    SELECT r.*, u.name
+    SELECT r.*, u.name, u.avatar
     FROM tbl_reviews r
     JOIN tbl_user u ON u.id_user = r.id_user
     WHERE id_group_product = ? 

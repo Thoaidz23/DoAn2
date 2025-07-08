@@ -61,7 +61,7 @@ const ProductReview = ({productId}) => {
         const res = await axios.get(`http://localhost:5000/api/reviews/check-purchased`, {
           params: {
             userId: user.id,
-            groupProductId: productId
+            groupProductId: productId,
           }
         });
         setHasPurchased(res.data.hasPurchased);
@@ -269,7 +269,7 @@ console.log("🟩 hasPurchased:", hasPurchased);
         <div className="review-items-review">
           {displayedReviews.map((item, i) => (
             <div key={i} className="review-item-review">
-              <div className="avatar">{item.initials}</div>
+            <div className="avatar"><img src={item.avatar}></img></div>
               <div className="content-review">
                 <div className="top-row-review">
                   <span className="name-review">{item.name}</span>

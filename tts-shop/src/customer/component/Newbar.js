@@ -77,7 +77,7 @@ function Newbar() {
                       />
                       </div>
                     <div className="card-body p-2 pb-0">
-                      <h6 className="card-title fw-bold">{item.title}</h6>
+                      <h6 className="card-title fw-bold two-line" >{item.title}</h6>
                       <div className="text-muted small d-flex flex-wrap align-items-center mt-2 ">
                         <div className="me-5 " >
                           <i className="bi bi-person-circle me-1"></i>

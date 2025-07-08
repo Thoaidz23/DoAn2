@@ -24,9 +24,9 @@ function AccountOverview() {
       fetchUserInfo();
     }
   }, [user]);
-  const nameParts = user?.name.split(' ');
-  const firstName = nameParts?.[nameParts.length - 1];
+
   // Trả về giao diện với thông tin tài khoản nếu có userInfo
+
   return (
     <div className="account-overview-container">
       <div className="container">
@@ -34,7 +34,7 @@ function AccountOverview() {
         <div className="account-content p-4 bg-white shadow rounded-4">
           {userInfo ? (
             <>
-              <img  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(firstName)}&background=random&color=fff&rounded=true&size=40`} alt="Avatar" className="avatar" />
+              <img  src={userInfo.avatar} alt="Avatar" className="avatar" />
               <div className="mb-3">
                 <strong>Họ và tên:</strong> {userInfo.name}
               </div>

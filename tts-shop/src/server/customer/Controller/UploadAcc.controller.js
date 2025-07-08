@@ -2,7 +2,7 @@ const db = require("../../db"); // file cấu hình kết nối MySQL
 
 exports.getUserById = (req, res) => {
   const userId = req.params.id;
-  const sql = "SELECT id_user, name, email, phone, address FROM tbl_user WHERE id_user = ?";
+  const sql = "SELECT id_user, name, email, phone, address,avatar FROM tbl_user WHERE id_user = ?";
   db.query(sql, [userId], (err, results) => {
     if (err) return res.status(500).json({ error: "Lỗi truy vấn" });
     if (results.length === 0) return res.status(404).json({ error: "Không tìm thấy người dùng" });
