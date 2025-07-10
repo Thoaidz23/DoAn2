@@ -7,12 +7,12 @@ import {
 } from "react-bootstrap";
 import { CartPlus, BagCheck } from "react-bootstrap-icons";
 import "../styles/ProductDetail.scss";
-import ProductReview from "../component/ProductReview";
 import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
 import TopHeadBar from "../component/TopHeadBar";
 import { useNavigate } from "react-router-dom";
-import "../styles/ProductReview.scss"
+import ProductReview from "../component/ProductReview";
+import QnASection from "../component/QnASection";
 const ProductDetail = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
@@ -519,8 +519,10 @@ const getAvailableOptions = (field) => {
 
         <Row className="mt-5 mb-5 position-relative">
         <ProductReview></ProductReview>
+<Row className="mt-5 position-relative"></Row>
 
-
+{/* Hoi dap */}
+<QnASection></QnASection>
            <Row className="mt-5 mb-5 position-relative"></Row>
   <Col>
     <h4>Bài viết liên quan</h4>
