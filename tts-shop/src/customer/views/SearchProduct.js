@@ -7,6 +7,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Link } from "react-router-dom";
 import TopHeadBar from "../component/TopHeadBar.js"; // Cập nhật đường dẫn theo vị trí thực tế
+import Pagination from "../component/Pagination";
 
 
 function Product() {
@@ -21,6 +22,15 @@ function Product() {
   const brandId = query.get("brand");
   const categoryId = query.get("category");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filtered.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filtered.length / productsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -101,7 +111,7 @@ function Product() {
             </div>
             <div className="product-one-content-items">
               {filtered.length > 0 ? (
-                filtered.map((product) => (
+                currentProducts.map((product) => (
                   <div className="product-one-content-item" key={product.id_group_product} >
                     <Link to={`/product/${product.id_group_product}`}>
                       <img src={`http://localhost:5000/images/product/${product.image}`} alt={product.name_group_product} />
@@ -134,15 +144,27 @@ function Product() {
                   </div>
                 ))
               ) : (
-                <img src="no-products.png" alt="Không có sản phẩm" style={{margin:"0 0 0 15%"}} />
+                  <img src="no-products.png" alt="Không có sản phẩm" style={{marginLeft:"50%"}} />
+                
+                
 
               )}
             </div>
           </div>
         </div>
       </div>
+      {totalPages > 1 && (
+  <Pagination
+    currentPage={currentPage}
+    totalPages={totalPages}
+    paginate={paginate}
+  />
+)}
+
     </div>
+    
   );
+  
 }
 
 export default Product;

@@ -3,6 +3,8 @@ import axios from "axios";
 import "../styles/ProductReview.scss";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import ReviewModal from "../component/ReviewModal"; // đường dẫn đúng theo dự án của bạn
+import WriteReviewButton from "../component/WriteReviewButton";
 
 const ProductReview = ({productId}) => {
   const [filter, setFilter] = useState("Tất cả");
@@ -117,49 +119,29 @@ useEffect(() => {
 
   const filteredReviews = getFilteredReviews();
   const displayedReviews = showAllReviews ? filteredReviews : filteredReviews.slice(0, 2);
-
- const handleSubmitReview = async () => {
-  if (comment.trim().length < 10) {
-    alert("Vui lòng nhập tối thiểu 10 ký tự.");
-    return;
-  }
-
-  if (selectedRating === 0) {
-    alert("Vui lòng chọn số sao đánh giá.");
-    return;
-  }
-
+const handleSubmitReview = async ({ rating, comment, tags }) => {
   setSubmitting(true);
-
   try {
-      if (hasReviewed && existingReview?.id) {
-      // GỌI UPDATE
+    if (hasReviewed && existingReview?.id) {
       await axios.put(`http://localhost:5000/api/reviews/${existingReview.id}`, {
-        rating: selectedRating,
+        rating,
         comment,
         tags,
       });
     } else {
-      // GỌI CREATE
       await axios.post("http://localhost:5000/api/reviews", {
         id_group_product: productId,
         id_user: user?.id || 0,
         initials: user?.name?.charAt(0).toUpperCase() || "K",
-        rating: selectedRating,
+        rating,
         comment,
         tags,
       });
     }
 
-
-
     alert(hasReviewed ? "Đánh giá đã được cập nhật!" : "Đánh giá đã được gửi!");
-    setShowModal(false);
-    setComment("");
-    setSelectedRating(0);
-    setTags([]);
 
-    // Reload đánh giá
+    // Reload reviews
     const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
     const data = res.data.map((item) => ({
       ...item,
@@ -172,8 +154,6 @@ useEffect(() => {
     }));
 
     setReviews(data);
-
-    // Cập nhật lại trạng thái đã đánh giá
     setHasReviewed(true);
     setExistingReview(data.find((r) => r.id_user === user?.id) || null);
   } catch (err) {
@@ -185,14 +165,12 @@ useEffect(() => {
 };
 
 
+
   const tagSuggestions = ["Chất lượng tốt", "Giá cả hợp lý", "Dễ sử dụng", "Hiệu năng mượt mà", "Thiết kế đẹp", "Kết nối ổn định"];
 
   if (loading) {
     return <p>Đang tải đánh giá...</p>;
   }
-  console.log("🔎 productId (group):", productId);
-console.log("👤 userId:", user?.id);
-console.log("🟩 hasPurchased:", hasPurchased);
 
   return (
     <div className="product-review-container">
@@ -210,22 +188,13 @@ console.log("🟩 hasPurchased:", hasPurchased);
               ))}
             </div>
             <p className="total-reviews">{totalReviews} lượt đánh giá</p>
-           {hasPurchased && (
-              <button
-                className="write-btn-review"
-                onClick={() => {
-                  if (hasReviewed && existingReview) {
-                    // nếu đã đánh giá thì prefill
-                    setComment(existingReview.comment);
-                    setSelectedRating(existingReview.rating);
-                    setTags(existingReview.tags || []);
-                  }
-                  setShowModal(true);
-                }}
-              >
-                {hasReviewed ? "Sửa đánh giá" : "Viết đánh giá"}
-              </button>
-            )}
+           <WriteReviewButton
+          hasPurchased={hasPurchased}
+          hasReviewed={hasReviewed}
+          existingReview={existingReview}
+          onSubmit={handleSubmitReview}
+        />
+                    
 
           </div>
 
@@ -310,71 +279,16 @@ console.log("🟩 hasPurchased:", hasPurchased);
         )}
       </div>
 
-      {showModal && (
-        <div className="review-modal-overlay">
-          <div className="review-modal">
-            <div className="modal-header">
-              <h3>Đánh giá & nhận xét</h3>
-              <button className="close-modal" onClick={() => setShowModal(false)}>×</button>
-            </div>
-            <h4 className="modal-product-title">Sản phẩm</h4>
+      <ReviewModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleSubmitReview}
+        initialComment={comment}
+        initialRating={selectedRating}
+        initialTags={tags}
+        submitting={submitting}
+      />
 
-            <div className="modal-section">
-              <p>Đánh giá chung</p>
-              <div className="modal-stars-row">
-                {["Rất Tệ", "Tệ", "Bình thường", "Tốt", "Tuyệt vời"].map((label, i) => (
-                  <div
-                    key={i}
-                    className="modal-star-item"
-                    onMouseEnter={() => setHoveredStar(i + 1)}
-                    onMouseLeave={() => setHoveredStar(0)}
-                    onClick={() => setSelectedRating(i + 1)}
-                  >
-                    <span className={`star ${hoveredStar >= i + 1 || selectedRating >= i + 1 ? 'yellow' : 'gray'}`}>★</span>
-                    <span>{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-                  <div className="tag-selector">
-        <p>Chọn những điểm bạn hài lòng:</p>
-        <div className="tag-buttons">
-          {tagSuggestions.map((tag, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`tag-button ${tags.includes(tag) ? "selected" : ""}`}
-              onClick={() => {
-                setTags((prev) =>
-                  prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-                );
-              }}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-      </div>
-        
-
-            <textarea
-              className="modal-textarea"
-              placeholder="Xin mời chia sẻ một số cảm nhận về sản phẩm (nhập tối thiểu 10 kí tự)"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-
-            <button
-              className="submit-review-btn"
-              disabled={submitting}
-              onClick={handleSubmitReview}
-            >
-              {submitting ? "Đang gửi..." : "GỬI ĐÁNH GIÁ"}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -20,6 +20,32 @@ const PaymentInfor = () => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [tempPhone, setTempPhone] = useState("");
   const [isEditingPhone, setIsEditingPhone] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(null);
+
+  useEffect(() => {
+  const fetchExchangeRate = async () => {
+    try {
+      const res = await axios.get("https://api.apilayer.com/exchangerates_data/latest", {
+        params: {
+          base: "USD",        // ⚠️ Bắt buộc dùng USD làm base
+          symbols: "VND"
+        },
+        headers: {
+          apikey: "94qldPtJY5HMp9orUVGFe6Jxa48SE7fK"  // ✅ Thay bằng API key bạn có
+        }
+      });
+
+      const usdToVnd = res.data.rates.VND;
+      const vndToUsd = 1 / usdToVnd;
+      setExchangeRate(vndToUsd);
+      console.log("Tỷ giá VND -> USD:", vndToUsd);
+    } catch (err) {
+      console.error("Lỗi gọi API Apilayer:", err.response?.data || err.message);
+    }
+  };
+
+  fetchExchangeRate();
+}, []);
 
   useEffect(() => {
     if (errorMessage) {
@@ -263,7 +289,7 @@ const PaymentInfor = () => {
       return actions.order.create({
         purchase_units: [{
           amount: {
-            value: (totalPrice / 24000).toFixed(2), // VND -> USD (tùy tỉ giá)
+            value: (totalPrice * exchangeRate).toFixed(2) // USD
           },
         }],
       });

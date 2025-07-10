@@ -125,7 +125,8 @@ useEffect(() => {
             </div>
             <div className="summary-item">
               <h2>
-                {orders.reduce((total, order) => total + order.total_price, 0).toLocaleString()} đ
+                {/* {orders.reduce((total, order) => total + order.total_price, 0).toLocaleString()} đ */}
+                {orders.reduce((total, order) => total + order.total_price, 0).toLocaleString("vi-VN") + "đ"}
               </h2>
               <p>Tổng tiền tích lũy từ {new Date(orders[orders.length - 1]?.date).toLocaleDateString()}</p>
             </div>
