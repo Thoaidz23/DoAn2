@@ -66,6 +66,7 @@ function Catalognews() {
                 <div className='postcontent'>
                   <Link to={`/PostDetail/${post.id_post}`}>
                     <h4>{post.title}</h4>
+
                   </Link>
                   <div className="meta">
                     <span>👤 {post.author}</span>

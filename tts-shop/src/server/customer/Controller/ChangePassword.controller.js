@@ -11,8 +11,7 @@ const changePassword = (req, res) => {
   const token = req.headers.authorization.split(" ")[1];  // Lấy token từ header
   jwt.verify(token, process.env.JWT_SECRET || 'yourSecretKey', (err, decoded) => {
     if (err || decoded.userId !== parseInt(userId)) {
-      console.log("Decoded userId:", decoded?.userId);
-      console.log("Request userId:", userId);
+
       return res.status(403).json({ message: "Không có quyền thực hiện thao tác này." });
     }
 

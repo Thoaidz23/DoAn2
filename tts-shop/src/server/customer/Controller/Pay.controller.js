@@ -10,7 +10,7 @@ const generateCodeOrder = () => {
 };
 
 const addToPay = (req, res) => {
-  const { id_user, products, name_user, address, phone, method, code_order: reqCodeOrder,email ,name_group_product} = req.body;
+  const { id_user, products, name_user, address, phone, method, code_order: reqCodeOrder,email ,name_group_product, paystatus = 0 } = req.body;
 
   if (!id_user || !products || products.length === 0 || !name_user || !address || !phone) {
     return res.status(400).json({ message: 'Thiếu thông tin' });
@@ -34,10 +34,10 @@ const addToPay = (req, res) => {
 
       const insertOrderQuery = `
         INSERT INTO tbl_order (id_user, code_order, status, total_price, name_user, address, phone, date, paystatus, method)
-        VALUES (?, ?, 0, ?, ?, ?, ?, NOW(), 0, ?)
+        VALUES (?, ?, 0, ?, ?, ?, ?, NOW(), ?, ?)
       `;
 
-      conn.query(insertOrderQuery, [id_user, code_order, total_price, name_user, address, phone, method], (err1, result1) => {
+      conn.query(insertOrderQuery, [id_user, code_order, total_price, name_user, address, phone,  paystatus, method], (err1, result1) => {
         if (err1) {
           return conn.rollback(() => {
             conn.release();
@@ -144,7 +144,6 @@ const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) 
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log('✅ Email xác nhận đã được gửi thành công!');
   } catch (err) {
     console.error('❌ Lỗi khi gửi email:', err);
     throw new Error('Không thể gửi email xác nhận.');

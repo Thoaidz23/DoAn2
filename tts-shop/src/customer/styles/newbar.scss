@@ -3,6 +3,9 @@
     position: relative;
     width: 100%;
     overflow: hidden; /* Ngăn cuộn bên ngoài */
+    .mb-4 {
+      margin-bottom: 0 !important;
+    }
   }
   
   /* Tiêu đề bài viết và liên kết "Xem tất cả" */
@@ -10,7 +13,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+
   }
   
   .see-all-newbar {
@@ -42,6 +45,7 @@
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+
   }
   
   .card:hover {
@@ -61,16 +65,25 @@
     height: 60%; /* Đảm bảo hình ảnh chiếm phần lớn khung */
   }
   .card-title {
-    font-size: 14px; /* Kích thước chữ tiêu đề */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Cắt bớt tiêu đề nếu dài quá */
-    white-space: nowrap; /* Đảm bảo tiêu đề không xuống dòng */
-  }
-  
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
   .card-text {
     font-size: 12px; /* Kích thước chữ mô tả */
     overflow: hidden;
     text-overflow: ellipsis; /* Cắt bớt mô tả nếu dài quá */
     white-space: nowrap; /* Đảm bảo mô tả không xuống dòng */
   }
-    
+    .two-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -10,7 +10,6 @@ function AccountOverview() {
   const [activeMenu, setActiveMenu] = useState("Tài khoản của bạn");
   const { user } = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState(null);
-  console.log(user )
   useEffect(() => {
     if (user && user.id) {
       const fetchUserInfo = async () => {
@@ -27,6 +26,7 @@ function AccountOverview() {
   }, [user]);
 
   // Trả về giao diện với thông tin tài khoản nếu có userInfo
+
   return (
     <div className="account-overview-container">
       <div className="container">
@@ -34,7 +34,7 @@ function AccountOverview() {
         <div className="account-content p-4 bg-white shadow rounded-4">
           {userInfo ? (
             <>
-              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsg3Tin2fFUDV0y54btyW_XrZpqXENGJUWw&s" alt="Avatar" className="avatar" />
+              <img  src={userInfo.avatar} alt="Avatar" className="avatar" />
               <div className="mb-3">
                 <strong>Họ và tên:</strong> {userInfo.name}
               </div>

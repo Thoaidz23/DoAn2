@@ -9,7 +9,7 @@ const getOrderDetail = (req, res) => {
     WHERE o.code_order = ?
   `;
   const queryProducts = `
-    SELECT d.*, gp.name_group_product, gp.image, p.price
+    SELECT d.*, gp.name_group_product, gp.image, p.price, p.id_group_product  
     FROM tbl_order_detail d
     JOIN tbl_product p ON d.id_product = p.id_product
     JOIN tbl_group_product gp ON gp.id_group_product = p.id_group_product
@@ -39,7 +39,7 @@ const getOrderDetail = (req, res) => {
 
       order.status_text = statusMap[order.status] || 'Không xác định';
       order.paystatus_text = order.paystatus === 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
-      console.log(productResults)
+
       res.json({
         order,
         products: productResults

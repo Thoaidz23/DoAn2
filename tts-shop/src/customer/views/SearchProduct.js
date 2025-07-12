@@ -7,17 +7,30 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Link } from "react-router-dom";
 import TopHeadBar from "../component/TopHeadBar.js"; // Cập nhật đường dẫn theo vị trí thực tế
+import Pagination from "../component/Pagination";
 
 
 function Product() {
   const location = useLocation();
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  
+  const [categoryName, setCategoryName] = useState("");
+  const [brandName, setBrandName] = useState("");
+  const [searchText, setSearchText] = useState("");
+
   const query = new URLSearchParams(location.search);
   const brandId = query.get("brand");
   const categoryId = query.get("category");
-  const searchText = query.get("search");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filtered.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filtered.length / productsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -25,8 +38,7 @@ function Product() {
     const category = query.get("category");
     const search = query.get("search");
     const price = query.get("price");
-    
-    console.log("Request params:", { brand, category, search, price }); 
+     setSearchText(search || ""); 
 
     axios.get(`http://localhost:5000/api/searchproduct`, {
       params: {
@@ -35,8 +47,17 @@ function Product() {
         search,
         price,
       },
-    })
-      .then((res) => setProducts(Array.isArray(res.data) ? res.data : []))
+    } )
+      .then((res) => {
+  const data = Array.isArray(res.data) ? res.data : [];
+  setProducts(data);
+
+  if (data.length > 0) {
+    if (category) setCategoryName(data[0]?.name_category_product || "");
+    if (brand) setBrandName(data[0]?.name_category_brand || "");
+  }
+})
+
       .catch((err) => {
         console.error(err);
         setProducts([]);
@@ -47,7 +68,6 @@ function Product() {
 
   useEffect(() => {
     let result = [...products];
-
     if (brandId) {
       result = result.filter((p) => String(p.id_category_brand) === brandId);
     }
@@ -70,20 +90,29 @@ function Product() {
 
          <TopHeadBar
           searchText={searchText}
-          categoryName={filtered[0]?.name_category_brand || filtered[0]?.name_category_product}
-          />
+          categoryName={categoryName}
+          brandName={brandName}
+        />
 
       <div className="container-search">
         <div className="product-one-content" style={{maxWidth:"1800px",margin:"auto"}}>
           <div className="container">
             <div className="product-one-content-title">
-              <h2 style={{marginLeft:"100px"}}>Kết quả tìm kiếm</h2>
+              {searchText === "" ?(
+                <>
+                   <h2 style={{margin:"10px 0 20px 0",width:"1200px",textAlign:"center"}}>Tìm thấy {products.length} sản phẩm "<strong>{categoryName} {brandName}</strong>"</h2>
+                </>
+              ) : (
+                <>
+                  <h2 style={{margin:"10px 0 20px 0",width:"1200px",textAlign:"center"}}>Tìm thấy {products.length} sản phẩm cho từ khóa "<strong>{searchText}</strong>"</h2>
+                </>
+              )}
+              
             </div>
-
-            <div className="product-one-content-items"style={{width:"100%",margin:"0 0 10% 14%"}}>
+            <div className="product-one-content-items">
               {filtered.length > 0 ? (
-                filtered.map((product) => (
-                  <div className="product-one-content-item" key={product.id_group_product} style={{width:"21.7%"}}>
+                currentProducts.map((product) => (
+                  <div className="product-one-content-item" key={product.id_group_product} >
                     <Link to={`/product/${product.id_group_product}`}>
                       <img src={`http://localhost:5000/images/product/${product.image}`} alt={product.name_group_product} />
                     </Link>
@@ -95,21 +124,47 @@ function Product() {
                           </Link>
                         </li>
                         <li>Online giá rẻ</li>
-                        <li>{product.price}<sup>đ</sup></li>
+                         {product.sale > 0 ? (
+                        <>
+                          <li className="old-price">
+                            {Math.round(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                          </li>
+                          <li className="new-price">
+                            {Math.round(product.saleprice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                          </li>
+                          <li className="sale-badge">Giảm {product.sale}%</li>
+                        </>
+                      ) : (
+                        <li className="new-price">
+                          {Math.round(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
+                        </li>
+                      )}
                       </ul>
                     </div>
                   </div>
                 ))
               ) : (
-                <img src="no-products.png" alt="Không có sản phẩm" style={{margin:"0 0 0 15%"}} />
+                  <img src="no-products.png" alt="Không có sản phẩm" style={{marginLeft:"50%"}} />
+                
+                
 
               )}
             </div>
           </div>
         </div>
       </div>
+      {totalPages > 1 && (
+  <Pagination
+    currentPage={currentPage}
+    totalPages={totalPages}
+    paginate={paginate}
+  />
+)}
+
     </div>
+    
   );
+  
 }
 
 export default Product;

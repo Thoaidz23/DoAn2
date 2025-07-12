@@ -15,9 +15,26 @@ function PurchaseHistory() {
   const [orders, setOrders] = useState([]);
   const [errorMessage1, setErrorMessage1] = useState('');
   const [confirmModal, setConfirmModal] = useState({ show: false, orderCode: '' });
+  const [userInfo, setUserInfo] = useState(null);
 
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  console.log(user)
+
+
+useEffect(() => {
+  if (user && user.id) {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/account/${user.id}`);
+        setUserInfo(res.data);
+      } catch (err) {
+        console.error("Lỗi khi lấy thông tin người dùng:", err);
+      }
+    };
+    fetchUserInfo();
+  }
+}, [user]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -89,12 +106,17 @@ function PurchaseHistory() {
         <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         <div className="purchase-history-content">
           <div className="user-info">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsg3Tin2fFUDV0y54btyW_XrZpqXENGJUWw&s" alt="Avatar" className="avatar" />
+            <img
+              src={userInfo?.avatar || "https://ui-avatars.com/api/?name=U&background=random&color=fff"}
+              alt="Avatar"
+              className="avatar"
+            />
             <div className="user-details">
-              <h3>{user.name || 'THOẠI MINH'}</h3>
-              <p>{user.email || '09*****264'} <i className="bi bi-eye"></i></p>
+              <h3>{userInfo?.name || "Người dùng"}</h3>
+              <p>{userInfo?.email || "email@..."}</p>
             </div>
           </div>
+
 
           <div className="order-summary">
             <div className="summary-item">
@@ -103,7 +125,8 @@ function PurchaseHistory() {
             </div>
             <div className="summary-item">
               <h2>
-                {orders.reduce((total, order) => total + order.total_price, 0).toLocaleString()} đ
+                {/* {orders.reduce((total, order) => total + order.total_price, 0).toLocaleString()} đ */}
+                {orders.reduce((total, order) => total + order.total_price, 0).toLocaleString("vi-VN") + "đ"}
               </h2>
               <p>Tổng tiền tích lũy từ {new Date(orders[orders.length - 1]?.date).toLocaleDateString()}</p>
             </div>
@@ -157,7 +180,8 @@ function PurchaseHistory() {
                     </span>
 
                     <p className="history-order-price">
-                      {order.total_price.toLocaleString()} đ
+                      {Math.round(order.total_price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} đ
+                      
                     </p>
 
                     <div className="history-order-actions">

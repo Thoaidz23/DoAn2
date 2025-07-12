@@ -5,7 +5,7 @@ const getCart = async (req, res) => {
   const { userId } = req.params; // ✅ Dùng đúng tên
   try {
     connection.query(
-                `SELECT c.*, gp.name_group_product, gp.image,
+                `SELECT c.*, gp.name_group_product, gp.image,c.price-((c.price/100)*gp.sale) as saleprice,
                cl.name_color,
                r1.name_ram,
                r2.name_rom

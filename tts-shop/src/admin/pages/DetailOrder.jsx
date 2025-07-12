@@ -11,36 +11,27 @@ const DetailOrder = () => {
     fetch(`http://localhost:5000/api/orders/${code}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
+
         setOrder(data)})
       .catch((err) => console.error("Lỗi khi lấy chi tiết đơn hàng:", err));
      
   }, [code]);
 
-  const handleStatusUpdate = () => {
-  fetch(`http://localhost:5000/api/orders/${code}/status`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      oldStatus: order.oldStatus || order.status,  // mặc định là status hiện tại nếu chưa có
-      status: order.status,
-      paystatus: order.paystatus,
-    }),
-  })
-    .then((res) => res.json())
-    .then(() => {
-      alert("Cập nhật trạng thái thành công!");
-      navigate("/admin/order");
-    })
-    .catch((err) => {
-      console.error("Lỗi khi cập nhật trạng thái:", err);
-      alert("Cập nhật thất bại!");
-    });
+  const handlePrintAndConfirm = async () => {
+  try {
+    // Nếu đơn đang ở trạng thái chờ xác nhận
+    if (order.status === 0) {
+      await fetch(`http://localhost:5000/api/orders/print/${code}`, {
+        method: "PUT",
+      });
+    }
+
+    window.open(`/admin/print-order/${code}`, "_blank");
+  } catch (err) {
+    console.error("Lỗi khi xác nhận và in:", err);
+  }
 };
 
-
-
-  console.log(order)
   if (!order) return <p>Đang tải đơn hàng...</p>;
   return (
     <div className="p-3 text-light" style={{ backgroundColor: "#1e1e2f", borderRadius: "12px" }}>
@@ -142,15 +133,37 @@ const DetailOrder = () => {
       </h5>
     </div>
   </Card.Body>
+  <div className="d-flex justify-content-center gap-3 mt-4 mb-4">
+  <Button
+  variant="primary"
+  onClick={async () => {
+    try {
+      await fetch(`http://localhost:5000/api/orders/print/${code}`, { method: "PUT" });
+      window.open(`/admin/order/print/${code}`, "_blank"); // in ở tab mới
+    } catch (err) {
+      alert("Lỗi khi cập nhật và in đơn hàng!");
+    }
+  }}
+>
+  Xác nhận & In đơn hàng
+</Button>
+
+
+  <Button variant="secondary" onClick={() => navigate(-1)}>
+    Quay lại
+  </Button>
+</div>
+
+
 </Card>
 
 {/* Cập nhật trạng thái đơn hàng */}
-<Card className="mb-4 bg-dark text-light shadow-sm">
+{/* <Card className="mb-4 bg-dark text-light shadow-sm">
   <Card.Header className="border-bottom border-secondary">
     <strong>Cập nhật trạng thái</strong>
   </Card.Header>
   <Card.Body>
-    {/* Trạng thái thanh toán */}
+
     <div className="mb-3">
       <label htmlFor="paystatus" className="form-label">Trạng thái thanh toán</label>
       <select
@@ -166,7 +179,7 @@ const DetailOrder = () => {
       </select>
     </div>
 
-    {/* Trạng thái đơn hàng */}
+
     <div>
       <label htmlFor="orderstatus" className="form-label">Trạng thái đơn hàng</label>
       <select
@@ -202,7 +215,6 @@ const DetailOrder = () => {
             options.push({ value: 5, label: "Đã hủy" });
           }
            else {
-            // fallback nếu không thuộc các trạng thái trên
             options.push({ value: status, label: "Không xác định" });
           }
 
@@ -215,18 +227,9 @@ const DetailOrder = () => {
       </select>
     </div>
 
-    <div className="mt-3">
-      
-      <Button variant="primary" onClick={handleStatusUpdate}>
-        Cập nhật trạng thái đơn hàng
-      </Button>
-
-      <Button variant="secondary" className="ms-2" onClick={() => navigate(-1)}>
-        Quay lại
-      </Button>
-    </div>
+    
   </Card.Body>
-</Card>
+</Card> */}
 
 </div>
 

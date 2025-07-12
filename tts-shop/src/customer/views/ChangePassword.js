@@ -109,9 +109,6 @@ function ChangePassword() {
   setLoading(true);
 
   try {
-    console.log("Đang gửi dữ liệu đổi mật khẩu:", { currentPassword, newPassword });
-    console.log("User ID:", user?.id);
-    console.log("Token:", token);
 
     const res = await axios.post(
       `http://localhost:5000/api/change-password/${user.id}`,
@@ -201,8 +198,11 @@ function ChangePassword() {
     <div className="account-overview-container">
       <div className="container">
         <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
-        <div className="account-content p-4 bg-white shadow rounded-4">
-          <h4 className="mb-4 text-center" >Đổi mật khẩu</h4>
+       
+        <div className="account-content p-4 bg-white shadow rounded-4"
+        >
+
+          <h4 className="mb-4 text-center mt-5 pt-2" >Đổi mật khẩu</h4>
           {error && <div className="alert alert-danger">{error}</div>}
           {success && <div className="alert alert-success">{success}</div>}
 
@@ -217,6 +217,7 @@ function ChangePassword() {
               </button>
             </div>
           </form>
+        
         </div>
       </div>
     </div>

@@ -14,6 +14,8 @@ const AddProduct = () => {
     id_category_brand: "",
   });
 
+  const [previewImage, setPreviewImage] = useState(null);
+
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [ramOptions, setRamOptions] = useState([]);
@@ -155,16 +157,36 @@ const AddProduct = () => {
             required
           />
         </Form.Group>
+          {previewImage && (
+          <div className="mb-3">
+            <img
+              src={previewImage}
+              alt="Ảnh xem trước"
+              style={{ maxWidth: "100%", maxHeight: "300px", marginTop: "10px", borderRadius: "8px" }}
+            />
+          </div>
+        )}
 
         <Form.Group className="mb-3">
           <Form.Label>Hình ảnh</Form.Label>
           <Form.Control
             type="file"
             name="image"
-            onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              setFormData({ ...formData, image: file });
+
+              if (file) {
+                setPreviewImage(URL.createObjectURL(file));
+              } else {
+                setPreviewImage(null);
+              }
+            }}
             required
           />
         </Form.Group>
+
 
         <Form.Group className="mb-3">
           <Form.Label>Mô tả</Form.Label>
@@ -200,7 +222,12 @@ const AddProduct = () => {
                 placeholder="Value"
               />
             </div>
-            <Button variant="danger" onClick={() => handleRemoveParameter(index)} className="ms-2">Xóa</Button>
+            {parameters.length > 1 && (
+              <Button variant="danger" onClick={() => handleRemoveParameter(index)} className="ms-2">
+                Xóa
+              </Button>
+            )}
+
             {index === parameters.length - 1 && (
               <Button variant="primary" onClick={handleAddParameter} className="ms-2">Thêm</Button>
             )}
@@ -313,7 +340,12 @@ const AddProduct = () => {
                 placeholder="Giá"
               />
             </div>
-            <Button variant="danger" onClick={() => handleRemoveRow(index)} className="ms-2">Xóa</Button>
+            {configurations.length > 1 && (
+              <Button variant="danger" onClick={() => handleRemoveRow(index)} className="ms-2">
+                Xóa
+              </Button>
+            )}
+
             {index === configurations.length - 1 && (
               <Button variant="primary" onClick={handleAddRow} className="ms-2">Thêm</Button>
             )}

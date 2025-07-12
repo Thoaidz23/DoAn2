@@ -21,7 +21,7 @@ const getGroupProductById = (req, res) => {
 
   const sql = `
     SELECT p.*, 
-          gp.name_group_product, gp.content,
+          gp.name_group_product, gp.content, gp.sale,
           c.name_color, r1.name_ram, r2.name_rom,
           gp.image,
           gp.id_category_product,
@@ -90,13 +90,18 @@ const getColorOptions = (req, res) => {
 
 // 8. Thêm nhóm sản phẩm mới cùng cấu hình và thông số kỹ thuật
 const addProduct = async (req, res) => {
-  const { name_group_product, content, id_category_product, id_category_brand } = req.body;
+  const { name_group_product, content, id_category_product, id_category_brand, discount } = req.body;
+
+   console.log("📦 req.body:", req.body);
+  console.log("👉 classifications thô:", req.body.classifications);
+  console.log("👉 parameters thô:", req.body.parameters);
+
   let parameters = [];
   let classifications = [];
 
   try {
     parameters = req.body.parameters ? JSON.parse(req.body.parameters) : [];
-    classifications = req.body.classifications ? JSON.parse(req.body.classifications) : [];
+    classifications = req.body.configurations ? JSON.parse(req.body.configurations) : [];
   } catch (error) {
     return res.status(400).json({ message: 'Dữ liệu không hợp lệ.' });
   }
@@ -116,13 +121,21 @@ const addProduct = async (req, res) => {
     const id_group_product = groupResult.insertId;
 
     for (const config of classifications) {
-      const { ram, rom, color, quantity, price } = config;
-      await conn.execute(
-        `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price) 
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [id_group_product, ram, rom, color, quantity, price]
-      );
-    }
+  const { ram, rom, color, quantity, price } = config;
+  console.log("🟡 Thêm cấu hình:", config);
+  try {
+    await conn.execute(
+      `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [id_group_product, ram, rom, color, quantity, price]
+    );
+    console.log("✅ Đã thêm sản phẩm con vào tbl_product");
+  } catch (err) {
+    console.error("❌ Lỗi khi thêm sản phẩm con:", err);
+  }
+}
+
+
 
     for (const param of parameters) {
       const { attribute, value } = param;
@@ -144,6 +157,94 @@ const addProduct = async (req, res) => {
     await conn.end();
   }
 };
+// const addProduct = async (req, res) => {
+//   const { name_group_product, content, id_category_product, id_category_brand } = req.body;
+//   let parameters = [];
+//   let classifications = [];
+
+//   try {
+//     parameters = req.body.parameters ? JSON.parse(req.body.parameters) : [];
+//     classifications = req.body.classifications ? JSON.parse(req.body.classifications) : [];
+//   } catch (error) {
+//     console.error("❌ Lỗi khi parse JSON:", error);
+//     return res.status(400).json({ message: 'Dữ liệu không hợp lệ.' });
+//   }
+
+//   const image = req.file?.filename || null;
+
+//   const conn = await mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'ttsshop',
+//   });
+
+//   try {
+//     await conn.beginTransaction();
+//     console.log("📥 Bắt đầu thêm nhóm sản phẩm...");
+
+//     const [groupResult] = await conn.execute(
+//       `INSERT INTO tbl_group_product (name_group_product, content, image, id_category_product, id_category_brand, is_del) 
+//        VALUES (?, ?, ?, ?, ?, 0)`,
+//       [name_group_product, content, image, id_category_product, id_category_brand]
+//     );
+
+//     const id_group_product = groupResult.insertId;
+//     console.log("✅ Đã thêm nhóm sản phẩm, ID:", id_group_product);
+
+//     // Helper để ép kiểu số hoặc null
+//     const toIntOrNull = (val) =>
+//       val === "" || val === null || val === undefined ? null : parseInt(val);
+
+//     for (const config of classifications) {
+//       const { ram, rom, color, quantity, price } = config;
+//       console.log("➕ Thêm cấu hình:", {
+//         ram,
+//         rom,
+//         color,
+//         quantity,
+//         price,
+//       });
+
+//       await conn.execute(
+//         `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price) 
+//          VALUES (?, ?, ?, ?, ?, ?)`,
+//         [
+//           id_group_product,
+//           toIntOrNull(ram),
+//           toIntOrNull(rom),
+//           toIntOrNull(color),
+//           parseInt(quantity),
+//           parseFloat(price),
+//         ]
+//       );
+//     }
+
+//     for (const param of parameters) {
+//       const { attribute, value } = param;
+//       console.log("🧩 Thêm thông số kỹ thuật:", attribute, "=", value);
+
+//       await conn.execute(
+//         `INSERT INTO tbl_parameter (id_group_product, attribute, value) 
+//          VALUES (?, ?, ?)`,
+//         [id_group_product, attribute, value]
+//       );
+//     }
+
+//     await conn.commit();
+//     console.log("✅ Hoàn tất thêm sản phẩm.");
+//     res.status(201).json({ message: "Thêm sản phẩm thành công!" });
+
+//   } catch (err) {
+//     await conn.rollback();
+//     console.error("❌ Lỗi khi thêm sản phẩm:", err);
+//     res.status(500).json({ error: "Lỗi khi thêm sản phẩm!", detail: err.message });
+
+//   } finally {
+//     await conn.end();
+//   }
+// };
+
 
 // 9. Cập nhật nhóm sản phẩm
 const updateProduct = async (req, res) => {
@@ -154,7 +255,8 @@ const updateProduct = async (req, res) => {
     id_category_product,
     id_category_brand,
     classifications,
-    parameters
+    parameters,
+    discount // 👈 Thêm dòng này
   } = req.body;
 
   let parsedConfigurations = [];
@@ -176,14 +278,14 @@ const updateProduct = async (req, res) => {
 
     let updateGroupQuery = `
       UPDATE tbl_group_product
-      SET name_group_product = ?, content = ?, id_category_product = ?, id_category_brand = ?
+      SET name_group_product = ?, content = ?, id_category_product = ?, id_category_brand = ?, sale = ?
       ${image ? ', image = ?' : ''}
       WHERE id_group_product = ?
     `;
 
     const updateGroupParams = image
-      ? [name_group_product, content, id_category_product, id_category_brand, image, id]
-      : [name_group_product, content, id_category_product, id_category_brand, id];
+      ? [name_group_product, content, id_category_product, id_category_brand, discount, image, id]
+      : [name_group_product, content, id_category_product, id_category_brand, discount, id];
 
     await conn.execute(updateGroupQuery, updateGroupParams);
 
@@ -232,6 +334,7 @@ const updateProduct = async (req, res) => {
     await conn.end();
   }
 };
+
 
 const getProductImages = async (req, res) => {
   const { id } = req.params;

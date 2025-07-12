@@ -1,37 +1,84 @@
 import AccountBar from "../component/AccountBar";
 import "../styles/BillDetail.scss";
 import { IoArrowBack } from "react-icons/io5";
-import { FaInfoCircle, FaUser, FaPhone, FaAddressBook } from "react-icons/fa";
+import { FaUser, FaPhone, FaAddressBook } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import WriteReviewButton from "../component/WriteReviewButton";
+
 
 function BillDetail() {
   const { code_order } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
-  console.log(products)
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
+  const [reviewMap, setReviewMap] = useState({});
 
+  // 🔁 Lấy đánh giá cho các sản phẩm trong đơn hàng
+ const fetchReviewsForProducts = async (productList, userId) => {
+  const reviewsData = {};
+
+  await Promise.all(
+    productList.map(async (item) => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/reviews/check-reviewed", {
+          params: {
+            userId: userId, // ✅ lấy từ đối số truyền vào
+            groupProductId: item.id_group_product,
+          },
+        });
+        if (res.data.reviewed) {
+          reviewsData[item.id_group_product] = res.data.review;
+        }
+      } catch (err) {
+        console.error("Lỗi kiểm tra đánh giá:", err);
+      }
+    })
+  );
+
+  setReviewMap(reviewsData);
+};
+
+
+  // 🧾 Lấy thông tin đơn hàng và sản phẩm
   useEffect(() => {
-    console.log("Mã đơn hàng:", code_order);
-    axios.get(`http://localhost:5000/api/bill-detail/${code_order}`)
-      .then(res => {
-        setOrder(res.data.order);
-        setProducts(res.data.products);
-        console.log(res.data.order)
-      })
-      .catch(err => {
-        console.error("Lỗi lấy chi tiết đơn hàng:", err);
-      });
-  }, [code_order]);
+  axios.get(`http://localhost:5000/api/bill-detail/${code_order}`)
+    .then(res => {
+      setOrder(res.data.order);
+      setProducts(res.data.products);
+      // KHÔNG gọi fetchReviewsForProducts ở đây nữa
+    })
+    .catch(err => {
+      console.error("Lỗi lấy chi tiết đơn hàng:", err);
+    });
+}, [code_order]);
+
+// 👉 Gọi khi order đã có
+useEffect(() => {
+  if (order && products.length > 0) {
+    fetchReviewsForProducts(products, order.id_user);
+  }
+}, [order, products]);
+
+
+  // 🔁 Chờ có order và products mới fetch đánh giá
+  useEffect(() => {
+    if (order && products.length > 0) {
+      fetchReviewsForProducts(products, order.id_user);
+    }
+  }, [order, products]);
 
   if (!order) return <div>Đang tải dữ liệu...</div>;
 
   return (
     <div className="billdetail-container">
       <div className="container">
-            <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+        <AccountBar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         <div className="detailbill-content">
           <div className="order-detail-bill">
             <div className="title-row">
@@ -49,18 +96,65 @@ function BillDetail() {
               </div>
             </div>
 
-            <div className="title-productbill"> Sản phẩm của bạn</div>
+            <div className="title-productbill">Sản phẩm của bạn</div>
             <div className="order-items-bill">
-              {products.map((item, index) => (
-                <div className="item-detailbill" key={index}>
-                  <img src={`http://localhost:5000/images/product/${item.image}`} alt={item.name_product} />
-                  <div className="item-info-bill">
-                    <h4>{item.name_product}</h4>
-                    <p>Giá : <span className="price-bill">{item.price.toLocaleString()}đ</span></p>
-                    <p>Số lượng: <span className="billdetail-Quantity">{item.quantity_product}</span></p>
+              {products.map((item, index) => {
+                const review = reviewMap[item.id_group_product];
+                const hasReviewed = !!review;
+                
+
+                return (
+                  <div className="item-detailbill" key={index}>
+                    <img src={`http://localhost:5000/images/product/${item.image}`} alt={item.name_group_product} />
+                    <div className="item-info-bill">
+                      <h4>{item.name_group_product}</h4>
+                      <p>Giá : <span className="price-bill">{item.price.toLocaleString()}đ</span></p>
+                      <p>Số lượng: <span className="billdetail-Quantity">{item.quantity_product}</span></p>
+                      {hasReviewed && (
+                        <p>
+                          Đánh giá: {"⭐".repeat(review.rating)}{" "}
+                          <span style={{ color: "#999" }}>({review.rating} sao)</span>
+                        </p>
+                      )}
+                      <div style={{ marginTop: "10px" }}>
+                       <WriteReviewButton
+  hasPurchased={true}
+  hasReviewed={hasReviewed}
+  existingReview={review}
+  onSubmit={(data) => {
+  const payload = {
+    id_group_product: item.id_group_product,
+    id_user: order.id_user,
+    initials: order.name_user?.charAt(0).toUpperCase() || "K",
+    ...data,
+  };
+
+  const request = hasReviewed
+    ? axios.put(`http://localhost:5000/api/reviews/${review.id}`, payload)
+    : axios.post("http://localhost:5000/api/reviews", payload);
+
+  request
+    .then(() => {
+      alert("Đánh giá đã được gửi thành công!");
+
+      // 🔗 Chỉ chuyển hướng khi đang ở trang BillDetail
+      if (location.pathname.includes("bill-detail")) {
+        navigate(`/product/${item.id_group_product}`);
+      }
+    })
+    .catch((err) => {
+      console.error("Lỗi gửi đánh giá:", err);
+      alert("Lỗi khi gửi đánh giá.");
+    });
+}}
+
+/>
+
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="title-underline"></div>

@@ -24,7 +24,7 @@ P {
 }
 
 .mascot {
-  width: 80px;
+  width: 140px;
   height: auto;
   margin-right: 16px;
 }
@@ -50,7 +50,7 @@ P {
 
 .ask-content button {
   padding: 8px 16px;
-  background: red;
+  background: rgb(27, 120, 75);
   color: white;
   border: none;
   border-radius: 8px;
@@ -222,7 +222,7 @@ P {
       .admin-avatar {
         width: 40px;
         height: 40px;
-        background: #d32f2f;
+        background: #0b7751;
         color: white;
         font-weight: bold;
         font-size: 18px;
@@ -248,7 +248,7 @@ P {
           }
 
           .tag {
-            background: #d32f2f;
+            background: #2ead6c;
             color: white;
             font-size: 11px;
             padding: 2px 6px;
@@ -299,4 +299,27 @@ P {
   button:hover {
     background-color: #e0e0e0;
   }
+}
+/*input phan hoi*/
+.reply-input-box {
+  display: flex;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+.reply-input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.send-reply-btn {
+  background-color: #18744e;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
 }

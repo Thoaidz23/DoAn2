@@ -10,6 +10,8 @@ import axios from "axios";
 const EditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [discount, setDiscount] = useState(0);
+
 
   const [formData, setFormData] = useState({
     name_group_product: "",
@@ -68,6 +70,8 @@ const EditProduct = () => {
           id_category_product: product.id_category_product,
           id_category_brand: product.id_category_brand,
         });
+
+        setDiscount(product.sale || 0);
 
         setClassifications(uniqueClassifications);
         setParameters(uniqueParams);
@@ -164,6 +168,7 @@ const EditProduct = () => {
     data.append("content", formData.content);
     data.append("id_category_product", formData.id_category_product);
     data.append("id_category_brand", formData.id_category_brand);
+    data.append("discount", discount);
 
     // Transform classifications to expected format for backend
     const transformedClassifications = classifications.map(cls => ({
@@ -172,8 +177,10 @@ const EditProduct = () => {
       rom: cls.id_rom || null,
       color: cls.id_color || null,
       quantity: cls.quantity,
-      price: cls.price,
+      price: cls.price, // giữ nguyên giá
+      discount: discount, // chỉ lưu % khuyến mãi
     }));
+
     setClassifications([
       ...classifications,
       {
@@ -225,9 +232,6 @@ const EditProduct = () => {
     const romsData = await romRes.json();
     const colorsData = await colorRes.json();
 
-    console.log("RAMs:", ramsData);
-    console.log("ROMs:", romsData);
-    console.log("Colors:", colorsData);
     setRams(Array.isArray(ramsData) ? ramsData : []);
   setRoms(Array.isArray(romsData) ? romsData : []);
   setColors(Array.isArray(colorsData) ? colorsData : []);
@@ -361,6 +365,22 @@ const EditProduct = () => {
           ))}
           <Button onClick={handleAddClassification}>Thêm phân loại mới</Button>
         </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Khuyến mãi (%)</Form.Label>
+          <Form.Select
+            value={discount}
+            onChange={(e) => setDiscount(parseInt(e.target.value))}
+          >
+            <option value={0}>Không khuyến mãi</option>
+            <option value={5}>5%</option>
+            <option value={10}>10%</option>
+            <option value={15}>15%</option>
+            <option value={20}>20%</option>
+            <option value={30}>30%</option>
+          </Form.Select>
+        </Form.Group>
+
 
 
         <Button type="submit" variant="primary" style={{background:"green"}}>Cập nhật</Button>

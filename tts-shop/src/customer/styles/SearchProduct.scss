@@ -1,8 +1,16 @@
+
+
+.product-one-content-items {
+  margin-bottom: 80px;
+}
+
+
 .container-detail_bar {
     margin-top: -5.3%;
     background-color: rgba(0, 0, 0, 0.1);
     padding-left: 5px;
     padding-right: 5px;
+
     .container{
       gap: 0 !important; 
       display: flex;
@@ -46,7 +54,7 @@
     padding: 12px;
     border-radius: 8px;
     padding: 0;
-  }
+    }
   
   .product-one-content-item-text li{
     list-style: none;
@@ -60,13 +68,15 @@
   
   .product-one-content-item {
     width: calc((100% - 4 * 10px) / 5); // 5 items mỗi hàng, 4 khoảng cách giữa
+    min-width: 232px;
     background-color: #ffffff;
-    padding: 30px 12px 40px;
+    padding: 30px 12px;
     border-radius: 10px;
+    box-sizing: border-box;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
+
     img {
       width: 100%;
       height: auto;
@@ -109,6 +119,18 @@
       }
     }
   }
+
+  /* Khi có ít hơn 3 sản phẩm */
+.product-one-content-items.few-items {
+  justify-content: flex-start;
+
+  .product-one-content-item {
+    width: auto;
+    flex: 0 0 auto;
+    max-width: 300px; // hoặc 100% nếu muốn full
+  }
+}
+
   /* Responsive cho màn hình từ 992px đến dưới 1200px: 3 sản phẩm */
 @media (max-width: 1199px) and (min-width: 992px) {
   .product-one-content-item {

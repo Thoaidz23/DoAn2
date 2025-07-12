@@ -3,7 +3,11 @@ const db = require('../../db');
 const getHomeData = async (req, res) => {
   try {
     // Lấy nhóm sản phẩm
-    const [products] = await db.promise().query('SELECT g.*,p.price FROM tbl_group_product g JOIN tbl_product p ON p.id_group_product = g.id_group_product WHERE g.is_del=0 GROUP BY g.name_group_product');
+    const [products] = await db.promise().query(`
+      SELECT g.*,p.price-((p.price/100)*g.sale) as saleprice,g.sale,p.price
+      FROM tbl_group_product g 
+      JOIN tbl_product p ON p.id_group_product = g.id_group_product 
+      WHERE g.is_del=0 GROUP BY g.name_group_product`);
     
     // Lấy danh mục sản phẩm
     const [categories] = await db.promise().query('SELECT * FROM tbl_category_product');

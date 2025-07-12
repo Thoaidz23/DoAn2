@@ -9,12 +9,9 @@ import { AuthContext } from "../context/AuthContext";
 const CartPage = () => {
   const Paynavigate = useNavigate(); // 👈 điều hướng đến trang thanh toán
   const [cartItems, setCartItems] = useState([]);
-  console.log(cartItems)
   const [loading, setLoading] = useState(true);
 
   const { user } = useContext(AuthContext); // Lấy user từ context
-  console.log("user context", user);
-
   // Lấy dữ liệu giỏ hàng khi trang load
   useEffect(() => {
     if (user) {
@@ -45,21 +42,18 @@ const CartPage = () => {
       quantity: value
     })
       .then(() => {
-        console.log("Cập nhật số lượng thành công");
       })
       .catch((error) => console.error('Lỗi khi cập nhật số lượng:', error));
   };
 
   // Xóa sản phẩm khỏi giỏ
   const handleDelete = (id_cart) => {
-    console.log("id_cart cần xóa:", id_cart); // Kiểm tra giá trị của id_cart
   
     axios.delete("http://localhost:5000/api/cartpage/delete", {
       data: { id_cart }  // Đảm bảo gửi đúng id_cart
     
     })
     .then(() => {
-      console.log("Xóa sản phẩm thành công");
       setCartItems(cartItems.filter(item => item.id_cart !== id_cart));  // Cập nhật lại giỏ hàng sau khi xóa
     })
     .catch((error) => {
@@ -71,7 +65,7 @@ const CartPage = () => {
 
   // Tính tổng tiền
   const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.saleprice * item.quantity,
     0
   );
 
@@ -148,7 +142,7 @@ const CartPage = () => {
                 </div>
                 <div className="text-end">
                   <strong className="text-danger">
-                    {(item.price * item.quantity).toLocaleString("vi-VN", {
+                    {(item.saleprice * item.quantity).toLocaleString("vi-VN", {
                       style: "currency",
                       currency: "VND",
                     })}

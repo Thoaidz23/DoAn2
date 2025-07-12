@@ -8,7 +8,7 @@ const CommentSection = ({ comments = [] }) => {
     e.preventDefault();
     if (!newComment.trim()) return;
     // TODO: gọi API lưu comment
-    console.log("Thêm comment:", newComment);
+
     setNewComment("");
   };
 

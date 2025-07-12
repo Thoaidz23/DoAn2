@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState ,useEffect} from "react";
+import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUser, FaSignOutAlt, FaHistory } from "react-icons/fa";
@@ -9,13 +10,36 @@ import "../styles/navbar.scss";
 function Navbar() {
   const { user } = useContext(AuthContext); // Lấy user từ context
   const [searchQuery, setSearchQuery] = useState("");
-    const [showError, setShowError] = useState(false); 
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showError, setShowError] = useState(false); 
+
   // Xử lý sự kiện tìm kiếm
   const handleSearch = (event) => {
-    event.preventDefault();
+  event.preventDefault();
+  onSearch(searchQuery, navigate, setSearchQuery);
+};
+ // Fetch gợi ý khi người dùng gõ
+  useEffect(() => {
+  const delayDebounce = setTimeout(() => {
     if (searchQuery.trim()) {
-     navigate(`/SearchProduct?search=${searchQuery}`)} // Điều hướng đến trang kết quả tìm kiếm
-  };
+     axios.get("http://localhost:5000/api/search-suggestion", {
+        params: { query: searchQuery },
+        })
+        .then((res) => {
+          setSuggestions(res.data.slice(0, 5));
+          setShowSuggestions(true);
+        })
+        .catch(() => setSuggestions([]));
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, 300); // đợi 300ms
+
+  return () => clearTimeout(delayDebounce); // clear nếu người dùng tiếp tục gõ
+}, [searchQuery]);
+
   
   const navigate = useNavigate();
 
@@ -66,7 +90,7 @@ function Navbar() {
 
           {/* Thanh tìm kiếm */}
           <form className="search-form" onSubmit={handleSearch}>
-            <div className="search-container">
+            <div className="search-container" style={{ position: "relative" }}>
               <input
                 className="form-control search-input"
                 type="search"
@@ -74,12 +98,39 @@ function Navbar() {
                 aria-label="Search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // tránh mất focus khi click
               />
               <button className="search-btn" type="submit">
                 <FaSearch />
               </button>
+
+              {showSuggestions && suggestions.length > 0 && (
+                <ul className="search-suggestions">
+                  {suggestions.slice(0, 4).map((item) => (
+                    <li
+                      key={item.id_group_product}
+                     onClick={() => {
+            navigate(`/product/${item.id_group_product}`);
+            setShowSuggestions(false);
+            setSearchQuery(""); // ✅ reset ô input
+          }}
+          
+                    >
+                      <img
+                        src={`http://localhost:5000/images/product/${item.image}`}
+                        alt={item.name_group_product}
+                        width="40"
+                        height="40"
+                      />
+                      <span>{item.name_group_product}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </form>
+
 
           {/* Menu */}
           <ul className="navbar-nav ms-auto">
@@ -113,5 +164,15 @@ function Navbar() {
     </header>
   );
 }
+
+const onSearch = (searchQuery, navigate, setSearchQuery) => {
+  if (searchQuery.trim()) {
+    navigate(`/SearchProduct?search=${encodeURIComponent(searchQuery)}`
+);
+    setSearchQuery(""); // ✅ reset sau khi chuyển trang
+  }
+};
+
+
 
 export default Navbar;

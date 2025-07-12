@@ -13,4 +13,6 @@ router.get('/:code', orderController.getOrderByCode);
 // Cập nhật trạng thái đơn hàng theo mã đơn (code_order)
 router.put('/:code/status', orderController.updateOrder);
 
-module.exports = router;
+router.put("/print/:code", orderController.printOrderIfUnconfirmed);
+
+module.exports = router;  

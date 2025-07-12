@@ -169,7 +169,7 @@ const UploadAccount = () => {
       </div>
     );
   };
-
+  console.log(userInfo)
   return (
     <div className="account-overview-container">
       <div className="container">
@@ -201,7 +201,7 @@ const UploadAccount = () => {
 
 
         <div className="account-content p-4 bg-white shadow rounded-4">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsg3Tin2fFUDV0y54btyW_XrZpqXENGJUWw&s" alt="Avatar" className="avatar" />
+          <img src={userInfo?.avatar} alt="Avatar" className="avatar" />
           {renderField("Họ và tên", "name")}
           {renderField("Email", "email", false)}
           {renderField("Số điện thoại", "phone")}

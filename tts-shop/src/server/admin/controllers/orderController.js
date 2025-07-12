@@ -106,10 +106,10 @@ const updateOrder = (req, res) => {
     if (currentStatus === 0 && status === 1) {
       const getProductsQuery = `
         SELECT od.id_product, od.quantity_product 
-FROM tbl_order_detail od
-JOIN tbl_order o ON od.code_order = o.code_order
-WHERE o.code_order = ?
-      `;
+        FROM tbl_order_detail od
+        JOIN tbl_order o ON od.code_order = o.code_order
+        WHERE o.code_order = ?
+              `;
       connection.query(getProductsQuery, [code], (err, products) => {
         if (err) {
           console.error("Lỗi truy vấn sản phẩm:", err);
@@ -172,6 +172,29 @@ WHERE o.code_order = ?
   });
 };
 
+const printOrderIfUnconfirmed = (req, res) => {
+  const { code } = req.params;
+
+  const getStatusQuery = "SELECT status FROM tbl_order WHERE code_order = ?";
+  connection.query(getStatusQuery, [code], (err, results) => {
+    if (err || results.length === 0) return res.status(500).json({ message: "Lỗi hoặc không tìm thấy" });
+
+    const currentStatus = results[0].status;
+
+    if (currentStatus === 0) {
+      const updateQuery = "UPDATE tbl_order SET status = 1 WHERE code_order = ?";
+      connection.query(updateQuery, [code], (err2) => {
+        if (err2) return res.status(500).json({ message: "Lỗi khi cập nhật trạng thái" });
+        return res.json({ message: "Cập nhật trạng thái thành công" });
+      });
+    } else {
+      return res.json({ message: "Đơn hàng không cần cập nhật" });
+    }
+  });
+};
 
 
-module.exports = { getOrders, getOrderByCode, updateOrder };
+
+
+
+module.exports = { getOrders, getOrderByCode, updateOrder, printOrderIfUnconfirmed };
