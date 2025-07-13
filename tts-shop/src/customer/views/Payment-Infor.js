@@ -87,7 +87,7 @@ const PaymentInfor = () => {
     setLoading(false);
   }, [user]);
 
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.saleprice * item.quantity, 0);
+  const totalPrice = cartItems.reduce((sum, item) => sum + Math.round(item.saleprice) * item.quantity, 0);
 
   const handlePaymentSelect = (method) => {
     setSelectedPayment(method);
@@ -111,7 +111,7 @@ const PaymentInfor = () => {
       products: cartItems.map(item => ({
         id_product: item.id_product,
         quantity: item.quantity,
-        price: item.saleprice,
+        price: Math.round(item.saleprice),
         id_group_product: item.id_group_product,
         name_group_product: item.name_group_product,
         image: item.image,
@@ -122,9 +122,57 @@ const PaymentInfor = () => {
       if (selectedPayment === 0) {
         await axios.post("http://localhost:5000/api/pay/addpay", payload);
         navigate("/PurchaseHistory");
-      } else if (selectedPayment === 1) {
-        navigate("/Payment-momo", { state: { payload } });
-      } else if (selectedPayment === 2) {
+     } else if (selectedPayment === 1) {
+  try {
+    const res = await axios.post("http://localhost:5000/api/pay/generate-order-code", {
+  id_user: user.id,
+});
+const code_order = res.data.code_order;
+
+const momoRes = await axios.post("http://localhost:5000/api/momo/create-payment-url", {
+  code_order,
+  amount: totalPrice,
+  orderInfo: "Thanh toán MoMo đơn hàng",
+  paymentCode: "mã paymentCode MoMo người dùng", // <== Bắt buộc
+  userData: {
+    email: user.email,
+    id_user: user.id,
+    name_user: userInfo.name,
+    address: tempAddress || userInfo.address,
+    phone: tempPhone || userInfo.phone,
+    method: 1,
+    paystatus: 1,
+    products: cartItems.map(item => ({
+      id_product: item.id_product,
+      quantity: item.quantity,
+      price: Math.round(item.saleprice),
+      id_group_product: item.id_group_product,
+      name_group_product: item.name_group_product,
+      image: item.image,
+    }))
+  }
+});
+
+if (momoRes.data.payUrl) {
+  window.location.href = momoRes.data.payUrl;
+} else if (momoRes.data.deeplink) {
+  window.location.href = momoRes.data.deeplink;
+} else if (momoRes.data.qrCodeUrl) {
+  // Trường hợp không dùng redirect, có thể hiển thị QR code
+  window.open(momoRes.data.qrCodeUrl, "_blank");
+} else {
+  setErrorMessage("Không thể mở trang thanh toán MoMo.");
+}
+
+
+  } catch (err) {
+    console.error("Lỗi khi tạo đơn MoMo:", err);
+    setErrorMessage("Thanh toán MoMo thất bại.");
+  }
+}
+
+
+else if (selectedPayment === 2) {
         try {
           const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
           const orderId = res.data.code_order;
@@ -310,7 +358,7 @@ const PaymentInfor = () => {
         products: cartItems.map(item => ({
           id_product: item.id_product,
           quantity: item.quantity,
-          price: item.saleprice,
+          price: Math.round(item.saleprice),
           id_group_product: item.id_group_product,
           name_group_product: item.name_group_product,
           image: item.image,

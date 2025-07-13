@@ -12,6 +12,7 @@ import CatalogProduct from "./CatalogProduct";
 import PostDetail from "./PostDetail"
 import ComparePage from "./ComparePage"; // ✅ đường dẫn tới file ComparePage.js
 
+
 import "../styles/App.scss"
 // Tự động import toàn bộ component trong views (trừ App.js)
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);

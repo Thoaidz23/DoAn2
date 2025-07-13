@@ -270,13 +270,15 @@ const getAvailableOptions = (field) => {
   const availableRomIds = new Set(availableRomOptions.map(o => o.id));
   
    const isDisabled = quantity > selectedProduct.quantity;
-
+  console.log(selectedProduct?.name_category_brand)
   return (
     
     <div>
    <TopHeadBar
   searchText=""
-  categoryName={selectedProduct?.name_group_product}
+  categoryName={selectedProduct?.name_category_product}
+  brandName={selectedProduct?.name_category_brand}
+  productname={selectedProduct?.name_group_product}
 />
 
     <div className="Product-detail-content">
