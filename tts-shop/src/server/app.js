@@ -55,7 +55,7 @@ const compareRoute = require("./customer/Routes/Compare.route");
 const searchSG = require("./customer/Routes/searchSuggestion.route")
 const reviewRoute = require("./customer/Routes/Review.route");
 app.use("/api/momo", require("./customer/Routes/Momo.route"));
-
+app.use('/api/qna', require('./customer/Routes/QaA.route'));
 
 //admin
 app.use('/api/dashboards', dashboardRoutes);

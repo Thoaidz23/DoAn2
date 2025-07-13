@@ -10,7 +10,6 @@ function TopHeadBar({ searchText, categoryName, brandName ,productname}) {
         </Link>
         
       {searchText=== "" ? (
-
         <>
         {categoryName && (
           <>

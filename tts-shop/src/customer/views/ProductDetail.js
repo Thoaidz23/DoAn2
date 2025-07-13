@@ -15,6 +15,7 @@ import ProductReview from "../component/ProductReview";
 import QnASection from "../component/QnASection";
 import CompareModal from './../component/CompareModal';
 import "../styles/ProductReview.scss"
+
 const ProductDetail = () => {
   const [compareSelected, setCompareSelected] = useState([]);
    const [showModal, setShowModal] = useState(false);
@@ -28,7 +29,7 @@ const ProductDetail = () => {
   const [post, setPost] = useState([]);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const { user} = useContext(AuthContext);
-
+  console.log(user)
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [showError, setShowError] = useState(false); 
@@ -545,14 +546,20 @@ const getAvailableOptions = (field) => {
 
         <Row className="mt-5 mb-5 position-relative">
 
-        <ProductReview></ProductReview>
-<Row className="mt-5 position-relative"></Row>
-
-{/* Hoi dap */}
-<QnASection></QnASection>
-           <Row className="mt-5 mb-5 position-relative"></Row>
+       <Row className="mt-5 mb-5 position-relative"></Row>
        <ProductReview productId={selectedProduct.id_group_product} />
         <Row className="mt-5 mb-5 position-relative"></Row>
+
+{/* Hoi dap */}
+<QnASection
+  nameuser={user.name}
+  avataruser={user.avatar}
+  roleuser={user.role}
+  id_group_product={selectedProduct.id_group_product}
+/>
+
+
+           
 
   <Col>
     <h4>Bài viết liên quan</h4>
