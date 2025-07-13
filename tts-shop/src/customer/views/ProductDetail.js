@@ -7,14 +7,14 @@ import {
 } from "react-bootstrap";
 import { CartPlus, BagCheck } from "react-bootstrap-icons";
 import "../styles/ProductDetail.scss";
-import ProductReview from "../component/ProductReview";
 import ProductOptionSelector from "../component/ProductOptionSelector";
 import { AuthContext } from "../context/AuthContext";
 import TopHeadBar from "../component/TopHeadBar";
 import { useNavigate } from "react-router-dom";
+import ProductReview from "../component/ProductReview";
+import QnASection from "../component/QnASection";
 import CompareModal from './../component/CompareModal';
 import "../styles/ProductReview.scss"
-
 const ProductDetail = () => {
   const [compareSelected, setCompareSelected] = useState([]);
    const [showModal, setShowModal] = useState(false);
@@ -544,8 +544,16 @@ const getAvailableOptions = (field) => {
         </Row>
 
         <Row className="mt-5 mb-5 position-relative">
+
+        <ProductReview></ProductReview>
+<Row className="mt-5 position-relative"></Row>
+
+{/* Hoi dap */}
+<QnASection></QnASection>
+           <Row className="mt-5 mb-5 position-relative"></Row>
        <ProductReview productId={selectedProduct.id_group_product} />
         <Row className="mt-5 mb-5 position-relative"></Row>
+
   <Col>
     <h4>Bài viết liên quan</h4>
     <div className="position-relative">
