@@ -8,7 +8,7 @@ import Order from './pages/Order';
 import DetailOrder from './pages/DetailOrder';
 import Banner from './pages/Banner';
 import GroupProduct from './pages/GroupProduct';
-import GroupProductDetail from './pages/GroupProductDetail';  // Thêm import cho ProductDetail
+import GroupProductDetail from './pages/GroupProductDetail';
 import ProductCategory from './pages/ProductCategory';
 import BrandCategory from './pages/BrandCategory';
 import Post from './pages/Post';
@@ -34,6 +34,7 @@ import AddStaffaccount from './pages/AddStaffaccount';
 import EditStaffaccount from './pages/EditStaffaccount';
 import ProductImagesPage from './pages/ProductImagesManager';
 import PrintOrder from "./pages/PrintOrder";
+import ReviewList from "./pages/ReviewList";
 
 
 function App() {
@@ -81,6 +82,7 @@ function App() {
             <Route path="/admin/AddminChangePW" element={<ChangePassword />} />
            <Route path="/admin/product/:id/images" element={<ProductImagesPage />} />
            <Route path="/admin/order/print/:code" element={<PrintOrder />} />
+           <Route path="/admin/product/:id_group_product/reviews" element={<ReviewList />} />
 
             {/* Route khác sau này */}
           </Routes>

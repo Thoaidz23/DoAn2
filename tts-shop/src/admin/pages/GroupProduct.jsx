@@ -208,7 +208,8 @@ const handleToggleDelete = async (id_group_product, is_del) => {
                
                  <td className="text-center align-middle">
   {user.role === 1 && (
-    <>
+  <>
+    <div className="d-flex justify-content-center mb-2">
       <Button
         as={Link}
         to={`/admin/product/edit/${product.id_group_product}`}
@@ -236,8 +237,21 @@ const handleToggleDelete = async (id_group_product, is_del) => {
           Xóa
         </Button>
       )}
-    </>
-  )}
+    </div>
+
+    <div className="text-center">
+      <Button
+        as={Link}
+        to={`/admin/product/${product.id_group_product}/reviews`}
+        variant="info"
+        size="sm"
+      >
+        Sửa đánh giá
+      </Button>
+    </div>
+  </>
+)}
+
 </td>
 
 

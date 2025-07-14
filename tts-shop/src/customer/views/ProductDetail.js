@@ -543,14 +543,16 @@ const getAvailableOptions = (field) => {
 
         <Row className="mt-5 mb-5 position-relative">
 
-        <ProductReview></ProductReview>
-<Row className="mt-5 position-relative"></Row>
+        
 
-{/* Hoi dap */}
-<QnASection></QnASection>
-           <Row className="mt-5 mb-5 position-relative"></Row>
+
+
+           
        <ProductReview productId={selectedProduct.id_group_product} />
         <Row className="mt-5 mb-5 position-relative"></Row>
+
+        {/* Hoi dap */}
+<QnASection></QnASection>
 
   <Col>
     <h4>Bài viết liên quan</h4>

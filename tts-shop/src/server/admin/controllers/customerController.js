@@ -2,7 +2,7 @@
 const db = require("../../db"); // file kết nối MySQL
 
 exports.getAllCustomers = (req, res) => {
-  const query = "SELECT *  FROM tbl_user WHERE role = 2";
+  const query = "SELECT *  FROM tbl_user WHERE role = 3";
 
   db.query(query, (err, results) => {
     if (err) {
