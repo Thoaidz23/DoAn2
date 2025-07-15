@@ -12,6 +12,7 @@ const getProductDetail = async (req, res) => {
              gp.id_category_product,
              gp.sale,
              cp.name_category_product,
+             cb.name_category_brand,
              gp.content,
              c.name_color, 
              r1.name_ram, 
@@ -24,6 +25,7 @@ const getProductDetail = async (req, res) => {
       LEFT JOIN tbl_rom r2 ON p.id_rom = r2.id_rom  
       LEFT JOIN tbl_product_images i ON i.id_group_product = gp.id_group_product
       LEFT JOIN tbl_category_product cp ON cp.id_category_product = gp.id_category_product
+      LEFT JOIN tbl_category_brand cb   ON cb.id_category_brand   = gp.id_category_brand
       WHERE p.id_group_product = ?
       GROUP BY p.id_product;
     `;

@@ -15,6 +15,7 @@ import ProductReview from "../component/ProductReview";
 import QnASection from "../component/QnASection";
 import CompareModal from './../component/CompareModal';
 import "../styles/ProductReview.scss"
+
 const ProductDetail = () => {
   const [compareSelected, setCompareSelected] = useState([]);
    const [showModal, setShowModal] = useState(false);
@@ -28,7 +29,7 @@ const ProductDetail = () => {
   const [post, setPost] = useState([]);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const { user} = useContext(AuthContext);
-
+  console.log(user)
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [showError, setShowError] = useState(false); 
@@ -270,13 +271,15 @@ const getAvailableOptions = (field) => {
   const availableRomIds = new Set(availableRomOptions.map(o => o.id));
   
    const isDisabled = quantity > selectedProduct.quantity;
-
+  console.log(selectedProduct?.name_category_brand)
   return (
     
     <div>
    <TopHeadBar
   searchText=""
-  categoryName={selectedProduct?.name_group_product}
+  categoryName={selectedProduct?.name_category_product}
+  brandName={selectedProduct?.name_category_brand}
+  productname={selectedProduct?.name_group_product}
 />
 
     <div className="Product-detail-content">
@@ -543,6 +546,7 @@ const getAvailableOptions = (field) => {
 
         <Row className="mt-5 mb-5 position-relative">
 
+<<<<<<< HEAD
         
 
 
@@ -553,6 +557,22 @@ const getAvailableOptions = (field) => {
 
         {/* Hoi dap */}
 <QnASection></QnASection>
+=======
+       <Row className="mt-5 mb-5 position-relative"></Row>
+       <ProductReview productId={selectedProduct.id_group_product} />
+        <Row className="mt-5 mb-5 position-relative"></Row>
+
+{/* Hoi dap */}
+<QnASection
+  nameuser={user.name}
+  avataruser={user.avatar}
+  roleuser={user.role}
+  id_group_product={selectedProduct.id_group_product}
+/>
+
+
+           
+>>>>>>> 709ac8b9da3142b55856facf5f0f1443b9081e00
 
   <Col>
     <h4>Bài viết liên quan</h4>

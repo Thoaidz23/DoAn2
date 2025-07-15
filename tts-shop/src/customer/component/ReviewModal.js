@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "../styles/ProductReview.scss";
 
 const tagSuggestions = [
@@ -24,6 +24,15 @@ const ReviewModal = ({
   const [selectedRating, setSelectedRating] = useState(initialRating);
   const [tags, setTags] = useState(initialTags);
 
+  useEffect(() => {
+    if (show) {
+      console.log("initialTags", initialTags);
+      setComment(initialComment);
+      setSelectedRating(initialRating);
+      setTags(initialTags);
+      setHoveredStar(0);
+    }
+  }, [show, initialComment, initialRating, initialTags]);
   const handleSubmit = () => {
     if (comment.trim().length < 10) {
       alert("Vui lòng nhập tối thiểu 10 ký tự.");

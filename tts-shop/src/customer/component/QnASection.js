@@ -1,65 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/QnASeciton.scss";
 import mascotImg from "../assets/img/QnA.png";
+import axios from "axios";
 
-function QnASection() {
+function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
+  const [comments, setComments] = useState([]);
   const [showReplies, setShowReplies] = useState(null);
   const [question, setQuestion] = useState("");
   const [showAllComments, setShowAllComments] = useState(false);
-  const [activeReplyInput, setActiveReplyInput] = useState(null); // thêm state theo dõi phản hồi đang mở
+  const [activeReplyInput, setActiveReplyInput] = useState(null);
+  const [replyTexts, setReplyTexts] = useState({});
 
-  const comments = [
-    {
-      id: 1,
-      name: "Thu Trang",
-      time: "2 tuần trước",
-      content: "đây là máy new đúng không ạ",
-      replies: [
-        {
-          id: 1,
-          name: "Quản Trị Viên",
-          time: "2 tuần trước",
-          content: `Dạ CellphoneS xin chào chị Trang
-Máy mới 100% ạ
-APPLE IPHONE 16 PLUS 128GB TRẮNG CHÍNH HÃNG VN/A (MXVV3) giá thời điểm hiện tại: 21.990.000 tại miền nam
-Không biết mình ở quận nào em kiểm tra cửa hàng gần nhất hỗ trợ giữ hàng qua SDT
-Thân Mến!`,
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Hà Ngọc Yến",
-      time: "3 tuần trước",
-      content: "Iphone 16plus trả góp khi nào mới có hàng vậy ạ",
-      replies: [],
-    },
-    {
-      id: 3,
-      name: "Trần Thị Phương Anh",
-      time: "1 tháng trước",
-      content: "ip16plus 128gb có UDSV hok ạ",
-      replies: [
-        {
-          id: 1,
-          name: "Quản Trị Viên",
-          time: "1 tháng trước",
-          content: `CellphoneS xin chào chị Phương Anh
-Dạ iphone mới chưa có ưu đãi S-Student ạ
-iPhone 16 Plus 128GB | Chính hãng VN/A hồng giá hiện tại giảm còn 22.390.000đ (giá tại miền nam) ạ
-Dạ mình ở khu vực nào để em kiểm tra shop còn hàng gần mình nhất ạ
-Thân mến !`,
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: "Nguyễn Văn Hùng",
-      time: "1 tháng trước",
-      content: "Máy có hỗ trợ eSim không vậy shop?",
-      replies: [],
-    },
-  ];
+  const fetchComments = () => {
+    axios.get(`http://localhost:5000/api/qna?productId=${id_group_product}`).then((res) => {
+      setComments(res.data);
+    });
+  };
+
+  useEffect(() => {
+    if(id_group_product){
+      fetchComments();
+    }
+    
+  }, [id_group_product]);
+
+  const handleSendQuestion = () => {
+    if (!question.trim()) return;
+    axios.post("http://localhost:5000/api/qna/question", {
+      name: nameuser || "Khách",
+      avatar: avataruser || "",
+      content: question,
+      id_group_product,
+    }).then(() => {
+      setQuestion("");
+      fetchComments();
+    });
+  };
+
+  const handleSendReply = (commentId, replyIdKey) => {
+    const content = replyTexts[replyIdKey];
+    if (!content?.trim()) return;
+    axios.post("http://localhost:5000/api/qna/reply", {
+      commentId,
+      name: nameuser || "Khách",
+      avatar: avataruser || "",
+      content,
+      role: roleuser || 0,
+    }).then(() => {
+      setReplyTexts((prev) => ({ ...prev, [replyIdKey]: "" }));
+      setActiveReplyInput(null);
+      fetchComments();
+    });
+  };
 
   const toggleReplies = (commentId) => {
     setShowReplies((prev) => (prev === commentId ? null : commentId));
@@ -67,113 +59,108 @@ Thân mến !`,
 
   const visibleComments = showAllComments ? comments : comments.slice(0, 2);
 
+  const getDisplayName = (item) => {
+    if (item.role === 1) return "Quản trị viên";
+    if (item.role === 2) return "Nhân viên";
+    return item.name;
+  };
+
+  const renderAvatar = (item) => {
+    return item.avatar ? (
+      <img src={item.avatar} alt="avatar" />
+    ) : (
+      <div className="avatar-fallback">{item.name?.charAt(0) || "?"}</div>
+    );
+  };
+
   return (
     <div className="qna-container">
       <h2>Hỏi và đáp</h2>
 
-      {/* 🔹 Hộp đặt câu hỏi */}
       <div className="ask-box">
         <img src={mascotImg} alt="Mascot" className="mascot" />
         <div className="ask-content">
           <h3>Hãy đặt câu hỏi cho chúng tôi</h3>
-          <p>
-            CellphoneS sẽ phản hồi trong vòng 1 giờ. Nếu Quý khách gửi câu hỏi
-            sau 22h, chúng tôi sẽ trả lời vào sáng hôm sau. Thông tin có thể
-            thay đổi theo thời gian, vui lòng đặt câu hỏi để nhận được cập nhật
-            mới nhất!
-          </p>
+          <p>CellphoneS sẽ phản hồi trong vòng 1 giờ...</p>
           <input
             type="text"
             placeholder="Viết câu hỏi của bạn tại đây"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
-          <button>Gửi câu hỏi ✈</button>
+          <button onClick={handleSendQuestion}>Gửi câu hỏi ✈</button>
         </div>
       </div>
 
-      {/* 🔹 Danh sách bình luận */}
       <div className="comment-list">
         {visibleComments.map((comment) => (
           <div className="item-comment" key={comment.id}>
-            <div className="avatar">{comment.name.charAt(0)}</div>
+            <div className="avatar">{renderAvatar(comment)}</div>
             <div className="comment-body">
               <div className="comment-header">
-                <strong>{comment.name}</strong>
-                <span>· {comment.time}</span>
+                <strong>{getDisplayName(comment)}</strong>
+                <span>· {new Date(comment.time).toLocaleDateString()}</span>
               </div>
               <p>{comment.content}</p>
-              <span
-                className="reply-action"
-                onClick={() => setActiveReplyInput(`comment-${comment.id}`)}
-              >
-                💬 Phản hồi
-              </span>
+              <span className="reply-action" onClick={() => setActiveReplyInput(`comment-${comment.id}`)}>💬 Phản hồi</span>
 
-              {/* Ô input phản hồi cho comment */}
               {activeReplyInput === `comment-${comment.id}` && (
                 <div className="reply-input-box">
                   <input
                     type="text"
                     placeholder="Nhập phản hồi của bạn..."
-                    className="reply-input"
+                    value={replyTexts[`comment-${comment.id}`] || ""}
+                    onChange={(e) =>
+                      setReplyTexts((prev) => ({ ...prev, [`comment-${comment.id}`]: e.target.value }))
+                    }
                   />
-                  <button className="send-reply-btn">Gửi</button>
+                  <button onClick={() => handleSendReply(comment.id, `comment-${comment.id}`)}>Gửi</button>
                 </div>
               )}
 
-              <br />
-              {/* 🔸 Toggle phản hồi nếu có */}
               {comment.replies.length > 0 && (
                 <>
-                  <div
-                    className="toggle-reply"
-                    onClick={() => toggleReplies(comment.id)}
-                  >
-                    {showReplies === comment.id
-                      ? "Thu gọn phản hồi ⯅"
-                      : `Xem tất cả ${comment.replies.length} phản hồi ⯆`}
+                  <div className="toggle-reply" onClick={() => toggleReplies(comment.id)}>
+                    {showReplies === comment.id ? "Thu gọn phản hồi ⯅" : `Xem tất cả ${comment.replies.length} phản hồi ⯆`}
                   </div>
 
                   {showReplies === comment.id &&
                     comment.replies.map((reply) => (
                       <div className="reply" key={reply.id}>
-                        <div className="admin-avatar">S</div>
+                        <div className="admin-avatar">{renderAvatar(reply)}</div>
                         <div className="reply-body">
                           <div className="reply-header">
-                            <strong>{reply.name}</strong>
-                            <span className="tag">QTV</span>
-                            <span>· {reply.time}</span>
+                            <strong>{getDisplayName(reply)}</strong>
+                            {reply.role === 1 && <span className="tag admin">Quản trị viên</span>}
+                            {reply.role === 2 && <span className="tag staff">Nhân viên</span>}
+                            <span>· {new Date(reply.time).toLocaleDateString()}</span>
                           </div>
-                          <p>
-                            {reply.content.split("\n").map((line, index) => (
-                              <React.Fragment key={index}>
-                                {line}
-                                <br />
-                              </React.Fragment>
-                            ))}
-                          </p>
+                          <p>{reply.content}</p>
                           <span
                             className="reply-action"
-                            onClick={() =>
-                              setActiveReplyInput(
-                                `reply-${comment.id}-${reply.id}`
-                              )
-                            }
+                            onClick={() => setActiveReplyInput(`reply-${comment.id}-${reply.id}`)}
                           >
                             💬 Phản hồi
                           </span>
 
-                          {/* Ô input phản hồi cho reply */}
-                          {activeReplyInput ===
-                            `reply-${comment.id}-${reply.id}` && (
+                          {activeReplyInput === `reply-${comment.id}-${reply.id}` && (
                             <div className="reply-input-box">
                               <input
                                 type="text"
-                                placeholder="Nhập phản hồi của bạn..."
-                                className="reply-input"
+                                placeholder="Nhập phản hồi..."
+                                value={replyTexts[`reply-${comment.id}-${reply.id}`] || ""}
+                                onChange={(e) =>
+                                  setReplyTexts((prev) => ({
+                                    ...prev,
+                                    [`reply-${comment.id}-${reply.id}`]: e.target.value,
+                                  }))
+                                }
                               />
-                              <button className="send-reply-btn">Gửi</button>
+                              <button
+                                onClick={() => handleSendReply(comment.id, `reply-${comment.id}-${reply.id}`)}
+                              >
+                                Gửi
+                              </button>
                             </div>
                           )}
                         </div>
@@ -185,7 +172,6 @@ Thân mến !`,
           </div>
         ))}
 
-        {/* 🔹 Nút xem thêm bình luận */}
         {comments.length > 2 && !showAllComments && (
           <div className="view-more-comments">
             <button onClick={() => setShowAllComments(true)}>

@@ -110,7 +110,9 @@ useEffect(() => {
                       <h4>{item.name_group_product}</h4>
                       <p>Giá : <span className="price-bill">{item.price.toLocaleString()}đ</span></p>
                       <p>Số lượng: <span className="billdetail-Quantity">{item.quantity_product}</span></p>
-                      {hasReviewed && (
+                      {order.status_text === "Đã giao hàng" &&(
+                        <>
+                         {hasReviewed && (
                         <p>
                           Đánh giá: {"⭐".repeat(review.rating)}{" "}
                           <span style={{ color: "#999" }}>({review.rating} sao)</span>
@@ -151,6 +153,9 @@ useEffect(() => {
 />
 
                       </div>
+                        </>
+                      )}
+                     
                     </div>
                   </div>
                 );
