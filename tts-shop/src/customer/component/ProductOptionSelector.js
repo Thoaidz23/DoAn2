@@ -2,26 +2,7 @@ import React from "react";
 import { Button, Form } from "react-bootstrap";
 import "../styles/ProductOptionSelector.scss";
 
-// const ProductOptionSelector = ({ label, options, selected, onSelect }) => {
-//   return (
-//     <div className="mb-3">
-//       <Form.Label>{label}</Form.Label>
-//       <div className="d-flex gap-2 flex-wrap">
-//       {options.map((option) => (
-//           <Button
-//             key={option.id}
-//             variant={selected === option.id ? "secondary" : "outline-secondary"}
-//             onClick={() => onSelect(option.id)}
-//             className={`option-btn ${selected === option.id ? "selected" : ""}`}
-//           >
-//             {option.label}
-//           </Button>
-//         ))}
 
-//       </div>
-//     </div>
-//   );
-// };
 const ProductOptionSelector = ({ label, options, selected, onSelect, disabledOptions = [] }) => {
   return (
     <div className="mb-3">

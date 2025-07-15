@@ -45,71 +45,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState('Tất cả');
 
-    const reviews = [
-  {
-    name: 'Tăng Quốc Anh',
-    initials: 'T',
-    rating: 5,
-    comment: 'Dạ cho em hỏi là bản đã kích hoạt thì bị lỗi so với chưa kích hoạt k ạ',
-    tags: [
-      'Hiệu năng Siêu mạnh mẽ',
-      'Thời lượng pin Cực khủng',
-      'Chất lượng camera Chụp đẹp, chuyên nghiệp',
-    ],
-    time: '6 tháng trước',
-  },
-  {
-    name: 'Nhan',
-    initials: 'N',
-    rating: 5,
-    comment: 'Rất hài lòng!',
-    tags: [],
-    time: '8 tháng trước',
-  },
-  {
-    name: 'Lê Hoàng',
-    initials: 'L',
-    rating: 4,
-    comment: 'Máy đẹp, hiệu năng ổn định nhưng hơi nóng khi chơi game lâu.',
-    tags: ['Hiệu năng ổn', 'Thiết kế đẹp'],
-    time: '3 tháng trước',
-  },
-  {
-    name: 'Nguyễn Thị Mai',
-    initials: 'M',
-    rating: 3,
-    comment: 'Chất lượng camera chưa đúng kỳ vọng, pin dùng được 1 ngày.',
-    tags: ['Camera trung bình', 'Pin tạm ổn'],
-    time: '2 tháng trước',
-  },
-  {
-    name: 'Phạm Văn Bình',
-    initials: 'B',
-    rating: 2,
-    comment: 'Mua về được 1 tuần thì máy bị đơ, phải mang bảo hành.',
-    tags: ['Hiệu năng kém', 'Lỗi phần mềm'],
-    time: '1 tháng trước',
-  },
-];
-const getFilteredReviews = () => {
-  switch (filter) {
-    case 'Có hình ảnh':
-      return reviews.filter((r) => r.hasImage);
-    case 'Đã mua hàng':
-      return reviews.filter((r) => r.purchased);
-    case '5 sao':
-    case '4 sao':
-    case '3 sao':
-    case '2 sao':
-    case '1 sao':
-      return reviews.filter((r) => r.rating === parseInt(filter));
-    default:
-      return reviews;
-  }
-};
 
-const filteredReviews = getFilteredReviews();
-const displayedReviews = showAllReviews ? filteredReviews : filteredReviews.slice(0, 3);
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
