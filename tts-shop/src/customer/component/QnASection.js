@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import "../styles/QnASeciton.scss";
 import mascotImg from "../assets/img/QnA.png";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
+
 
 function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
   const [comments, setComments] = useState([]);
@@ -10,7 +12,8 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
   const [showAllComments, setShowAllComments] = useState(false);
   const [activeReplyInput, setActiveReplyInput] = useState(null);
   const [replyTexts, setReplyTexts] = useState({});
-
+  const { user} = useContext(AuthContext);
+  const avatar = `https://ui-avatars.com/api/?name=Ad&background=random&color=fff&rounded=true&size=40`;
   const fetchComments = () => {
     axios.get(`http://localhost:5000/api/qna?productId=${id_group_product}`).then((res) => {
       setComments(res.data);
@@ -24,11 +27,28 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
     
   }, [id_group_product]);
 
+  const handleDeleteQuestion = (id) => {
+    if (window.confirm("Bạn có chắc muốn xóa câu hỏi này?")) {
+      axios.delete(`http://localhost:5000/api/qna/question/${id}`).then(() => {
+        fetchComments();
+      });
+    }
+  };
+
+  const handleDeleteReply = (id) => {
+    if (window.confirm("Bạn có chắc muốn xóa phản hồi này?")) {
+      axios.delete(`http://localhost:5000/api/qna/reply/${id}`).then(() => {
+        fetchComments();
+      });
+    }
+  };
+
+
   const handleSendQuestion = () => {
     if (!question.trim()) return;
     axios.post("http://localhost:5000/api/qna/question", {
       name: nameuser || "Khách",
-      avatar: avataruser || "",
+      avatar,
       content: question,
       id_group_product,
     }).then(() => {
@@ -43,7 +63,7 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
     axios.post("http://localhost:5000/api/qna/reply", {
       commentId,
       name: nameuser || "Khách",
-      avatar: avataruser || "",
+      avatar,
       content,
       role: roleuser || 0,
     }).then(() => {
@@ -61,7 +81,7 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
 
   const getDisplayName = (item) => {
     if (item.role === 1) return "Quản trị viên";
-    if (item.role === 2) return "Nhân viên";
+    if (item.role === 2) return "Quản trị viên";
     return item.name;
   };
 
@@ -74,8 +94,10 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
   };
 
   return (
-    <div className="qna-container">
-      <h2>Hỏi và đáp</h2>
+    <div className="qna-container" style={{color:"black"}}>
+      {user.role == 3 && (
+        <>
+        <h2>Hỏi và đáp</h2>
 
       <div className="ask-box">
         <img src={mascotImg} alt="Mascot" className="mascot" />
@@ -91,6 +113,9 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
           <button onClick={handleSendQuestion}>Gửi câu hỏi ✈</button>
         </div>
       </div>
+        </>
+      )}
+      
 
       <div className="comment-list">
         {visibleComments.map((comment) => (
@@ -102,7 +127,12 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
                 <span>· {new Date(comment.time).toLocaleDateString()}</span>
               </div>
               <p>{comment.content}</p>
-              <span className="reply-action" onClick={() => setActiveReplyInput(`comment-${comment.id}`)}>💬 Phản hồi</span>
+                <span className="reply-action" onClick={() => setActiveReplyInput(`comment-${comment.id}`)}>💬 Phản hồi</span>
+                {(roleuser === 1 || roleuser === 2) && (
+                  <span className="reply-action" onClick={() => handleDeleteQuestion(comment.id)}>
+                    🗑️ Xóa
+                  </span>
+                )}
 
               {activeReplyInput === `comment-${comment.id}` && (
                 <div className="reply-input-box">
@@ -142,6 +172,12 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
                           >
                             💬 Phản hồi
                           </span>
+                          {(roleuser === 1 || roleuser === 2) && (
+                              <span className="reply-action" onClick={() => handleDeleteReply(reply.id)}>
+                                🗑️ Xóa
+                              </span>
+                            )}
+
 
                           {activeReplyInput === `reply-${comment.id}-${reply.id}` && (
                             <div className="reply-input-box">
