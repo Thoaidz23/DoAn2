@@ -22,30 +22,47 @@ const PaymentInfor = () => {
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null);
 
-  useEffect(() => {
+
+useEffect(() => {
   const fetchExchangeRate = async () => {
+    const cachedRate = localStorage.getItem("usdVndRate");
+    const cachedTime = localStorage.getItem("usdVndRateTime");
+    const now = Date.now();
+
+    // Dùng cache nếu còn hạn (6 tiếng)
+    if (cachedRate && cachedTime && now - cachedTime < 6 * 60 * 60 * 1000) {
+      setExchangeRate(parseFloat(cachedRate));
+      console.log("✅ Dùng tỷ giá từ cache:", cachedRate);
+      return;
+    }
+
     try {
-      const res = await axios.get("https://api.apilayer.com/exchangerates_data/latest", {
+      const res = await axios.get("https://api.frankfurter.app/latest", {
         params: {
-          base: "USD",        // ⚠️ Bắt buộc dùng USD làm base
-          symbols: "VND"
+          from: "USD",
+          to: "VND",
         },
-        headers: {
-          apikey: "94qldPtJY5HMp9orUVGFe6Jxa48SE7fK"  // ✅ Thay bằng API key bạn có
-        }
       });
 
-      const usdToVnd = res.data.rates.VND;
+      const usdToVnd = res.data.rates?.VND;
       const vndToUsd = 1 / usdToVnd;
+
+      // Lưu vào localStorage
+      localStorage.setItem("usdVndRate", vndToUsd);
+      localStorage.setItem("usdVndRateTime", now.toString());
+
       setExchangeRate(vndToUsd);
-      console.log("Tỷ giá VND -> USD:", vndToUsd);
+      console.log("📡 Frankfurter API tỷ giá:", vndToUsd);
     } catch (err) {
-      console.error("Lỗi gọi API Apilayer:", err.response?.data || err.message);
+      console.error("❌ Lỗi gọi Frankfurter API:", err);
+      const fallback = 1 / 25000;
+      setExchangeRate(fallback);
     }
   };
 
   fetchExchangeRate();
 }, []);
+
 
   useEffect(() => {
     if (errorMessage) {
@@ -171,30 +188,6 @@ if (momoRes.data.payUrl) {
   }
 }
 
-
-else if (selectedPayment === 2) {
-        try {
-          const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
-          const orderId = res.data.code_order;
-          const paymentRes = await axios.post("http://localhost:5000/api/vnpay/create-payment-url", {
-            amount: totalPrice,
-            orderId,
-            orderDesc: `Thanh toan don hang cho nguoi dung ${user.email}`,
-            bankCode: "",
-            language: "vn",
-          });
-
-          const { paymentUrl } = paymentRes.data;
-          if (paymentUrl) {
-            window.location.href = paymentUrl;
-          } else {
-            setErrorMessage("Không thể tạo link thanh toán VNPay.");
-          }
-        } catch (error) {
-          console.error("Lỗi khi thanh toán VNPay:", error);
-          setErrorMessage("Thanh toán thất bại.");
-        }
-      }
     } catch (err) {
       console.error("Lỗi khi thêm vào đơn hàng:", err);
       setErrorMessage("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
@@ -274,7 +267,7 @@ else if (selectedPayment === 2) {
                           value={tempPhone}
                           onChange={(e) => setTempPhone(e.target.value)}
                           className="edit-address-input"
-                        />
+                          />
                       ) : (
                         tempPhone || userInfo.phone
                       )
@@ -337,42 +330,51 @@ else if (selectedPayment === 2) {
       return actions.order.create({
         purchase_units: [{
           amount: {
-            value: (totalPrice * exchangeRate).toFixed(2) // USD
+            value: exchangeRate ? (totalPrice * exchangeRate).toFixed(2) : "1.00"
           },
         }],
       });
     }}
     onApprove={async (data, actions) => {
-      const details = await actions.order.capture();
-      alert(`Thanh toán PayPal thành công bởi ${details.payer.name.given_name}`);
+  const details = await actions.order.capture();
+  alert(`Thanh toán PayPal thành công bởi ${details.payer.name.given_name}`);
 
-      // Gửi đơn hàng lên server
-      const payload = {
-        email: user.email,
-        id_user: user.id,
-        name_user: userInfo.name,
-        address: tempAddress || userInfo.address,
-        phone: tempPhone || userInfo.phone,
-        method: 3, // PayPal
-        paystatus: 1, // ✅ Quan trọng: thanh toán thành công
-        products: cartItems.map(item => ({
-          id_product: item.id_product,
-          quantity: item.quantity,
-          price: Math.round(item.saleprice),
-          id_group_product: item.id_group_product,
-          name_group_product: item.name_group_product,
-          image: item.image,
-        })),
-      };
+  try {
+    // 👉 Tạo code_order trước
+    const codeRes = await axios.post("http://localhost:5000/api/pay/generate-order-code", {
+      id_user: user.id,
+    });
+    const code_order = codeRes.data.code_order;
 
-      try {
-        await axios.post("http://localhost:5000/api/pay/addpay", payload);
-        navigate("/PurchaseHistory");
-      } catch (err) {
-        console.error("Lỗi khi thêm đơn hàng sau PayPal:", err);
-        setErrorMessage("Đã thanh toán nhưng lỗi khi lưu đơn hàng.");
-      }
-    }}
+    // 👉 Chuẩn bị payload đầy đủ
+    const payload = {
+      email: user.email,
+      id_user: user.id,
+      name_user: userInfo.name,
+      address: tempAddress || userInfo.address,
+      phone: tempPhone || userInfo.phone,
+      method: 3,
+      paystatus: 1,
+      code_order, // ✅ thêm dòng này
+      products: cartItems.map(item => ({
+        id_product: item.id_product,
+        quantity: item.quantity,
+        price: Math.round(item.saleprice),
+        id_group_product: item.id_group_product,
+        name_group_product: item.name_group_product,
+        image: item.image,
+      })),
+    };
+
+    await axios.post("http://localhost:5000/api/pay/addpay", payload);
+    navigate("/PurchaseHistory");
+  } catch (err) {
+    console.error("Lỗi khi thêm đơn hàng sau PayPal:", err);
+    console.log("Chi tiết lỗi:", err.response?.data);
+    setErrorMessage("Đã thanh toán nhưng lỗi khi lưu đơn hàng.");
+  }
+}}
+
     onError={(err) => {
       console.error("Lỗi PayPal:", err);
       setErrorMessage("Có lỗi xảy ra khi thanh toán bằng PayPal.");

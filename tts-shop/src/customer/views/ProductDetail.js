@@ -546,18 +546,6 @@ const getAvailableOptions = (field) => {
 
         <Row className="mt-5 mb-5 position-relative">
 
-<<<<<<< HEAD
-        
-
-
-
-           
-       <ProductReview productId={selectedProduct.id_group_product} />
-        <Row className="mt-5 mb-5 position-relative"></Row>
-
-        {/* Hoi dap */}
-<QnASection></QnASection>
-=======
        <Row className="mt-5 mb-5 position-relative"></Row>
        <ProductReview productId={selectedProduct.id_group_product} />
         <Row className="mt-5 mb-5 position-relative"></Row>
@@ -571,8 +559,7 @@ const getAvailableOptions = (field) => {
 />
 
 
-           
->>>>>>> 709ac8b9da3142b55856facf5f0f1443b9081e00
+
 
   <Col>
     <h4>Bài viết liên quan</h4>

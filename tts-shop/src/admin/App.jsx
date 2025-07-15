@@ -35,6 +35,7 @@ import EditStaffaccount from './pages/EditStaffaccount';
 import ProductImagesPage from './pages/ProductImagesManager';
 import PrintOrder from "./pages/PrintOrder";
 import ReviewList from "./pages/ReviewList";
+import CommentList from "./pages/CommentList";
 
 
 function App() {
@@ -83,6 +84,7 @@ function App() {
            <Route path="/admin/product/:id/images" element={<ProductImagesPage />} />
            <Route path="/admin/order/print/:code" element={<PrintOrder />} />
            <Route path="/admin/product/:id_group_product/reviews" element={<ReviewList />} />
+           <Route path="/admin/product/:id_group_product/comments" element={<CommentList />} />
 
             {/* Route khác sau này */}
           </Routes>

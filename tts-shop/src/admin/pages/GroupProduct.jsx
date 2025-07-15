@@ -239,16 +239,27 @@ const handleToggleDelete = async (id_group_product, is_del) => {
       )}
     </div>
 
-    <div className="text-center">
-      <Button
-        as={Link}
-        to={`/admin/product/${product.id_group_product}/reviews`}
-        variant="info"
-        size="sm"
-      >
-        Sửa đánh giá
-      </Button>
-    </div>
+    <div className="d-flex flex-column align-items-center">
+  <Button
+    as={Link}
+    to={`/admin/product/${product.id_group_product}/reviews`}
+    variant="info"
+    size="sm"
+    className="mb-2"
+  >
+    Sửa đánh giá
+  </Button>
+
+  <Button
+    as={Link}
+    to={`/admin/product/${product.id_group_product}/comments`}
+    variant="secondary"
+    size="sm"
+  >
+    Bình luận
+  </Button>
+</div>
+
   </>
 )}
 
