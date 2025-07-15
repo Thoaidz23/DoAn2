@@ -61,4 +61,45 @@ const postReply = (req, res) => {
   );
 };
 
-module.exports = { getAllQnA, postQuestion, postReply };
+// Xóa câu hỏi
+const deleteQuestion = (req, res) => {
+  const { id } = req.params;
+
+  // Xóa phản hồi trước để tránh lỗi khóa ngoại
+  pool.query("DELETE FROM tbl_qna_replies WHERE comment_id = ?", [id], (err1) => {
+    if (err1) {
+      return res.status(500).json({ message: "Lỗi khi xóa phản hồi" });
+    }
+
+    pool.query("DELETE FROM tbl_qna_comments WHERE id = ?", [id], (err2) => {
+      if (err2) {
+        return res.status(500).json({ message: "Lỗi khi xóa câu hỏi" });
+      }
+
+      res.json({ message: "✅ Đã xóa câu hỏi và các phản hồi liên quan" });
+    });
+  });
+};
+
+// Xóa phản hồi
+const deleteReply = (req, res) => {
+  const { id } = req.params;
+
+  pool.query("DELETE FROM tbl_qna_replies WHERE id = ?", [id], (err) => {
+    if (err) {
+      return res.status(500).json({ message: "Lỗi khi xóa phản hồi" });
+    }
+
+    res.json({ message: "✅ Đã xóa phản hồi" });
+  });
+};
+
+module.exports = {
+  getAllQnA,
+  postQuestion,
+  postReply,
+  deleteQuestion,
+  deleteReply,
+};
+
+
