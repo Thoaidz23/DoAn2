@@ -77,10 +77,8 @@ Thân mến !`,
         <div className="ask-content">
           <h3>Hãy đặt câu hỏi cho chúng tôi</h3>
           <p>
-            CellphoneS sẽ phản hồi trong vòng 1 giờ. Nếu Quý khách gửi câu hỏi
-            sau 22h, chúng tôi sẽ trả lời vào sáng hôm sau. Thông tin có thể
-            thay đổi theo thời gian, vui lòng đặt câu hỏi để nhận được cập nhật
-            mới nhất!
+            TTSShop sẽ phản hồi trong vòng 1 giờ. Nếu quý khách gửi câu hỏi hãy hỏi và chúng tôi sẽ giải đáp thắt mắc cho quý khách sớm nhất. TTS trân trọng cảm ơn!
+            
           </p>
           <input
             type="text"

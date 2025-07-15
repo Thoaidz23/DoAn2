@@ -39,7 +39,6 @@
 .review-title {
   font-size: 24px;
   font-weight: 600;
-  
 }
 
 .review-box {
@@ -49,7 +48,7 @@
   border-radius: 8px;
   background: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  gap: 5%; // Khoảng cách giữa các phần
+  gap: 5%;
 }
 
 .left-review {
@@ -76,12 +75,13 @@
 
 .left-review .stars-review .star-review,
 .criteria-stars-review .star-review {
-  color: #fcd34d;
+  color: #ccc; // ⭐ Mặc định màu xám
   font-size: 20px;
 }
 
-.left-review .stars-review .star-review.filled-review {
-  color: #fcd34d;
+.left-review .stars-review .star-review.filled-review,
+.criteria-stars-review .star-review.filled-review {
+  color: #fcd34d; // ⭐ Chỉ tô vàng sao được chọn
 }
 
 .left-review .total-reviews {
@@ -299,6 +299,7 @@
 .see-more-review-btn:hover {
   background-color: #e0e0e0;
 }
+
 .modal-stars-row {
   display: flex;
   gap: 16px;
@@ -329,7 +330,7 @@
     }
   }
 }
-/* ======================== 🔽 MODAL CSS PHẦN ĐƯỢC DỜI XUỐNG CUỐI FILE 🔽 ======================== */
+
 .review-modal-overlay {
   position: fixed;
   top: 0;
@@ -450,10 +451,6 @@
   margin-top: 16px;
   cursor: pointer;
   width: 100%;
-
-  &:hover {
-    background: #d32f2f;
-  }
 }
 
 @keyframes fadeIn {
@@ -465,4 +462,26 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+/* thong bao sua danh gia */
+.review-message {
+  background-color: #f44336;
+  color: white;
+  text-align: center;
+  font-size: 16px !important;
+  font-weight: 500;
+  position: fixed;
+  top: 13%;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 15%;
+  padding: 1% 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.5s ease-in-out;
+}
+
+.review-message.success {
+  background-color: green;
 }

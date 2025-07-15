@@ -3,10 +3,10 @@ import axios from "axios";
 import "../styles/ProductReview.scss";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import ReviewModal from "../component/ReviewModal"; // đường dẫn đúng theo dự án của bạn
+import ReviewModal from "../component/ReviewModal";
 import WriteReviewButton from "../component/WriteReviewButton";
 
-const ProductReview = ({productId}) => {
+const ProductReview = ({ productId }) => {
   const [filter, setFilter] = useState("Tất cả");
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -22,12 +22,10 @@ const ProductReview = ({productId}) => {
   const [existingReview, setExistingReview] = useState(null);
   const { user } = useContext(AuthContext);
 
-  // Hàm chuyển ngày tạo thành "3 tháng trước"
   const convertToTimeAgo = (dateStr) => {
     const now = new Date();
     const date = new Date(dateStr);
-    const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24)); // ngày
-
+    const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
     if (diff < 1) return "hôm nay";
     if (diff === 1) return "1 ngày trước";
     if (diff < 30) return `${diff} ngày trước`;
@@ -35,7 +33,6 @@ const ProductReview = ({productId}) => {
     return `${months} tháng trước`;
   };
 
-  // Fetch đánh giá từ server
   useEffect(() => {
     const fetchReviews = async () => {
       try {
@@ -52,52 +49,49 @@ const ProductReview = ({productId}) => {
         setLoading(false);
       }
     };
-
     fetchReviews();
   }, [productId]);
 
   useEffect(() => {
-  const fetchPurchaseStatus = async () => {
-    try {
+    const fetchPurchaseStatus = async () => {
+      try {
+        if (user?.id) {
+          const res = await axios.get(`http://localhost:5000/api/reviews/check-purchased`, {
+            params: {
+              userId: user.id,
+              groupProductId: productId,
+            },
+          });
+          setHasPurchased(res.data.hasPurchased);
+        }
+      } catch (err) {
+        console.error("Lỗi kiểm tra đã mua sản phẩm:", err);
+      }
+    };
+    fetchPurchaseStatus();
+  }, [user, productId]);
+
+  useEffect(() => {
+    const checkReviewed = async () => {
       if (user?.id) {
-        const res = await axios.get(`http://localhost:5000/api/reviews/check-purchased`, {
+        const res = await axios.get(`http://localhost:5000/api/reviews/check-reviewed`, {
           params: {
             userId: user.id,
             groupProductId: productId,
-          }
+          },
         });
-        setHasPurchased(res.data.hasPurchased);
+        setHasReviewed(res.data.reviewed);
+        setExistingReview(res.data.review || null);
       }
-    } catch (err) {
-      console.error("Lỗi kiểm tra đã mua sản phẩm:", err);
-    }
-  };
-  console.log("📤 Gửi request kiểm tra mua hàng với:", {
-  userId: user?.id,
-  groupProductId: productId,
-});
-  fetchPurchaseStatus();
-}, [user, productId]);
-
-useEffect(() => {
-  const checkReviewed = async () => {
-    if (user?.id) {
-      const res = await axios.get(`http://localhost:5000/api/reviews/check-reviewed`, {
-        params: {
-          userId: user.id,
-          groupProductId: productId
-        }
-      });
-      setHasReviewed(res.data.reviewed);
-      setExistingReview(res.data.review || null);
-    }
-  };
-
-  checkReviewed();
-}, [user, productId]);
+    };
+    checkReviewed();
+  }, [user, productId]);
 
   const totalReviews = reviews.length;
-  const rating = totalReviews > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1) : 0;
+  const rating = totalReviews > 0
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1)
+    : 0;
+
   const ratingCounts = [0, 0, 0, 0, 0];
   reviews.forEach((r) => {
     const idx = 5 - r.rating;
@@ -119,58 +113,64 @@ useEffect(() => {
 
   const filteredReviews = getFilteredReviews();
   const displayedReviews = showAllReviews ? filteredReviews : filteredReviews.slice(0, 2);
-const handleSubmitReview = async ({ rating, comment, tags }) => {
-  setSubmitting(true);
-  try {
-    if (hasReviewed && existingReview?.id) {
-      await axios.put(`http://localhost:5000/api/reviews/${existingReview.id}`, {
-        rating,
-        comment,
-        tags,
-      });
-    } else {
-      await axios.post("http://localhost:5000/api/reviews", {
-        id_group_product: productId,
-        id_user: user?.id || 0,
-        initials: user?.name?.charAt(0).toUpperCase() || "K",
-        rating,
-        comment,
-        tags,
-      });
+
+  const handleSubmitReview = async ({ rating, comment, tags }) => {
+    setSubmitting(true);
+    try {
+      if (hasReviewed && existingReview?.id) {
+        await axios.put(`http://localhost:5000/api/reviews/${existingReview.id}`, {
+          rating,
+          comment,
+          tags,
+        });
+      } else {
+        await axios.post("http://localhost:5000/api/reviews", {
+          id_group_product: productId,
+          id_user: user?.id || 0,
+          initials: user?.name?.charAt(0).toUpperCase() || "K",
+          rating,
+          comment,
+          tags,
+        });
+      }
+
+      alert(hasReviewed ? "Đánh giá đã được cập nhật!" : "Đánh giá đã được gửi!");
+
+      const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
+      const data = res.data.map((item) => ({
+        ...item,
+        tags: Array.isArray(item.tags)
+          ? item.tags
+          : item.tags
+          ? JSON.parse(item.tags)
+          : [],
+        time: convertToTimeAgo(item.created_at),
+      }));
+
+      setReviews(data);
+      setHasReviewed(true);
+      setExistingReview(data.find((r) => r.id_user === user?.id) || null);
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi khi gửi đánh giá.");
+    } finally {
+      setSubmitting(false);
     }
+  };
 
-    alert(hasReviewed ? "Đánh giá đã được cập nhật!" : "Đánh giá đã được gửi!");
+  const tagSuggestions = [
+    "Chất lượng tốt",
+    "Giá cả hợp lý",
+    "Dễ sử dụng",
+    "Hiệu năng mượt mà",
+    "Thiết kế đẹp",
+    "Kết nối ổn định",
+  ];
 
-    // Reload reviews
-    const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
-    const data = res.data.map((item) => ({
-      ...item,
-      tags: Array.isArray(item.tags)
-        ? item.tags
-        : item.tags
-        ? JSON.parse(item.tags)
-        : [],
-      time: convertToTimeAgo(item.created_at),
-    }));
+  if (loading) return <p>Đang tải đánh giá...</p>;
 
-    setReviews(data);
-    setHasReviewed(true);
-    setExistingReview(data.find((r) => r.id_user === user?.id) || null);
-  } catch (err) {
-    console.error(err);
-    alert("Lỗi khi gửi đánh giá.");
-  } finally {
-    setSubmitting(false);
-  }
-};
+  const filledStars = Math.round(rating);
 
-
-
-  const tagSuggestions = ["Chất lượng tốt", "Giá cả hợp lý", "Dễ sử dụng", "Hiệu năng mượt mà", "Thiết kế đẹp", "Kết nối ổn định"];
-
-  if (loading) {
-    return <p>Đang tải đánh giá...</p>;
-  }
 
   return (
     <div className="product-review-container">
@@ -183,19 +183,19 @@ const handleSubmitReview = async ({ rating, comment, tags }) => {
               <span className="out-of-review">/5</span>
             </div>
             <div className="stars-review">
-              {'★★★★★'.split('').map((s, i) => (
-                <span key={i} className="star-review filled-review">★</span>
+              {[...Array(5)].map((_, i) => (
+                <span key={i} className={`star-review ${i < filledStars ? "filled-review" : ""}`}>
+                  ★
+                </span>
               ))}
             </div>
             <p className="total-reviews">{totalReviews} lượt đánh giá</p>
-           <WriteReviewButton
-          hasPurchased={hasPurchased}
-          hasReviewed={hasReviewed}
-          existingReview={existingReview}
-          onSubmit={handleSubmitReview}
-        />
-                    
-
+            <WriteReviewButton
+              hasPurchased={hasPurchased}
+              hasReviewed={hasReviewed}
+              existingReview={existingReview}
+              onSubmit={handleSubmitReview}
+            />
           </div>
 
           <div className="center-review">
@@ -238,7 +238,7 @@ const handleSubmitReview = async ({ rating, comment, tags }) => {
         <div className="review-items-review">
           {displayedReviews.map((item, i) => (
             <div key={i} className="review-item-review">
-            <div className="avatar"><img src={item.avatar}></img></div>
+              <div className="avatar"><img src={item.avatar} alt="avatar" /></div>
               <div className="content-review">
                 <div className="top-row-review">
                   <span className="name-review">{item.name}</span>
@@ -288,7 +288,6 @@ const handleSubmitReview = async ({ rating, comment, tags }) => {
         initialTags={tags}
         submitting={submitting}
       />
-
     </div>
   );
 };

@@ -108,7 +108,7 @@ const getFilteredReviews = () => {
 };
 
 const filteredReviews = getFilteredReviews();
-const displayedReviews = showAllReviews ? filteredReviews : filteredReviews.slice(0, 3);
+
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
@@ -539,19 +539,14 @@ const getAvailableOptions = (field) => {
               </Tab>
             </Tabs>
           </Col>
-        </Row>
-
-        <Row className="mt-5 mb-5 position-relative">
-
-        <ProductReview></ProductReview>
-<Row className="mt-5 position-relative"></Row>
-
+  
+           <Row className="mt-3 mb-3 position-relative"></Row>
+       <ProductReview productId={selectedProduct.id_group_product} />
+   
 {/* Hoi dap */}
 <QnASection></QnASection>
-           <Row className="mt-5 mb-5 position-relative"></Row>
-       <ProductReview productId={selectedProduct.id_group_product} />
-        <Row className="mt-5 mb-5 position-relative"></Row>
-
+     <Row className="mt-3 mb-3 position-relative"></Row>
+        
   <Col>
     <h4>Bài viết liên quan</h4>
     <div className="position-relative">
