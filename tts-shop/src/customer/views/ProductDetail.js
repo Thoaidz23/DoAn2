@@ -495,7 +495,7 @@ const getAvailableOptions = (field) => {
 />
 
 
-           
+
 
   <Col>
     <h4>Bài viết liên quan</h4>
