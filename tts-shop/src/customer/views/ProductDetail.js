@@ -45,8 +45,6 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState('Tất cả');
 
-
-
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
       .then((res) => {
@@ -499,10 +497,6 @@ const getAvailableOptions = (field) => {
   roleuser={user.role}
   id_group_product={selectedProduct.id_group_product}
 />
-
-
-
-
   <Col>
     <h4>Bài viết liên quan</h4>
     <div className="position-relative">

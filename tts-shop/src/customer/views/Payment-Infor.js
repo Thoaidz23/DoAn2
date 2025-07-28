@@ -21,8 +21,6 @@ const PaymentInfor = () => {
   const [tempPhone, setTempPhone] = useState("");
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null);
-
-
 useEffect(() => {
   const fetchExchangeRate = async () => {
     const cachedRate = localStorage.getItem("usdVndRate");
@@ -62,7 +60,6 @@ useEffect(() => {
 
   fetchExchangeRate();
 }, []);
-
 
   useEffect(() => {
     if (errorMessage) {
@@ -335,6 +332,7 @@ if (momoRes.data.payUrl) {
         }],
       });
     }}
+
     onApprove={async (data, actions) => {
   const details = await actions.order.capture();
   alert(`Thanh toán PayPal thành công bởi ${details.payer.name.given_name}`);
@@ -345,7 +343,6 @@ if (momoRes.data.payUrl) {
       id_user: user.id,
     });
     const code_order = codeRes.data.code_order;
-
     // 👉 Chuẩn bị payload đầy đủ
     const payload = {
       email: user.email,
@@ -374,7 +371,6 @@ if (momoRes.data.payUrl) {
     setErrorMessage("Đã thanh toán nhưng lỗi khi lưu đơn hàng.");
   }
 }}
-
     onError={(err) => {
       console.error("Lỗi PayPal:", err);
       setErrorMessage("Có lỗi xảy ra khi thanh toán bằng PayPal.");

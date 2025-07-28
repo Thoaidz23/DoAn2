@@ -7,7 +7,7 @@ const ProductOptionSelector = ({ label, options, selected, onSelect, disabledOpt
   return (
     <div className="mb-3">
       <Form.Label>{label}</Form.Label>
-      <div className="d-flex gap-2 flex-wrap">
+      <div className="d-flex gap-2">
         {options.map((option) => {
           const isDisabled = disabledOptions.includes(option.id);
           return (

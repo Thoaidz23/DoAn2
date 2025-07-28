@@ -1,4 +1,7 @@
 
+body {
+  overflow-x: hidden;
+}
 
 .navbar {
   background-color: #043828 !important;
@@ -182,5 +185,46 @@
       width: 20% !important;
       min-width: 140px; /* Giới hạn nhỏ nhất */
     }
+  }
+}
+/* Hiển thị logo khác nhau theo kích thước màn hình */
+.logo-desktop {
+  display: block;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.logo-mobile {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+/* tắt giỏ và lsdh ở màn hình*/ 
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .search-form {
+    width: 45% !important;
+    min-width: 140px;
+    margin-left: -20px; /* ✅ Cách logo một khoảng nhỏ */
+    margin-right: auto; /* ✅ Đẩy phần bên phải sang phải */
+  }
+
+  .navbar-nav {
+    margin-left: auto;
+    gap: 4px; /* ✅ Giảm khoảng cách giữa các nút */
+  }
+
+  .account-nav-item {
+    margin-left: -30px;
+    font-size: 18px; /* ✅ Nhỏ lại nếu cần */
+
   }
 }

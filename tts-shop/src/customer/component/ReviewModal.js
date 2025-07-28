@@ -1,4 +1,5 @@
-import React, { useState,useEffect } from "react";
+
+import React, { useState, useEffect } from "react";
 import "../styles/ProductReview.scss";
 
 const tagSuggestions = [
@@ -23,6 +24,7 @@ const ReviewModal = ({
   const [comment, setComment] = useState(initialComment);
   const [selectedRating, setSelectedRating] = useState(initialRating);
   const [tags, setTags] = useState(initialTags);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
   useEffect(() => {
     if (show) {
@@ -35,23 +37,45 @@ const ReviewModal = ({
   }, [show, initialComment, initialRating, initialTags]);
   const handleSubmit = () => {
     if (comment.trim().length < 10) {
-      alert("Vui lòng nhập tối thiểu 10 ký tự.");
+      setMessage({ type: "error", text: "Vui lòng nhập tối thiểu 10 ký tự." });
       return;
     }
 
     if (selectedRating === 0) {
-      alert("Vui lòng chọn số sao đánh giá.");
+      setMessage({ type: "error", text: "Vui lòng chọn số sao đánh giá." });
       return;
     }
 
+    setMessage({ type: "success", text: "Gửi đánh giá thành công!" });
     onSubmit({ rating: selectedRating, comment, tags });
+
+    // reset form
+    setComment("");
+    setSelectedRating(0);
+    setTags([]);
   };
+
+  useEffect(() => {
+    if (message.text) {
+      const timer = setTimeout(() => {
+        setMessage({ type: "", text: "" });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   if (!show) return null;
 
   return (
     <div className="review-modal-overlay">
       <div className="review-modal">
+        {/* Thông báo */}
+        {message.text && (
+          <div className={`review-message ${message.type === "success" ? "success" : ""}`}>
+            {message.text}
+          </div>
+        )}
+
         <div className="modal-header">
           <h3>Đánh giá & nhận xét</h3>
           <button className="close-modal" onClick={onClose}>×</button>
