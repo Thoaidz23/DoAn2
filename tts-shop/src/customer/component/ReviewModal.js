@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import "../styles/ProductReview.scss";
 
@@ -25,6 +26,15 @@ const ReviewModal = ({
   const [tags, setTags] = useState(initialTags);
   const [message, setMessage] = useState({ type: "", text: "" });
 
+  useEffect(() => {
+    if (show) {
+      console.log("initialTags", initialTags);
+      setComment(initialComment);
+      setSelectedRating(initialRating);
+      setTags(initialTags);
+      setHoveredStar(0);
+    }
+  }, [show, initialComment, initialRating, initialTags]);
   const handleSubmit = () => {
     if (comment.trim().length < 10) {
       setMessage({ type: "error", text: "Vui lòng nhập tối thiểu 10 ký tự." });

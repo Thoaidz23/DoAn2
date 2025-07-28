@@ -175,7 +175,7 @@ const ProductReview = ({ productId }) => {
   return (
     <div className="product-review-container">
       <div className="review-summary-container">
-        <h2 className="review-title">Đánh giá sản phẩm</h2>
+        <h2 className="review-title" >Đánh giá sản phẩm</h2>
         <div className="review-box">
           <div className="left-review">
             <div className="main-rating-review">
