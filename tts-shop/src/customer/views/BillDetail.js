@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import WriteReviewButton from "../component/WriteReviewButton";
-
+import WarrantyModal from "../component/WarrantyModal";
 
 function BillDetail() {
   const { code_order } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [showWarranty, setShowWarranty] = useState(false);
+  const [warrantyProduct, setWarrantyProduct] = useState(null);
 
 
   const [order, setOrder] = useState(null);
@@ -75,6 +78,8 @@ useEffect(() => {
 
   if (!order) return <div>Đang tải dữ liệu...</div>;
 
+  
+  
   return (
     <div className="billdetail-container">
       <div className="container">
@@ -101,7 +106,7 @@ useEffect(() => {
               {products.map((item, index) => {
                 const review = reviewMap[item.id_group_product];
                 const hasReviewed = !!review;
-                
+            
 
                 return (
                   <div className="item-detailbill" key={index}>
@@ -111,7 +116,71 @@ useEffect(() => {
                       <p>Giá : <span className="price-bill">{item.price.toLocaleString()}đ</span></p>
                       <p>Số lượng: <span className="billdetail-Quantity">{item.quantity_product}</span></p>
                       {order.status_text === "Đã giao hàng" &&(
-                        <>
+                        <>  
+                        
+                         {new Date(item.date_end_warranty).getFullYear() - new Date(item.date_start_warranty).getFullYear() < 1 ? (
+                            <p>
+                              Thời gian bảo hành <span style={{ color: "red" }}>6 tháng</span> tính từ 
+                              <span style={{ color: "red" }}> {item.date_start_warranty.slice(0, 10)} </span>
+                              đến 
+                              <span style={{ color: "red" }}> {item.date_end_warranty.slice(0, 10)} </span>
+                            </p>
+                          ) : (
+                            <p>
+                              Thời gian bảo hành <span style={{ color: "red" }}>
+                                {new Date(item.date_end_warranty).getFullYear() - new Date(item.date_start_warranty).getFullYear()} năm
+                              </span> tính từ 
+                              <span style={{ color: "red" }}> {item.date_start_warranty.slice(0, 10)} </span>
+                              đến 
+                              <span style={{ color: "red" }}> {item.date_end_warranty.slice(0, 10)} </span>
+                            </p>
+                          )}
+                          
+
+                           {item.warranty_status_text && (
+                             <p>Trạng thái bảo hành: {item.warranty_status_text}</p>
+                           )}
+
+                           {!["Đang chờ duyệt", "Đã duyệt bảo hành", "Đang bảo hành"].includes(item.warranty_status_text) && 
+                           new Date() <= new Date(item.date_end_warranty) && (
+
+                             <button
+                               className="btn-warranty"
+                               onClick={() => {
+                                 setWarrantyProduct(item);
+                                 setShowWarranty(true);
+                               }}
+                             >
+                               Gửi yêu cầu bảo hành
+                             </button>
+                           )}
+                            {showWarranty && warrantyProduct && (
+                            <WarrantyModal
+                              show={showWarranty}
+                              onClose={() => setShowWarranty(false)}
+                              productName={warrantyProduct.name_group_product}
+                              defaultPhone={order.phone}
+                              onSubmit={(data) => {
+                                const payload = {
+                                  ...data,
+                                  id_user: order.id_user,
+                                  id_group_product: warrantyProduct.id_group_product,
+                                  code_order: order.code_order,
+                                };
+                              
+                                axios.post("http://localhost:5000/api/warranty", payload)
+                                  .then(() => {
+                                    alert("Yêu cầu bảo hành đã được gửi!");
+                                    setShowWarranty(false);
+                                  })
+                                  .catch((err) => {
+                                    console.error("Lỗi gửi bảo hành:", err);
+                                    alert("Gửi yêu cầu bảo hành thất bại.");
+                                  });
+                              }}
+                            />
+                          )}
+
                          {hasReviewed && (
                         <p>
                           Đánh giá: {"⭐".repeat(review.rating)}{" "}

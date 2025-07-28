@@ -303,23 +303,36 @@ P {
 /*input phan hoi*/
 .reply-input-box {
   display: flex;
-  margin-top: 8px;
   gap: 8px;
-}
+  margin-top: 8px;
 
-.reply-input {
-  flex: 1;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
+  input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.2s;
 
-.send-reply-btn {
-  background-color: #18744e;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
+    &:focus {
+      outline: none;
+      border-color: #2ead6c;
+    }
+  }
+
+  button {
+    background-color: #2ead6c;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #249a5a;
+    }
+  }
 }

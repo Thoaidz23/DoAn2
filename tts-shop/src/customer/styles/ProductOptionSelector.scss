@@ -18,3 +18,10 @@
     color: white;
   }
 }
+@media (max-width: 768px) {
+  .option-btn {
+    width: 45%; // chiếm ít hơn trên màn hình nhỏ
+    font-size: 13px;
+    margin-left: 2%;
+  }
+}

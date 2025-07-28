@@ -37,4 +37,25 @@
     box-shadow: none;
     border-color: #0d6efd;
   }
-  
+  /* Css thong bao */ 
+  .password-message {
+  background-color: #f44336;
+  color: white;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  position: fixed;
+  top: 13%;
+  left: 80%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 15%;
+  padding: 1% 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.5s ease-in-out;
+}
+
+.password-message.success {
+  background-color: green;
+}

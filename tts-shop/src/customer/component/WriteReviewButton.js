@@ -37,9 +37,31 @@ useEffect(() => {
 
     return hasPurchased ? (
       <>
-        <button className="write-btn-review" onClick={handleOpen} id="write-review-btn">
-          {hasReviewed ? "Sửa đánh giá" : "Viết đánh giá"}
-        </button>
+       <>
+  <button
+    className="write-btn-review"
+    onClick={handleOpen}
+    id="write-review-btn"
+  >
+    {hasReviewed ? "Sửa đánh giá" : "Viết đánh giá"}
+  </button>
+
+  <style>
+    {`
+      .write-btn-review {
+        background: #02705c ;
+        padding: 5px;
+        border-radius: 8px;
+        font-weight: 400;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+    `}
+  </style>
+</>
+
 
         <ReviewModal
           show={showModal}

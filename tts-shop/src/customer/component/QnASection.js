@@ -103,7 +103,12 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
         <img src={mascotImg} alt="Mascot" className="mascot" />
         <div className="ask-content">
           <h3>Hãy đặt câu hỏi cho chúng tôi</h3>
-          <p>CellphoneS sẽ phản hồi trong vòng 1 giờ...</p>
+
+          <p>
+            TTSShop sẽ phản hồi trong vòng 1 giờ. Nếu quý khách gửi câu hỏi hãy hỏi và chúng tôi sẽ giải đáp thắt mắc cho quý khách sớm nhất. TTS trân trọng cảm ơn!
+            
+          </p>
+
           <input
             type="text"
             placeholder="Viết câu hỏi của bạn tại đây"

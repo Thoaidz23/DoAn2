@@ -29,7 +29,7 @@ const ProductDetail = () => {
   const [post, setPost] = useState([]);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const { user} = useContext(AuthContext);
-  console.log(user)
+
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [showError, setShowError] = useState(false); 
@@ -44,8 +44,6 @@ const ProductDetail = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const navigate = useNavigate();
   const [filter, setFilter] = useState('Tất cả');
-
-
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/group-route/${id}`)
@@ -314,7 +312,7 @@ const getAvailableOptions = (field) => {
                 </span>
               )}
             </h4>
-            
+              
               <div onClick={() => setShowModal(true)}  style={{ cursor: "pointer" }}>
                     <svg id="Compare--Streamline-Carbon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="20" width="20">
                       <desc>
@@ -329,6 +327,12 @@ const getAvailableOptions = (field) => {
                 
               </div>
             </div>
+            {selectedProduct.name_warranty && (
+              <>
+              <p>Bảo Hành : {selectedProduct.name_warranty}</p>
+              </>
+            )}
+            
         {showModal && (
             <CompareModal
               onClose={() => setShowModal(false)}
@@ -493,10 +497,6 @@ const getAvailableOptions = (field) => {
   roleuser={user.role}
   id_group_product={selectedProduct.id_group_product}
 />
-
-
-
-
   <Col>
     <h4>Bài viết liên quan</h4>
     <div className="position-relative">

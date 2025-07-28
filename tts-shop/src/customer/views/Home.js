@@ -10,6 +10,7 @@ import "../styles/newbar.scss"
 import ProductSection from "../component/ProductSetion";
 import MenuBar from "../component/MenuBar";
 import ChatWidget from "../component/chatai";
+import NavButton from "../component/NavButton"; // đường dẫn tùy cấu trúc thư mục
 
 
 
@@ -209,6 +210,9 @@ const handlePrev = (id_category_product) => {
         <div className="footer-spacing"></div>
       </div>
       <ChatWidget />
+      <ChatWidget />
+<NavButton />  {/* ✅ Thêm ở đây */}
+
     </div>
   );
 }

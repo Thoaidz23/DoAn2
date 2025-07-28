@@ -17,6 +17,7 @@ const getProductDetail = async (req, res) => {
              c.name_color, 
              r1.name_ram, 
              r2.name_rom,
+             w.name_warranty,
              GROUP_CONCAT(CONCAT('http://localhost:5000/images/product/', i.name) ORDER BY i.id_product_images ASC) AS images
       FROM tbl_product p
       JOIN tbl_group_product gp ON p.id_group_product = gp.id_group_product
@@ -25,7 +26,8 @@ const getProductDetail = async (req, res) => {
       LEFT JOIN tbl_rom r2 ON p.id_rom = r2.id_rom  
       LEFT JOIN tbl_product_images i ON i.id_group_product = gp.id_group_product
       LEFT JOIN tbl_category_product cp ON cp.id_category_product = gp.id_category_product
-      LEFT JOIN tbl_category_brand cb   ON cb.id_category_brand   = gp.id_category_brand
+      LEFT JOIN tbl_category_brand cb ON cb.id_category_brand = gp.id_category_brand
+      LEFT JOIN tbl_warranty_level w ON w.id_warranty = gp.warranty_level
       WHERE p.id_group_product = ?
       GROUP BY p.id_product;
     `;

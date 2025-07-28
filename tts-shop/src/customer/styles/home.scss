@@ -569,4 +569,31 @@
       max-width: 25%; /* 4 bài viết trong một hàng */
     }
   }
+  .section-product-one-content-item {
+  position: relative;
+
+  .product-rating {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
   
+    padding: 4px 8px;
+    
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #333;
+
+    .star-icon {
+      color: #fbbf24;
+      font-size: 14px;
+    }
+
+    .sold-count {
+      font-size: 12px;
+      color: #666;
+      margin-left: 4px;
+    }
+  }
+}
