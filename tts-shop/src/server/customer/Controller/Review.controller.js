@@ -11,7 +11,7 @@ const getReviewsByProduct = (req, res) => {
     ORDER BY created_at DESC`;
   db.query(sql, [productId], (err, result) => {
     if (err) {
-      console.error("❌ Lỗi truy vấn MySQL:", err); // Log lỗi chi tiết
+      console.error("❌ Lỗi truy vấn MySQL:", err);
       return res.status(500).json({ error: "Lỗi khi truy vấn đánh giá" });
     }
 

@@ -25,7 +25,7 @@ const bannerRoutes = require('./admin/routes/bannerRoutes');
 const postRoutes = require('./admin/routes/postRoutes');
 const footerRoutes = require('./admin/routes/footerRoutes');
 const staffaccountRoutes = require('./admin/routes/staffaccountRoutes');
-
+const reviewRoutes = require("./admin/routes/reviewRoutes");
 const customerRoutes = require("./admin/routes/customerRoute");
 
 
@@ -69,6 +69,8 @@ app.use('/api/posts', postRoutes);
 app.use('/api/footers', footerRoutes);
 app.use('/api/staffaccounts', staffaccountRoutes);
 app.use("/api", customerRoutes);
+app.use("/api/reviews", reviewRoutes);
+
 
 //customer
 app.use('/api/Home',HProductRoute)

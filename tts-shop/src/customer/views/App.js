@@ -4,19 +4,17 @@ import NavBar from "../component/NavBar";
 import Footer from "../component/Footer";
 import ProductDetail from "../views/ProductDetail";
 import BillDetail from "./BillDetail";
-import CartPage from "../views/CartPage"
-import { AuthProvider,AuthContext } from "../context/AuthContext"; // ✅ Thêm dòng này
-import ScrollToTop from "../component/ScrollToTop"; // 👈 thêm dòng này
-import CustomerSupport from "../component/CustomerSP";
+import CartPage from "../views/CartPage";
 import CatalogProduct from "./CatalogProduct";
-import PostDetail from "./PostDetail"
-import ComparePage from "./ComparePage"; // ✅ đường dẫn tới file ComparePage.js
+import PostDetail from "./PostDetail";
+import ComparePage from "./ComparePage";
+import CategoryPhone from "../component/categoryPhone"; // ✅ Thêm dòng này
+import { AuthProvider } from "../context/AuthContext";
+import ScrollToTop from "../component/ScrollToTop";
 
+import "../styles/App.scss";
 
-import "../styles/App.scss"
-// Tự động import toàn bộ component trong views (trừ App.js)
 const pages = require.context("./", true, /^\.\/(?!App\.js$).*\.js$/);
-  
 const routes = pages.keys().map((key) => {
   const name = key.replace("./", "").replace(".js", "").toLowerCase();
   const Component = pages(key).default;
@@ -30,17 +28,17 @@ const routes = pages.keys().map((key) => {
   );
 });
 
-// 👇 Component bọc App để dùng useLocation
 function AppContent() {
   const location = useLocation();
-  const hideLayout = location.pathname === "/Payment-momo" || location.pathname === "/Payment-Bank"; // 👈 kiểm tra đường dẫn
-  
+  const hideLayout =
+    location.pathname === "/Payment-momo" || location.pathname === "/Payment-Bank";
+
   return (
     <>
       <ScrollToTop />
       {!hideLayout && <NavBar />}
       <Suspense fallback={<div className="text-center mt-5">Đang tải trang...</div>}>
-      <div style={{marginTop:"10%",background:"white"}}></div>
+        <div style={{ marginTop: "10%", background: "white" }}></div>
         <Routes>
           {routes}
           <Route path="/product/:id" element={<ProductDetail />} />
@@ -49,20 +47,17 @@ function AppContent() {
           <Route path="/postdetail/:id_post" element={<PostDetail />} />
           <Route path="/bill-detail/:code_order" element={<BillDetail />} />
           <Route path="/compare" element={<ComparePage />} />
-
+          <Route path="/categories" element={<CategoryPhone />} /> {/* ✅ Thêm dòng này */}
         </Routes>
       </Suspense>
       <Footer />
-      
-      {/* {user && <CustomerSupport /> } */}
-
     </>
   );
 }
 
 function App() {
   return (
-    <AuthProvider> {/* ✅ Bao bọc AppContent bởi AuthProvider */}
+    <AuthProvider>
       <Router>
         <AppContent />
       </Router>

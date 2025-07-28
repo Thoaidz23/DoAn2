@@ -21,8 +21,7 @@ const PaymentInfor = () => {
   const [tempPhone, setTempPhone] = useState("");
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null);
-
- useEffect(() => {
+useEffect(() => {
   const fetchExchangeRate = async () => {
     const cachedRate = localStorage.getItem("usdVndRate");
     const cachedTime = localStorage.getItem("usdVndRateTime");
@@ -61,6 +60,7 @@ const PaymentInfor = () => {
 
   fetchExchangeRate();
 }, []);
+
   useEffect(() => {
     if (errorMessage) {
       const timer = setTimeout(() => {
@@ -185,30 +185,6 @@ if (momoRes.data.payUrl) {
   }
 }
 
-
-else if (selectedPayment === 2) {
-        try {
-          const res = await axios.post("http://localhost:5000/api/pay/addpay", payload);
-          const orderId = res.data.code_order;
-          const paymentRes = await axios.post("http://localhost:5000/api/vnpay/create-payment-url", {
-            amount: totalPrice,
-            orderId,
-            orderDesc: `Thanh toan don hang cho nguoi dung ${user.email}`,
-            bankCode: "",
-            language: "vn",
-          });
-
-          const { paymentUrl } = paymentRes.data;
-          if (paymentUrl) {
-            window.location.href = paymentUrl;
-          } else {
-            setErrorMessage("Không thể tạo link thanh toán VNPay.");
-          }
-        } catch (error) {
-          console.error("Lỗi khi thanh toán VNPay:", error);
-          setErrorMessage("Thanh toán thất bại.");
-        }
-      }
     } catch (err) {
       console.error("Lỗi khi thêm vào đơn hàng:", err);
       setErrorMessage("Có lỗi xảy ra khi thanh toán. Vui lòng thử lại!");
@@ -288,7 +264,7 @@ else if (selectedPayment === 2) {
                           value={tempPhone}
                           onChange={(e) => setTempPhone(e.target.value)}
                           className="edit-address-input"
-                        />
+                          />
                       ) : (
                         tempPhone || userInfo.phone
                       )
@@ -296,7 +272,7 @@ else if (selectedPayment === 2) {
                     <span className="edit-icon" onClick={() => setIsEditingPhone(prev => !prev)}>
                       {isEditingPhone ? "✔" : "✎"}
                     </span>
-                  </p>
+                  </p>  
                 </div>
               </div>
             </div>
@@ -351,12 +327,13 @@ else if (selectedPayment === 2) {
       return actions.order.create({
         purchase_units: [{
           amount: {
-            value: (totalPrice * exchangeRate).toFixed(2) // USD
+            value: exchangeRate ? (totalPrice * exchangeRate).toFixed(2) : "1.00"
           },
         }],
       });
     }}
-   onApprove={async (data, actions) => {
+
+    onApprove={async (data, actions) => {
   const details = await actions.order.capture();
   alert(`Thanh toán PayPal thành công bởi ${details.payer.name.given_name}`);
 
@@ -366,7 +343,6 @@ else if (selectedPayment === 2) {
       id_user: user.id,
     });
     const code_order = codeRes.data.code_order;
-
     // 👉 Chuẩn bị payload đầy đủ
     const payload = {
       email: user.email,
