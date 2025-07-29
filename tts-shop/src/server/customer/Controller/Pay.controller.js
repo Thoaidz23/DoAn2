@@ -1,5 +1,6 @@
 const pool = require('../../db');
-const nodemailer = require("nodemailer"); 
+const nodemailer = require("nodemailer");
+const path = require('path');
 
 const generateCodeOrder = () => {
   const letters = Array.from({ length: 4 }, () =>
@@ -20,10 +21,9 @@ const generateOrderCode = (req, res) => {
   return res.status(200).json({ code_order });
 };
 
-
-
-const addToPayRaw = ({ id_user, products, name_user, address, phone, method, code_order, email, name_group_product, paystatus = 0 }) => {
+const addToPayRaw = ({ id_user, products, name_user, address, phone, method, email, paystatus = 0 ,capture_id = null}) => {
   return new Promise((resolve, reject) => {
+    const code_order = generateCodeOrder();
     const total_price = products.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     pool.getConnection((err, conn) => {
@@ -36,15 +36,15 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, cod
         }
 
         const insertOrderQuery = `
-          INSERT INTO tbl_order (id_user, code_order, status, total_price, name_user, address, phone, date, paystatus, method)
-          VALUES (?, ?, 0, ?, ?, ?, ?, NOW(), ?, ?)
+          INSERT INTO tbl_order (id_user, code_order, status, total_price, name_user, address, phone, date)
+          VALUES (?, ?, 0, ?, ?, ?, ?, NOW())
         `;
 
-        conn.query(insertOrderQuery, [id_user, code_order, total_price, name_user, address, phone, paystatus, method], (err1) => {
+        conn.query(insertOrderQuery, [id_user, code_order, total_price, name_user, address, phone], (err1) => {
           if (err1) {
             return conn.rollback(() => {
               conn.release();
-              console.error('Chi tiết lỗi SQL:', err1); // Thêm dòng này
+              console.error('Chi tiết lỗi SQL:', err1);
               reject('Lỗi thêm đơn hàng');
             });
           }
@@ -72,18 +72,31 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, cod
                 });
               }
 
-              conn.commit(errCommit => {
-                if (errCommit) {
+              const insertPaymentQuery = `
+                INSERT INTO tbl_payment_infor (code_order, method, paystatus, payment_time,capture_id)
+                VALUES (?, ?, ?, NOW(),?)
+              `;
+              conn.query(insertPaymentQuery, [code_order, method, paystatus,capture_id], (err3) => {
+                if (err3) {
                   return conn.rollback(() => {
                     conn.release();
-                    reject('Lỗi commit');
+                    reject('Lỗi thêm payment_infor');
                   });
                 }
 
-                conn.release();
-                sendOrderConfirmationEmail(email, code_order, products, total_price, name_group_product)
-                  .then(() => resolve('Đặt hàng thành công'))
-                  .catch((errMail) => resolve('Đặt hàng xong nhưng không gửi được email'));
+                conn.commit(errCommit => {
+                  if (errCommit) {
+                    return conn.rollback(() => {
+                      conn.release();
+                      reject('Lỗi commit');
+                    });
+                  }
+
+                  conn.release();
+                  sendOrderConfirmationEmail(email, code_order, products, total_price)
+                    .then(() => resolve('Đặt hàng thành công'))
+                    .catch((errMail) => resolve('Đặt hàng xong nhưng không gửi được email'));
+                });
               });
             });
           });
@@ -103,9 +116,6 @@ const addToPay = async (req, res) => {
   }
 };
 
-
-const path = require('path');
-
 const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) => {
   if (!email) {
     throw new Error('Không có email người nhận.');
@@ -122,11 +132,10 @@ const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) 
   const attachments = items.map((item, index) => ({
     filename: item.image,
     path: path.resolve(__dirname, '..', '..', 'images', 'product', item.image),
-    cid: `product${index}` // cid để dùng trong HTML
+    cid: `product${index}`
   }));
 
-  const itemListHtml = items
-  .map((item, index) => `
+  const itemListHtml = items.map((item, index) => `
     <li style="display: flex; align-items: center; margin-bottom: 8px; width:100%">
       <img src="cid:product${index}" style="width: 100px; height: auto; vertical-align: middle; margin-right: 10px;" />
       <div style="flex-grow: 1; text-align: right; right:0">
@@ -135,10 +144,7 @@ const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) 
         <div>Giá: ${item.price.toLocaleString()}đ</div>
       </div>
     </li>
-
-  `)
-  .join('');
-
+  `).join('');
 
   const mailOptions = {
     from: 'truongthuong1512@gmail.com',
@@ -162,6 +168,9 @@ const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) 
   }
 };
 
-
-
-module.exports = { addToPay ,sendOrderConfirmationEmail,generateOrderCode,addToPayRaw};
+module.exports = {
+  addToPay,
+  sendOrderConfirmationEmail,
+  generateOrderCode,
+  addToPayRaw
+};

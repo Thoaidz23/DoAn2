@@ -9,8 +9,8 @@ exports.createWarrantyRequest = (req, res) => {
   }
 
   const query = `
-    INSERT INTO tbl_warranty_requests (id_user, id_group_product, code_order, phone, issue)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO tbl_warranty_requests (id_user, id_group_product, code_order, phone, issue, status)
+    VALUES (?, ?, ?, ?, ?, 1)
   `;
 
   db.query(query, [id_user, id_group_product, code_order, phone, issue], (err, result) => {
