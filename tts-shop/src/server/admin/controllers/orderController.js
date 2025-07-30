@@ -204,23 +204,94 @@ const markAsShipping = (req, res) => {
 
 const markAsDelivered = (req, res) => {
   const { code } = req.params;
-
   const getStatusQuery = 'SELECT status FROM tbl_order WHERE code_order = ?';
+
   connection.query(getStatusQuery, [code], (err, result) => {
     if (err) return res.status(500).json({ error: "Lỗi khi truy vấn trạng thái" });
     if (result.length === 0) return res.status(404).json({ message: "Đơn hàng không tồn tại" });
 
     const currentStatus = result[0].status;
 
-    if (currentStatus === 2) {
-      const updateQuery = 'UPDATE tbl_order SET status = 3 WHERE code_order = ?';
-      connection.query(updateQuery, [code], (err2) => {
-        if (err2) return res.status(500).json({ error: "Lỗi khi cập nhật trạng thái sang đã giao" });
-        return res.json({ message: "Đơn hàng đã chuyển sang trạng thái: Đã giao hàng" });
-      });
-    } else {
+    if (currentStatus !== 2) {
       return res.status(400).json({ message: "Chỉ có thể chuyển từ đang vận chuyển sang đã giao hàng" });
     }
+
+    const updateOrderStatus = 'UPDATE tbl_order SET status = 3 WHERE code_order = ?';
+    connection.query(updateOrderStatus, [code], (err2) => {
+      if (err2) return res.status(500).json({ error: "Lỗi khi cập nhật trạng thái đơn hàng" });
+
+      const updatePayment = 'UPDATE tbl_payment_infor SET paystatus = 1 WHERE code_order = ?';
+      connection.query(updatePayment, [code], (err3) => {
+        if (err3) return res.status(500).json({ error: "Lỗi khi cập nhật trạng thái thanh toán" });
+
+        const getWarrantyData = `
+          SELECT od.id_product, gp.warranty_level
+          FROM tbl_order_detail od
+          JOIN tbl_product p ON od.id_product = p.id_product
+          JOIN tbl_group_product gp ON p.id_group_product = gp.id_group_product
+          WHERE od.code_order = ?
+        `;
+
+        connection.query(getWarrantyData, [code], (err4, products) => {
+          if (err4) return res.status(500).json({ error: "Lỗi khi truy vấn thông tin bảo hành" });
+
+          if (products.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy sản phẩm trong đơn hàng" });
+          }
+
+
+          const updates = products.map(({ id_product, warranty_level }) => {
+  return new Promise((resolve, reject) => {
+    let updateWarranty;
+    let queryParams;
+
+    if (warranty_level === 0) {
+      // Trọn đời → start và end đều NOW()
+      updateWarranty = `
+        UPDATE tbl_order_detail 
+        SET date_start_warranty = NOW(), date_end_warranty = NOW() 
+        WHERE code_order = ? AND id_product = ?
+      `;
+      queryParams = [code, id_product];
+    } else {
+      // Tính bảo hành có thời hạn
+      let months = 0;
+      switch (warranty_level) {
+        case 1: months = 6; break;
+        case 2: months = 12; break;
+        case 3: months = 24; break;
+        case 4: months = 36; break;
+        default: months = 0;
+      }
+
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + months);
+
+      updateWarranty = `
+        UPDATE tbl_order_detail 
+        SET date_start_warranty = NOW(), date_end_warranty = ? 
+        WHERE code_order = ? AND id_product = ?
+      `;
+      queryParams = [endDate, code, id_product];
+    }
+
+    connection.query(updateWarranty, queryParams, (err5) => {
+      if (err5) reject(err5);
+      else resolve();
+    });
+  });
+});
+
+          Promise.all(updates)
+            .then(() => {
+              return res.json({ message: "Đơn hàng đã chuyển sang trạng thái: Đã giao hàng và cập nhật bảo hành, thanh toán thành công" });
+            })
+            .catch(err => {
+              return res.status(500).json({ error: "Lỗi khi cập nhật thông tin bảo hành", detail: err });
+            });
+        });
+      });
+    });
   });
 };
 
