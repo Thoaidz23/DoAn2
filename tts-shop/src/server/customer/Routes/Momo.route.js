@@ -4,5 +4,5 @@ const momoController = require('../Controller/Momo.controller');
 
 router.post('/create-payment-url', momoController.createMomoPaymentUrl);
 router.post('/ipn', momoController.handleMomoIPN);
-
+router.post('/refund', momoController.refundMomoSandbox); 
 module.exports = router;
