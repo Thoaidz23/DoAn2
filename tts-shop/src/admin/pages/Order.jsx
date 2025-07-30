@@ -20,6 +20,7 @@ const [paymentStatusFilter, setPaymentStatusFilter] = useState(null);
   fetch("http://localhost:5000/api/orders")
     .then((res) => res.json())
     .then((data) => {
+      console.log("API /orders trả về:", data);
       setOrders(data);
       setFilteredOrders(data); // thêm dòng này
     })

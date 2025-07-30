@@ -6,7 +6,7 @@ const partnerCode = 'MOMO';
 const accessKey = 'F8BBA842ECF85';
 const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
 const redirectUrl = 'http://localhost:3000/PurchaseHistory'; // hoặc domain thật
-const ipnUrl = 'https://074fb63d4cbc.ngrok-free.app/api/momo/ipn';
+const ipnUrl = 'https://3bf1b79e8dc0.ngrok-free.app/api/momo/ipn';
 const requestType = 'payWithMethod';
 
 // ✅ Tạo URL thanh toán MoMo

@@ -8,6 +8,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import AccountBar from '../component/AccountBar';
 import { AuthContext } from "../context/AuthContext";
+import RefundModal from "../component/RefundModal";
 
 function PurchaseHistory() {
   const [activeFilter, setActiveFilter] = useState('Tất cả');
@@ -16,7 +17,8 @@ function PurchaseHistory() {
   const [errorMessage1, setErrorMessage1] = useState('');
   const [confirmModal, setConfirmModal] = useState({ show: false, orderCode: '' });
   const [userInfo, setUserInfo] = useState(null);
-
+  const [showRefund, setShowRefund] = useState(false);
+  const [refundProduct, setRefundProduct] = useState(null);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   console.log(user)
@@ -184,8 +186,47 @@ useEffect(() => {
                       
                     </p>
 
-                    <div className="history-order-actions">
-                      {order.status === 0 && (
+                    <div className="history-order-actions ">
+                      {order.paystatus == 1 && order.method == 3 && (
+                        <>
+                          <button
+                            className="btn-refund"
+                            onClick={() => {
+                              setRefundProduct(order);
+                              setShowRefund(true);
+                            }}
+                          >
+                            Hoàn tiền
+                          </button>
+                          {showRefund && refundProduct && (
+                            <RefundModal
+                              show={showRefund}
+                              onClose={() => setShowRefund(false)}
+                              code_order={refundProduct.code_order}
+                              onSubmit={() => {
+                                const payload = {
+                                  capture_id: refundProduct.capture_id,
+                                  code_order: refundProduct.code_order,
+                                };
+                                console.log("Payload refund gửi lên:", payload);
+                                axios.post("http://localhost:5000/api/paypal/refund", payload)
+                                  .then(() => {
+                                    alert("Hoàn tiền thành công!");
+                                    setShowRefund(false);
+                                    window.location.reload();
+                                  })
+                                  .catch((err) => {
+                                    console.error("Lỗi hoàn tiền:", err);
+                                    alert("Không thể hoàn tiền.");
+                                  });
+                              }}
+                            />
+
+                          )}
+                          </>
+                      )}
+                      
+                      {order.status === 0&& (
                         <button
                           className="history-cancel-button"
                           onClick={() => setConfirmModal({ show: true, orderCode: order.code_order })}
@@ -200,6 +241,7 @@ useEffect(() => {
                       >
                         Xem chi tiết
                       </button>
+
                     </div>
                   </div>
                 </div>

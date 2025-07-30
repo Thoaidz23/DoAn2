@@ -8,6 +8,7 @@ import axios from "axios";
 import WriteReviewButton from "../component/WriteReviewButton";
 import WarrantyModal from "../component/WarrantyModal";
 
+
 function BillDetail() {
   const { code_order } = useParams();
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ function BillDetail() {
 
   const [showWarranty, setShowWarranty] = useState(false);
   const [warrantyProduct, setWarrantyProduct] = useState(null);
+
 
 
   const [order, setOrder] = useState(null);
@@ -115,7 +117,8 @@ useEffect(() => {
                       <h4>{item.name_group_product}</h4>
                       <p>Giá : <span className="price-bill">{item.price.toLocaleString()}đ</span></p>
                       <p>Số lượng: <span className="billdetail-Quantity">{item.quantity_product}</span></p>
-                      {order.status_text === "Đã giao hàng" &&(
+                      
+                      {order.status_text === "Đã giao hàng" ?( 
                         <>  
                         
                          {new Date(item.date_end_warranty).getFullYear() - new Date(item.date_start_warranty).getFullYear() < 1 ? (
@@ -140,6 +143,7 @@ useEffect(() => {
                            {item.warranty_status_text && (
                              <p>Trạng thái bảo hành: {item.warranty_status_text}</p>
                            )}
+                         
 
                            {!["Đang chờ duyệt", "Đã duyệt bảo hành", "Đang bảo hành"].includes(item.warranty_status_text) && 
                            new Date() <= new Date(item.date_end_warranty) && (
@@ -172,7 +176,6 @@ useEffect(() => {
                                   .then(() => {
                                     alert("Yêu cầu bảo hành đã được gửi!");
                                     setShowWarranty(false);
-                                    // 🔄 Reload lại trang sau khi gửi thành công
                                     window.location.reload();
                                   })
                                   .catch((err) => {
@@ -189,41 +192,46 @@ useEffect(() => {
                           <span style={{ color: "#999" }}>({review.rating} sao)</span>
                         </p>
                       )}
+                      
                       <div style={{ marginTop: "10px" }}>
                        <WriteReviewButton
-  hasPurchased={true}
-  hasReviewed={hasReviewed}
-  existingReview={review}
-  onSubmit={(data) => {
-  const payload = {
-    id_group_product: item.id_group_product,
-    id_user: order.id_user,
-    initials: order.name_user?.charAt(0).toUpperCase() || "K",
-    ...data,
-  };
+                          hasPurchased={true}
+                          hasReviewed={hasReviewed}
+                          existingReview={review}
+                          onSubmit={(data) => {
+                          const payload = {
+                            id_group_product: item.id_group_product,
+                            id_user: order.id_user,
+                            initials: order.name_user?.charAt(0).toUpperCase() || "K",
+                            ...data,
+                          };
+                        
+                          const request = hasReviewed
+                            ? axios.put(`http://localhost:5000/api/reviews/${review.id}`, payload)
+                            : axios.post("http://localhost:5000/api/reviews", payload);
+                        
+                          request
+                            .then(() => {
+                              alert("Đánh giá đã được gửi thành công!");
+                            
+                              // 🔗 Chỉ chuyển hướng khi đang ở trang BillDetail
+                              if (location.pathname.includes("bill-detail")) {
+                                navigate(`/product/${item.id_group_product}`);
+                              }
+                            })
+                            .catch((err) => {
+                              console.error("Lỗi gửi đánh giá:", err);
+                              alert("Lỗi khi gửi đánh giá.");
+                            });
+                        }}
 
-  const request = hasReviewed
-    ? axios.put(`http://localhost:5000/api/reviews/${review.id}`, payload)
-    : axios.post("http://localhost:5000/api/reviews", payload);
-
-  request
-    .then(() => {
-      alert("Đánh giá đã được gửi thành công!");
-
-      // 🔗 Chỉ chuyển hướng khi đang ở trang BillDetail
-      if (location.pathname.includes("bill-detail")) {
-        navigate(`/product/${item.id_group_product}`);
-      }
-    })
-    .catch((err) => {
-      console.error("Lỗi gửi đánh giá:", err);
-      alert("Lỗi khi gửi đánh giá.");
-    });
-}}
-
-/>
+                        />
 
                       </div>
+                        </>
+                      ):(
+                        <>
+                         
                         </>
                       )}
                      
