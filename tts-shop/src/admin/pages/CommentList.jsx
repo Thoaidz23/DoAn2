@@ -8,7 +8,7 @@ const AdminQnAPage = () => {
   const { id_group_product } = useParams(); // lấy id sản phẩm từ URL
 
   return (
-    <div className=" mt-4\">
+    <div className=" mt-4">
       <h3 className="text-center mb-4" style={{width:"1200px"}}>Quản lý hỏi đáp sản phẩm</h3>
       <AdminQnASection
         nameuser={user.name}

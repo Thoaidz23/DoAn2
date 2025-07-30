@@ -2,7 +2,7 @@ const connection = require('../../db');  // Đảm bảo bạn đã có kết n�
 
 // Lấy tất cả đơn hàng từ cơ sở dữ liệu
 const getOrders = (req, res) => {
-  const query = 'SELECT o.id_order, o.code_order, u.name, o.total_price, o.status, o.date, o.name_user, o.address, o.phone, o.paystatus FROM tbl_order o JOIN tbl_user u ON o.id_user = u.id_user';
+  const query = 'SELECT o.id_order, o.code_order, u.name, o.total_price, o.status, o.date, o.name_user, o.address, o.phone, p.method, p.paystatus FROM tbl_order o JOIN tbl_user u ON o.id_user = u.id_user JOIN tbl_payment_infor p ON o.code_order = p.code_order';
   
   connection.query(query, (err, results) => {
     if (err) {
@@ -23,8 +23,6 @@ const getOrderByCode = (req, res) => {
     o.code_order,
     o.total_price,
     o.status,
-    o.paystatus,
-    o.method,
     o.date,
     o.name_user,
     o.address,
@@ -45,18 +43,22 @@ const getOrderByCode = (req, res) => {
 
     ram.name_ram,
     rom.name_rom,
-    color.name_color
+    color.name_color,
 
-    FROM tbl_order o
-    JOIN tbl_user u ON o.id_user = u.id_user
-    JOIN tbl_order_detail od ON o.code_order = od.code_order
-    JOIN tbl_product p ON od.id_product = p.id_product
-    JOIN tbl_group_product gp ON p.id_group_product = gp.id_group_product
-    LEFT JOIN tbl_ram ram ON p.id_ram = ram.id_ram
-    LEFT JOIN tbl_rom rom ON p.id_rom = rom.id_rom
-    LEFT JOIN tbl_color color ON p.id_color = color.id_color
+    pi.method,
+    pi.paystatus
 
-    WHERE o.code_order = ?;
+FROM tbl_order o
+JOIN tbl_user u ON o.id_user = u.id_user
+JOIN tbl_order_detail od ON o.code_order = od.code_order
+JOIN tbl_product p ON od.id_product = p.id_product
+JOIN tbl_group_product gp ON p.id_group_product = gp.id_group_product
+LEFT JOIN tbl_ram ram ON p.id_ram = ram.id_ram
+LEFT JOIN tbl_rom rom ON p.id_rom = rom.id_rom
+LEFT JOIN tbl_color color ON p.id_color = color.id_color
+LEFT JOIN tbl_payment_infor pi ON o.code_order = pi.code_order
+
+WHERE o.code_order = ?;
     `;
 
   connection.query(query, [code], (err, results) => {
@@ -86,9 +88,8 @@ const getOrderByCode = (req, res) => {
 
 const updateOrder = (req, res) => {
   const { code } = req.params;
-  const { status, paystatus } = req.body;
+  const { status } = req.body;
 
-  // 1. Lấy trạng thái hiện tại của đơn hàng
   const getStatusQuery = 'SELECT status FROM tbl_order WHERE code_order = ?';
   connection.query(getStatusQuery, [code], (err, statusResult) => {
     if (err) {
@@ -102,21 +103,21 @@ const updateOrder = (req, res) => {
 
     const currentStatus = statusResult[0].status;
 
-    // 2. Nếu từ trạng thái 0 -> 1 thì trừ số lượng
+    // Chỉ xử lý chuyển từ 0 -> 1 (chờ xác nhận -> đã xác nhận) để trừ hàng
     if (currentStatus === 0 && status === 1) {
       const getProductsQuery = `
         SELECT od.id_product, od.quantity_product 
         FROM tbl_order_detail od
         JOIN tbl_order o ON od.code_order = o.code_order
         WHERE o.code_order = ?
-              `;
+      `;
+
       connection.query(getProductsQuery, [code], (err, products) => {
         if (err) {
           console.error("Lỗi truy vấn sản phẩm:", err);
           return res.status(500).json({ error: "Lỗi máy chủ khi lấy sản phẩm" });
         }
 
-        // Trừ số lượng sản phẩm
         const updateQuantityPromises = products.map(product => {
           return new Promise((resolve, reject) => {
             const updateQtyQuery = `
@@ -124,7 +125,7 @@ const updateOrder = (req, res) => {
               SET quantity = quantity - ? 
               WHERE id_product = ? AND quantity >= ?
             `;
-            connection.query(updateQtyQuery, [product.quantity_product, product.id_product, product.quantity_product], (err, result) => {
+            connection.query(updateQtyQuery, [product.quantity_product, product.id_product, product.quantity_product], (err) => {
               if (err) return reject(err);
               resolve();
             });
@@ -133,18 +134,16 @@ const updateOrder = (req, res) => {
 
         Promise.all(updateQuantityPromises)
           .then(() => {
-            // Sau khi trừ xong thì cập nhật trạng thái đơn hàng
             const updateOrderQuery = `
               UPDATE tbl_order 
-              SET status = ?, paystatus = ? 
+              SET status = ?
               WHERE code_order = ?
             `;
-            connection.query(updateOrderQuery, [status, paystatus, code], (err, result) => {
+            connection.query(updateOrderQuery, [status, code], (err) => {
               if (err) {
                 console.error("Lỗi cập nhật đơn hàng:", err);
                 return res.status(500).json({ error: "Lỗi máy chủ khi cập nhật đơn hàng" });
               }
-
               return res.json({ message: "Cập nhật trạng thái và trừ số lượng thành công" });
             });
           })
@@ -154,20 +153,8 @@ const updateOrder = (req, res) => {
           });
       });
     } else {
-      // Nếu không cần trừ số lượng thì chỉ cập nhật trạng thái
-      const updateOrderQuery = `
-        UPDATE tbl_order 
-        SET status = ?, paystatus = ? 
-        WHERE code_order = ?
-      `;
-      connection.query(updateOrderQuery, [status, paystatus, code], (err, result) => {
-        if (err) {
-          console.error("Lỗi cập nhật đơn hàng:", err);
-          return res.status(500).json({ error: "Lỗi máy chủ khi cập nhật đơn hàng" });
-        }
-
-        return res.json({ message: "Cập nhật trạng thái thành công" });
-      });
+      // Không xử lý các trường hợp khác trong hàm này
+      return res.status(400).json({ message: "Chỉ được phép cập nhật từ trạng thái 0 sang 1 trong hàm này" });
     }
   });
 };
@@ -193,8 +180,126 @@ const printOrderIfUnconfirmed = (req, res) => {
   });
 };
 
+const markAsShipping = (req, res) => {
+  const { code } = req.params;
+
+  const getStatusQuery = 'SELECT status FROM tbl_order WHERE code_order = ?';
+  connection.query(getStatusQuery, [code], (err, result) => {
+    if (err) return res.status(500).json({ error: "Lỗi khi truy vấn trạng thái" });
+    if (result.length === 0) return res.status(404).json({ message: "Đơn hàng không tồn tại" });
+
+    const currentStatus = result[0].status;
+
+    if (currentStatus === 1) {
+      const updateQuery = 'UPDATE tbl_order SET status = 2 WHERE code_order = ?';
+      connection.query(updateQuery, [code], (err2) => {
+        if (err2) return res.status(500).json({ error: "Lỗi khi cập nhật trạng thái sang đang vận chuyển" });
+        return res.json({ message: "Đơn hàng đã chuyển sang trạng thái: Đang vận chuyển" });
+      });
+    } else {
+      return res.status(400).json({ message: "Chỉ có thể chuyển từ đã xác nhận sang đang vận chuyển" });
+    }
+  });
+};
+
+const markAsDelivered = (req, res) => {
+  const { code } = req.params;
+  const getStatusQuery = 'SELECT status FROM tbl_order WHERE code_order = ?';
+
+  connection.query(getStatusQuery, [code], (err, result) => {
+    if (err) return res.status(500).json({ error: "Lỗi khi truy vấn trạng thái" });
+    if (result.length === 0) return res.status(404).json({ message: "Đơn hàng không tồn tại" });
+
+    const currentStatus = result[0].status;
+
+    if (currentStatus !== 2) {
+      return res.status(400).json({ message: "Chỉ có thể chuyển từ đang vận chuyển sang đã giao hàng" });
+    }
+
+    const updateOrderStatus = 'UPDATE tbl_order SET status = 3 WHERE code_order = ?';
+    connection.query(updateOrderStatus, [code], (err2) => {
+      if (err2) return res.status(500).json({ error: "Lỗi khi cập nhật trạng thái đơn hàng" });
+
+      const updatePayment = 'UPDATE tbl_payment_infor SET paystatus = 1 WHERE code_order = ?';
+      connection.query(updatePayment, [code], (err3) => {
+        if (err3) return res.status(500).json({ error: "Lỗi khi cập nhật trạng thái thanh toán" });
+
+        const getWarrantyData = `
+          SELECT od.id_product, gp.warranty_level
+          FROM tbl_order_detail od
+          JOIN tbl_product p ON od.id_product = p.id_product
+          JOIN tbl_group_product gp ON p.id_group_product = gp.id_group_product
+          WHERE od.code_order = ?
+        `;
+
+        connection.query(getWarrantyData, [code], (err4, products) => {
+          if (err4) return res.status(500).json({ error: "Lỗi khi truy vấn thông tin bảo hành" });
+
+          if (products.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy sản phẩm trong đơn hàng" });
+          }
 
 
+          const updates = products.map(({ id_product, warranty_level }) => {
+  return new Promise((resolve, reject) => {
+    let updateWarranty;
+    let queryParams;
 
+    if (warranty_level === 0) {
+      // Trọn đời → start và end đều NOW()
+      updateWarranty = `
+        UPDATE tbl_order_detail 
+        SET date_start_warranty = NOW(), date_end_warranty = NOW() 
+        WHERE code_order = ? AND id_product = ?
+      `;
+      queryParams = [code, id_product];
+    } else {
+      // Tính bảo hành có thời hạn
+      let months = 0;
+      switch (warranty_level) {
+        case 1: months = 6; break;
+        case 2: months = 12; break;
+        case 3: months = 24; break;
+        case 4: months = 36; break;
+        default: months = 0;
+      }
 
-module.exports = { getOrders, getOrderByCode, updateOrder, printOrderIfUnconfirmed };
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + months);
+
+      updateWarranty = `
+        UPDATE tbl_order_detail 
+        SET date_start_warranty = NOW(), date_end_warranty = ? 
+        WHERE code_order = ? AND id_product = ?
+      `;
+      queryParams = [endDate, code, id_product];
+    }
+
+    connection.query(updateWarranty, queryParams, (err5) => {
+      if (err5) reject(err5);
+      else resolve();
+    });
+  });
+});
+
+          Promise.all(updates)
+            .then(() => {
+              return res.json({ message: "Đơn hàng đã chuyển sang trạng thái: Đã giao hàng và cập nhật bảo hành, thanh toán thành công" });
+            })
+            .catch(err => {
+              return res.status(500).json({ error: "Lỗi khi cập nhật thông tin bảo hành", detail: err });
+            });
+        });
+      });
+    });
+  });
+};
+
+module.exports = {
+  getOrders,
+  getOrderByCode,
+  updateOrder,
+  printOrderIfUnconfirmed,
+  markAsShipping,
+  markAsDelivered
+};
