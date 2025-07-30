@@ -10,7 +10,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: #043828;
+    background: oklab(43.757000000000005% -0.08778 0.04408 / 0.792);
     padding: 10px 0;
     z-index: 9999;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
@@ -32,6 +32,6 @@
   }
 
   &:hover {
-    color: #ffcc00;
+    color: #94a99b;
   }
 }

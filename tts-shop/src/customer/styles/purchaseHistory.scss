@@ -360,3 +360,37 @@
     }
   }
 }
+@media (max-width: 576px) {
+    .order-summary {
+    padding: 10px;
+    gap: 8px;
+
+    .summary-item {
+      flex: 1;
+      padding: 0 5px;
+
+      h2 {
+        font-size: 15px  !important;
+      }
+
+      p {
+        font-size: 12px !important;
+      }
+    }
+  }
+  .purchase-history-content {
+    margin-top: 60px !important;
+  }
+  .filter-buttons {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    padding-bottom: 10px;
+
+    button {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+  }
+}

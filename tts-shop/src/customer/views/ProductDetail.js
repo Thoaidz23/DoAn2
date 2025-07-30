@@ -15,7 +15,7 @@ import ProductReview from "../component/ProductReview";
 import QnASection from "../component/QnASection";
 import CompareModal from './../component/CompareModal';
 import "../styles/ProductReview.scss"
-
+import FloatingCart from '../component/FloatingCart';
 const ProductDetail = () => {
   const [compareSelected, setCompareSelected] = useState([]);
    const [showModal, setShowModal] = useState(false);
@@ -533,7 +533,7 @@ const getAvailableOptions = (field) => {
     </div>
   </Col>
 </Row>
-
+  <FloatingCart cartCount={1} />
         
       </Container>
     </div>
