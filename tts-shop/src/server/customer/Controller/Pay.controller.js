@@ -73,8 +73,8 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
               }
 
               const insertPaymentQuery = `
-                INSERT INTO tbl_payment_infor (code_order, method, paystatus, payment_time,capture_id)
-                VALUES (?, ?, ?, NOW(),?)
+                INSERT INTO tbl_payment_infor (code_order, method, paystatus, capture_id)
+                VALUES (?, ?, ?, ?)
               `;
               conn.query(insertPaymentQuery, [code_order, method, paystatus,capture_id], (err3) => {
                 if (err3) {
