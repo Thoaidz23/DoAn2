@@ -8,7 +8,6 @@ const getOrderDetail = (req, res) => {
          pi.method, 
          pi.paystatus,
          pi.capture_id,
-         pi.refund_status,
          DATE_FORMAT(o.date, '%d/%m/%Y') AS date_formatted,
          TIME_FORMAT(o.date, '%H giờ %i phút') AS time_formatted
   FROM tbl_order o
