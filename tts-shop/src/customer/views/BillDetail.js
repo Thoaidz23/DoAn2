@@ -172,6 +172,8 @@ useEffect(() => {
                                   .then(() => {
                                     alert("Yêu cầu bảo hành đã được gửi!");
                                     setShowWarranty(false);
+                                    // 🔄 Reload lại trang sau khi gửi thành công
+                                    window.location.reload();
                                   })
                                   .catch((err) => {
                                     console.error("Lỗi gửi bảo hành:", err);
