@@ -563,37 +563,81 @@
   font-size: 14px;
 }
   
-  /* Màn hình lớn hơn 768px, giữ nguyên layout mặc định */
-  @media (min-width: 768px) {
-    .news-wrapper .col-md-3 {
-      max-width: 25%; /* 4 bài viết trong một hàng */
-    }
-  }
+/* Wrapper layout cho grid bài viết/sản phẩm */
+.search-product-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+
   .section-product-one-content-item {
-  position: relative;
+    position: relative;
+    background-color: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s;
+    cursor: pointer;
 
-  .product-rating {
-    position: absolute;
-    bottom: 8px;
-    left: 8px;
-  
-    padding: 4px 8px;
-    
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: #333;
-
-    .star-icon {
-      color: #fbbf24;
-      font-size: 14px;
+    &:hover {
+      transform: translateY(-4px);
     }
 
-    .sold-count {
-      font-size: 12px;
-      color: #666;
-      margin-left: 4px;
+    img {
+      width: 100%;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    .product-title {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 8px 0 4px;
+      color: #222;
+    }
+
+    .product-price {
+      font-size: 16px;
+      font-weight: bold;
+      color: red;
+    }
+
+    .product-rating {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #333;
+      background-color: rgba(255,255,255,0.8);
+      padding: 4px 8px;
+      border-radius: 4px;
+
+      .star-icon {
+        color: #fbbf24;
+        font-size: 14px;
+      }
+
+      .sold-count {
+        font-size: 12px;
+        color: #666;
+        margin-left: 4px;
+      }
     }
   }
 }
+
+/* Mobile: 2 sản phẩm mỗi hàng (dưới 768px) */
+@media (max-width: 767px) {
+  .search-product-wrapper {
+    gap: 10px; /* giảm khoảng cách để vừa 2 cột */
+
+    .section-product-one-content-item {
+      width: calc(45% - 5px); /* 2 sản phẩm mỗi hàng */
+    }
+  }
+}
+
+

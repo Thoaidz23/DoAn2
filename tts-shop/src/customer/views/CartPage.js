@@ -85,7 +85,7 @@ const CartPage = () => {
               style={{ cursor: "pointer" }}
             ></i>
   
-            <h2 className="mb-0 fw-bold text-center" style={{ fontSize: "1.8rem" }}>
+            <h2 className="mb-0 mt-3 fw-bold text-center" style={{ fontSize: "1.8rem" }}>
               Giỏ hàng
             </h2>
           </div>
@@ -98,7 +98,7 @@ const CartPage = () => {
             <h4 className="mt-3">Giỏ hàng của bạn đang trống</h4>
           </div>
         ) : (
-          <Container className="custom-cart-container"  style={{ marginTop: "-60px" ,marginBottom : "150px"}}>
+          <Container className="custom-cart-container"  style={{ marginTop: "80px" ,marginBottom : "150px"}}>
           
             <ListGroup className="list-cart">
             <div
