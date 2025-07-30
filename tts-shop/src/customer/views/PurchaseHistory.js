@@ -187,7 +187,8 @@ useEffect(() => {
                     </p>
 
                     <div className="history-order-actions ">
-                      {order.paystatus == 1 && order.method == 3 && (
+                      {order.paystatus == 1 && (order.method == 3 || order.method == 1) && (
+
                         <>
                           <button
                             className="btn-refund"
@@ -205,23 +206,43 @@ useEffect(() => {
                               code_order={refundProduct.code_order}
                               onSubmit={() => {
                                 const payload = {
-                                  capture_id: refundProduct.capture_id,
                                   code_order: refundProduct.code_order,
+                                  amount: refundProduct.total_price,
                                 };
-                                console.log("Payload refund gửi lên:", payload);
+
+                              if (refundProduct.method === 3) {
+                                payload.capture_id = refundProduct.capture_id;
                                 axios.post("http://localhost:5000/api/paypal/refund", payload)
                                   .then(() => {
-                                    alert("Hoàn tiền thành công!");
+                                    alert("Hoàn tiền PayPal thành công!");
                                     setShowRefund(false);
                                     window.location.reload();
                                   })
                                   .catch((err) => {
-                                    console.error("Lỗi hoàn tiền:", err);
+                                    console.error("Lỗi hoàn tiền PayPal:", err);
                                     alert("Không thể hoàn tiền.");
                                   });
-                              }}
+                              } else if (refundProduct.method === 1) {
+                                payload.capture_id = refundProduct.capture_id; // bạn cần lưu transId lúc tạo đơn thanh toán MoMo
+                                axios.post("http://localhost:5000/api/momo/refund", {
+                                orderId: refundProduct.code_order,
+                                requestId: `${refundProduct.code_order}-${Date.now()}`,
+                                transId: refundProduct.capture_id,
+                                amount: refundProduct.total_price
+                              })
+                              .then(() => {
+                                alert("Hoàn tiền MoMo thành công!");
+                                setShowRefund(false);
+                                window.location.reload();
+                              })
+                              .catch((err) => {
+                                console.error("Lỗi hoàn tiền MoMo:", err);
+                                alert("Không thể hoàn tiền MoMo.");
+                              });
+                              
+                              }
+                            }}
                             />
-
                           )}
                           </>
                       )}

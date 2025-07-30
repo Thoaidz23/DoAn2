@@ -1,12 +1,15 @@
 const https = require('https');
 const crypto = require('crypto');
+const db = require("../../db");
+
+
 const { addToPayRaw } = require('./Pay.controller');
 
 const partnerCode = 'MOMO';
 const accessKey = 'F8BBA842ECF85';
 const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
 const redirectUrl = 'http://localhost:3000/PurchaseHistory'; // hoặc domain thật
-const ipnUrl = 'https://3bf1b79e8dc0.ngrok-free.app/api/momo/ipn';
+const ipnUrl = 'https://fa20bd3b357a.ngrok-free.app/api/momo/ipn';
 const requestType = 'payWithMethod';
 
 // ✅ Tạo URL thanh toán MoMo
@@ -90,7 +93,7 @@ const createMomoPaymentUrl = async (req, res) => {
 const handleMomoIPN = async (req, res) => {
   console.log("📩 ĐÃ NHẬN IPN MoMo");
   try {
-    const { resultCode, orderId, extraData } = req.body;
+    const { resultCode, orderId, extraData, transId } = req.body;
     console.log("📨 MoMo IPN trả về:", req.body);
 
     if (resultCode === 0) {
@@ -101,6 +104,7 @@ const handleMomoIPN = async (req, res) => {
         paystatus: 1,
         address: userData.address || 'Không có địa chỉ',
         phone: userData.phone || 'Không có số điện thoại',
+        capture_id: transId,
       };
       
       console.log("📦 Payload IPN MoMo:", payload);
@@ -118,8 +122,91 @@ const handleMomoIPN = async (req, res) => {
   }
 };
 
+const refundMomoSandbox = async (req, res) => {
+  try {
+    const { orderId, requestId, amount, transId } = req.body;
+ 
+    const description = `Hoàn tiền đơn hàng ${orderId}`;
+    const rawSignature = `accessKey=${accessKey}&amount=${amount}&description=${description}&orderId=${orderId}&partnerCode=${partnerCode}&requestId=${requestId}&transId=${transId}`;
+    const signature = crypto.createHmac('sha256', secretKey).update(rawSignature).digest('hex');
+    const partnerRefId = requestId;
+    const requestType = "refundMoMoWallet";
+    const version = "2.0";
+
+    const payload = JSON.stringify({
+      partnerCode,
+      requestId,
+      orderId,
+      amount,
+      transId,
+      partnerRefId,
+      requestType,
+      description,
+      version,
+      signature
+    });
+
+    const options = {
+      hostname: 'test-payment.momo.vn',
+      port: 443,
+      path: '/v2/gateway/api/refund',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload)
+      }
+    };
+
+    const momoReq = https.request(options, momoRes => {
+      let data = '';
+      momoRes.on('data', chunk => {
+        data += chunk;
+      });
+
+      momoRes.on('end', () => {
+        // ✅ Dùng async IIFE tại đây để dùng await bên trong
+        (async () => {
+          const response = JSON.parse(data);
+          console.log("📥 Phản hồi hoàn tiền MoMo:", response);
+
+          if (response.resultCode === 0) {
+            try {
+              const updateQuery = `
+                UPDATE tbl_payment_infor
+                SET paystatus = 0
+                WHERE code_order = ?
+              `;
+              await db.promise().query(updateQuery, [orderId]);
+              console.log("✅ Đã cập nhật trạng thái đơn hàng hoàn tiền thành công");
+
+              return res.status(200).json({ message: 'Hoàn tiền thành công', data: response });
+            } catch (err) {
+              console.error("❌ Lỗi khi cập nhật DB sau refund:", err);
+              return res.status(500).json({ message: 'Hoàn tiền thành công nhưng lỗi cập nhật DB', data: response });
+            }
+          } else {
+            return res.status(400).json({ message: 'Hoàn tiền thất bại', data: response });
+          }
+        })(); // <-- async IIFE
+      });
+    });
+
+    momoReq.on('error', error => {
+      console.error('❌ Lỗi gửi refund đến MoMo:', error);
+      return res.status(500).json({ message: 'Lỗi kết nối MoMo khi hoàn tiền' });
+    });
+
+    momoReq.write(payload);
+    momoReq.end();
+  } catch (err) {
+    console.error("❌ Lỗi refund MoMo:", err);
+    return res.status(500).json({ message: 'Lỗi server khi hoàn tiền MoMo' });
+  }
+};
+
 
 module.exports = {
   createMomoPaymentUrl,
   handleMomoIPN,
+  refundMomoSandbox,
 };
