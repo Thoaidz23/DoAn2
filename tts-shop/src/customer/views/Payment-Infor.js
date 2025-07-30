@@ -333,7 +333,7 @@ if (momoRes.data.payUrl) {
       });
     }}
 
-    onApprove={async (data, actions) => {
+  onApprove={async (data, actions) => {
   const details = await actions.order.capture();
   alert(`Thanh toán PayPal thành công bởi ${details.payer.name.given_name}`);
 
@@ -353,6 +353,7 @@ if (momoRes.data.payUrl) {
       method: 3,
       paystatus: 1,
       code_order, // ✅ thêm dòng này
+      capture_id: details.purchase_units[0].payments.captures[0].id,
       products: cartItems.map(item => ({
         id_product: item.id_product,
         quantity: item.quantity,
@@ -362,6 +363,7 @@ if (momoRes.data.payUrl) {
         image: item.image,
       })),
     };
+  console.log("🧾 PayPal details:", details);
 
     await axios.post("http://localhost:5000/api/pay/addpay", payload);
     navigate("/PurchaseHistory");

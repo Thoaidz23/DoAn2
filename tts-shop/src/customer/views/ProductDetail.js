@@ -29,7 +29,7 @@ const ProductDetail = () => {
   const [post, setPost] = useState([]);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const { user} = useContext(AuthContext);
-  console.log(user)
+
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [showError, setShowError] = useState(false); 
@@ -312,7 +312,7 @@ const getAvailableOptions = (field) => {
                 </span>
               )}
             </h4>
-            
+              
               <div onClick={() => setShowModal(true)}  style={{ cursor: "pointer" }}>
                     <svg id="Compare--Streamline-Carbon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="20" width="20">
                       <desc>
@@ -327,6 +327,12 @@ const getAvailableOptions = (field) => {
                 
               </div>
             </div>
+            {selectedProduct.name_warranty && (
+              <>
+              <p>Bảo Hành : {selectedProduct.name_warranty}</p>
+              </>
+            )}
+            
         {showModal && (
             <CompareModal
               onClose={() => setShowModal(false)}
