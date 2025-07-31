@@ -76,7 +76,7 @@ const getOrderDetail = (req, res) => {
           w => w.id_product === product.id_product
         );
       
-        let warranty_status_text = 'Không có yêu cầu bảo hành';
+        let warranty_status_text = '';
       
         if (matchingWarranties.length > 0) {
           // Lấy bảo hành mới nhất (theo request_time hoặc id nếu cần)

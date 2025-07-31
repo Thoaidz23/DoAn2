@@ -150,7 +150,6 @@ useEffect(() => {
                         )}
                          
                           
-
                            {item.warranty_status_text && (
                              <p>Trạng thái bảo hành: {item.warranty_status_text}</p>
                            )}
