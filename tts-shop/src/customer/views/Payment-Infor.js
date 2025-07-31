@@ -281,7 +281,7 @@ if (momoRes.data.payUrl) {
 
         <h2 className="section-title section-header">PHƯƠNG THỨC THANH TOÁN</h2>
         <div className="info-card payment-options">
-          {totalPrice < 10000000 && (
+          {totalPrice < 100000000 && (
             <div className={`payment-option ${selectedPayment === 0 ? "active" : ""}`} onClick={() => handlePaymentSelect(0)}>
               <img
                 src="https://th.bing.com/th/id/OIP.pr3kU9TsrcMbdI4tjJ8SDQAAAA?w=157&h=180&c=7&r=0&o=5&dpr=1.6&pid=1.7"

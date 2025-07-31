@@ -187,7 +187,7 @@ useEffect(() => {
                     </p>
 
                     <div className="history-order-actions ">
-                      {order.paystatus == 1 && (order.method == 3 || order.method == 1) && (
+                      {order.paystatus == 1 && (order.method == 3 || order.method == 1) && order.status != 3 && (
 
                         <>
                           <button

@@ -108,20 +108,28 @@ useEffect(() => {
               {products.map((item, index) => {
                 const review = reviewMap[item.id_group_product];
                 const hasReviewed = !!review;
-            
-
+  
                 return (
                   <div className="item-detailbill" key={index}>
                     <img src={`http://localhost:5000/images/product/${item.image}`} alt={item.name_group_product} />
                     <div className="item-info-bill">
-                      <h4>{item.name_group_product}</h4>
+                      <h4>{item.name_group_product} {item.name_color} {item.name_ram} {item.name_rom}</h4>
                       <p>Giá : <span className="price-bill">{item.price.toLocaleString()}đ</span></p>
                       <p>Số lượng: <span className="billdetail-Quantity">{item.quantity_product}</span></p>
                       
                       {order.status_text === "Đã giao hàng" ?( 
                         <>  
-                        
-                         {new Date(item.date_end_warranty).getFullYear() - new Date(item.date_start_warranty).getFullYear() < 1 ? (
+                        {item.date_end_warranty == item.date_start_warranty ? (
+                          <>
+                           <p>
+                              Thời gian bảo hành <span style={{ color: "red" }}>trọn đời</span> tính từ 
+                              <span style={{ color: "red" }}> {item.date_start_warranty.slice(0, 10)} </span>
+                              
+                            </p>
+                          </>
+                        ):(
+                          <>
+                            {new Date(item.date_end_warranty).getFullYear() - new Date(item.date_start_warranty).getFullYear() < 1 ? (
                             <p>
                               Thời gian bảo hành <span style={{ color: "red" }}>6 tháng</span> tính từ 
                               <span style={{ color: "red" }}> {item.date_start_warranty.slice(0, 10)} </span>
@@ -138,6 +146,9 @@ useEffect(() => {
                               <span style={{ color: "red" }}> {item.date_end_warranty.slice(0, 10)} </span>
                             </p>
                           )}
+                          </>
+                        )}
+                         
                           
 
                            {item.warranty_status_text && (
@@ -146,8 +157,7 @@ useEffect(() => {
                          
 
                            {!["Đang chờ duyệt", "Đã duyệt bảo hành", "Đang bảo hành"].includes(item.warranty_status_text) && 
-                           new Date() <= new Date(item.date_end_warranty) && (
-
+                           (item.date_end_warranty === item.date_start_warranty || new Date() <= new Date(item.date_end_warranty)) && (
                              <button
                                className="btn-warranty"
                                onClick={() => {
@@ -168,7 +178,7 @@ useEffect(() => {
                                 const payload = {
                                   ...data,
                                   id_user: order.id_user,
-                                  id_group_product: warrantyProduct.id_group_product,
+                                  id_product: warrantyProduct.id_product,
                                   code_order: order.code_order,
                                 };
                               
