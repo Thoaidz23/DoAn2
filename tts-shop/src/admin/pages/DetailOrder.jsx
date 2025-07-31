@@ -55,9 +55,9 @@ const DetailOrder = () => {
         order.method === 0
           ? "Thanh toán trực tiếp"
           : order.method === 1
-          ? "Thanh toán qua ngân hàng"
-          : order.method === 2
-          ? "Thanh toán qua Momo"
+          ? "Thanh toán qua MoMo"
+          : order.method === 3
+          ? "Thanh toán qua Paypal"
           : "Không xác định"
       }</p>
       <p><strong>Trạng thái thanh toán:</strong> {order.paystatus === 1 ? "Đã thanh toán" : "Chưa thanh toán"}</p>
@@ -134,102 +134,63 @@ const DetailOrder = () => {
     </div>
   </Card.Body>
   <div className="d-flex justify-content-center gap-3 mt-4 mb-4">
-  <Button
-  variant="primary"
-  onClick={async () => {
-    try {
-      await fetch(`http://localhost:5000/api/orders/print/${code}`, { method: "PUT" });
-      window.open(`/admin/order/print/${code}`, "_blank"); // in ở tab mới
-    } catch (err) {
-      alert("Lỗi khi cập nhật và in đơn hàng!");
-    }
-  }}
->
-  Xác nhận & In đơn hàng
-</Button>
+  {order.status === 0 && (
+    <Button
+      variant="primary"
+      onClick={async () => {
+        try {
+          await fetch(`http://localhost:5000/api/orders/print/${code}`, { method: "PUT" });
+          window.open(`/admin/order/print/${code}`, "_blank");
+        } catch (err) {
+          alert("Lỗi khi cập nhật và in đơn hàng!");
+        }
+      }}
+    >
+      Xác nhận & In đơn hàng
+    </Button>
+  )}
 
+  {order.status === 1 && (
+    <Button
+      variant="warning"
+      onClick={async () => {
+        try {
+          await fetch(`http://localhost:5000/api/orders/${code}/shipping`, {
+            method: "PUT"
+          });
+          navigate("/admin/order");
+        } catch (err) {
+          alert("Lỗi khi cập nhật trạng thái!");
+        }
+      }}
+    >
+      Xác nhận đang vận chuyển
+    </Button>
+  )}
+
+  {order.status === 2 && (
+    <Button
+      variant="success"
+      onClick={async () => {
+        try {
+          await fetch(`http://localhost:5000/api/orders/${code}/delivered`, {
+            method: "PUT"
+          });
+          navigate("/admin/order");
+        } catch (err) {
+          alert("Lỗi khi cập nhật trạng thái!");
+        }
+      }}
+    >
+      Xác nhận đã giao hàng
+    </Button>
+  )}
 
   <Button variant="secondary" onClick={() => navigate(-1)}>
     Quay lại
   </Button>
 </div>
-
-
 </Card>
-
-{/* Cập nhật trạng thái đơn hàng */}
-{/* <Card className="mb-4 bg-dark text-light shadow-sm">
-  <Card.Header className="border-bottom border-secondary">
-    <strong>Cập nhật trạng thái</strong>
-  </Card.Header>
-  <Card.Body>
-
-    <div className="mb-3">
-      <label htmlFor="paystatus" className="form-label">Trạng thái thanh toán</label>
-      <select
-        id="paystatus"
-        className="form-select"
-        value={order.paystatus}
-        onChange={(e) =>
-          setOrder({ ...order, paystatus: parseInt(e.target.value) })
-        }
-      >
-        <option value={0}>Chưa thanh toán</option>
-        <option value={1}>Đã thanh toán</option>
-      </select>
-    </div>
-
-
-    <div>
-      <label htmlFor="orderstatus" className="form-label">Trạng thái đơn hàng</label>
-      <select
-        id="orderstatus"
-        className="form-select"
-        value={order.status}
-        onChange={(e) =>
-  setOrder({ ...order, oldStatus: order.status, status: parseInt(e.target.value) })
-}
-
-      >
-        {(() => {
-          const status = order.status;
-          const options = [];
-
-          if (status === 0) {
-            options.push({ value: 0, label: "Chờ xác nhận" });
-            options.push({ value: 1, label: "Đã xác nhận" });
-          } else if (status === 1) {
-            options.push({ value: 1, label: "Đã xác nhận" });
-            options.push({ value: 2, label: "Đang vận chuyển" });
-          } else if (status === 2) {
-            options.push({ value: 2, label: "Đang vận chuyển" });
-            options.push({ value: 3, label: "Đã giao hàng" });
-          }else if (status === 3) {
-            options.push({ value: 3, label: "Đã giao hàng" });
-          } 
-          else if (status === 4) {
-            options.push({ value: 4, label: "Đang chờ hủy" });
-            options.push({ value: 5, label: "Đã hủy" });
-          }
-          else if (status === 5) {
-            options.push({ value: 5, label: "Đã hủy" });
-          }
-           else {
-            options.push({ value: status, label: "Không xác định" });
-          }
-
-          return options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ));
-        })()}
-      </select>
-    </div>
-
-    
-  </Card.Body>
-</Card> */}
 
 </div>
 

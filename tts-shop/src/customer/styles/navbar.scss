@@ -45,6 +45,7 @@ body {
 }
 
 .search-input {
+
   width: 100%;
   border: 1px solid #ffffff;
   border-radius: 25px;
@@ -168,25 +169,6 @@ body {
   overflow: visible;
 }
 
-
-@media (max-width: 992px) {
-  .navbar-header , .navbar-brand {
-   padding-left: 5px !important;
-  }
-  .search-form {
-    width: 25% !important;
-    min-width: 140px; /* Giới hạn nhỏ nhất */
-  }
-  @media (max-width: 768px) {
-    .navbar-header , .navbar-brand {
-     padding-left: 5px !important;
-    }
-    .search-form {
-      width: 20% !important;
-      min-width: 140px; /* Giới hạn nhỏ nhất */
-    }
-  }
-}
 /* Hiển thị logo khác nhau theo kích thước màn hình */
 .logo-desktop {
   display: block;
