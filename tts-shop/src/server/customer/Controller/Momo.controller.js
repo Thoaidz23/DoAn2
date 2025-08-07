@@ -9,7 +9,7 @@ const partnerCode = 'MOMO';
 const accessKey = 'F8BBA842ECF85';
 const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
 const redirectUrl = 'http://localhost:3000/PurchaseHistory'; // hoặc domain thật
-const ipnUrl = 'https://fa20bd3b357a.ngrok-free.app/api/momo/ipn';
+const ipnUrl = 'https://95c9a605d539.ngrok-free.app/api/momo/ipn';
 const requestType = 'payWithMethod';
 
 // ✅ Tạo URL thanh toán MoMo
@@ -173,7 +173,7 @@ const refundMomoSandbox = async (req, res) => {
             try {
               const updateQuery = `
                 UPDATE tbl_payment_infor
-                SET paystatus = 0
+                SET paystatus = 0, method = 0
                 WHERE code_order = ?
               `;
               await db.promise().query(updateQuery, [orderId]);

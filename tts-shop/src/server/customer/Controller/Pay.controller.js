@@ -21,7 +21,7 @@ const generateOrderCode = (req, res) => {
   return res.status(200).json({ code_order });
 };
 
-const addToPayRaw = ({ id_user, products, name_user, address, phone, method, email, paystatus = 0 ,capture_id = null}) => {
+const addToPayRaw = ({ id_user, products, name_user, address, phone, method, email, paystatus = 0 ,capture_id = null,isFromCart }) => {
   return new Promise((resolve, reject) => {
     const code_order = generateCodeOrder();
     const total_price = products.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -49,21 +49,13 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
             });
           }
 
-          const deleteCartQuery = `DELETE FROM tbl_cart WHERE id_user = ?`;
-          conn.query(deleteCartQuery, [id_user], (errDel) => {
-            if (errDel) {
-              return conn.rollback(() => {
-                conn.release();
-                reject('Lỗi xoá giỏ hàng');
-              });
-            }
-
+          const proceed = () => {
             const insertDetailQuery = `
               INSERT INTO tbl_order_detail (code_order, id_product, quantity_product)
               VALUES ?
             `;
             const detailValues = products.map(item => [code_order, item.id_product, item.quantity]);
-
+                    
             conn.query(insertDetailQuery, [detailValues], (err2) => {
               if (err2) {
                 return conn.rollback(() => {
@@ -71,19 +63,19 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
                   reject('Lỗi chi tiết đơn hàng');
                 });
               }
-
+            
               const insertPaymentQuery = `
                 INSERT INTO tbl_payment_infor (code_order, method, paystatus, capture_id)
                 VALUES (?, ?, ?, ?)
               `;
-              conn.query(insertPaymentQuery, [code_order, method, paystatus,capture_id], (err3) => {
+              conn.query(insertPaymentQuery, [code_order, method, paystatus, capture_id], (err3) => {
                 if (err3) {
                   return conn.rollback(() => {
                     conn.release();
                     reject('Lỗi thêm payment_infor');
                   });
                 }
-
+              
                 conn.commit(errCommit => {
                   if (errCommit) {
                     return conn.rollback(() => {
@@ -91,7 +83,7 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
                       reject('Lỗi commit');
                     });
                   }
-
+                
                   conn.release();
                   sendOrderConfirmationEmail(email, code_order, products, total_price)
                     .then(() => resolve('Đặt hàng thành công'))
@@ -99,7 +91,25 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
                 });
               });
             });
-          });
+          };
+          
+          // 👉 Chỉ xóa giỏ hàng nếu từ cart
+          if (isFromCart) {
+            const deleteCartQuery = `DELETE FROM tbl_cart WHERE id_user = ?`;
+            conn.query(deleteCartQuery, [id_user], (errDel) => {
+              if (errDel) {
+                return conn.rollback(() => {
+                  conn.release();
+                  reject('Lỗi xoá giỏ hàng');
+                });
+              }
+              proceed();
+            });
+          } else {
+            proceed();
+          }
+          
+                    
         });
       });
     });

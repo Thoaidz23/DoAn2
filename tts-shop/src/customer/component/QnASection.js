@@ -5,7 +5,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
 
-function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
+function QnASection({ id_group_product}) {
   const [comments, setComments] = useState([]);
   const [showReplies, setShowReplies] = useState(null);
   const [question, setQuestion] = useState("");
@@ -47,8 +47,8 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
   const handleSendQuestion = () => {
     if (!question.trim()) return;
     axios.post("http://localhost:5000/api/qna/question", {
-      name: nameuser || "Khách",
-      avatar,
+      name: user.name || "Khách",
+      avatar: user.avatar || avatar,
       content: question,
       id_group_product,
     }).then(() => {
@@ -62,10 +62,10 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
     if (!content?.trim()) return;
     axios.post("http://localhost:5000/api/qna/reply", {
       commentId,
-      name: nameuser || "Khách",
-      avatar,
+      name: user.name || "Khách",
+      avatar:  user.avatar || avatar,
       content,
-      role: roleuser || 0,
+      role: user.role || 0,
     }).then(() => {
       setReplyTexts((prev) => ({ ...prev, [replyIdKey]: "" }));
       setActiveReplyInput(null);
@@ -79,36 +79,34 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
 
   const visibleComments = showAllComments ? comments : comments.slice(0, 2);
 
-  const getDisplayName = (item) => {
-    if (item.role === 1) return "Quản trị viên";
-    if (item.role === 2) return "Quản trị viên";
-    return item.name;
+  const getDisplayName = (user) => {
+    if (user.role === 1) return "Quản trị viên";
+    if (user.role === 2) return "Quản trị viên";
+    return user.name;
   };
 
-  const renderAvatar = (item) => {
-    return item.avatar ? (
-      <img src={item.avatar} alt="avatar" />
+  const renderAvatar = (user) => {
+    return user.avatar ? (
+      <img src={user.avatar} alt="avatar" />
     ) : (
-      <div className="avatar-fallback">{item.name?.charAt(0) || "?"}</div>
+      <div className="avatar-fallback">{user.name?.charAt(0) || "?"}</div>
     );
   };
 
   return (
     <div className="qna-container" style={{color:"black"}}>
-      {user.role == 3 && (
+      <h2>Hỏi và đáp</h2>
+{(!user || user?.role === 3) && (
+  <div className="ask-box">
+    <img src={mascotImg} alt="Mascot" className="mascot" />
+    <div className="ask-content">
+      <h3>Hãy đặt câu hỏi cho chúng tôi</h3>
+      <p>
+        TTSShop sẽ phản hồi trong vòng 1 giờ. Nếu quý khách gửi câu hỏi hãy hỏi và chúng tôi sẽ giải đáp thắc mắc cho quý khách sớm nhất. TTS trân trọng cảm ơn!
+      </p>
+
+      {user ? (
         <>
-        <h2>Hỏi và đáp</h2>
-
-      <div className="ask-box">
-        <img src={mascotImg} alt="Mascot" className="mascot" />
-        <div className="ask-content">
-          <h3>Hãy đặt câu hỏi cho chúng tôi</h3>
-
-          <p>
-            TTSShop sẽ phản hồi trong vòng 1 giờ. Nếu quý khách gửi câu hỏi hãy hỏi và chúng tôi sẽ giải đáp thắt mắc cho quý khách sớm nhất. TTS trân trọng cảm ơn!
-            
-          </p>
-
           <input
             type="text"
             placeholder="Viết câu hỏi của bạn tại đây"
@@ -116,11 +114,17 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
             onChange={(e) => setQuestion(e.target.value)}
           />
           <button onClick={handleSendQuestion}>Gửi câu hỏi ✈</button>
-        </div>
-      </div>
         </>
+      ) : (
+        <p style={{ fontWeight: "bold", color: "red" }}>
+          Vui lòng <a href="/login">đăng nhập</a> để đặt câu hỏi.
+        </p>
       )}
-      
+    </div>
+  </div>
+)}
+
+
 
       <div className="comment-list">
         {visibleComments.map((comment) => (
@@ -133,7 +137,7 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
               </div>
               <p>{comment.content}</p>
                 <span className="reply-action" onClick={() => setActiveReplyInput(`comment-${comment.id}`)}>💬 Phản hồi</span>
-                {(roleuser === 1 || roleuser === 2) && (
+                {(user?.role === 1 || user?.role === 2) && (
                   <span className="reply-action" onClick={() => handleDeleteQuestion(comment.id)}>
                     🗑️ Xóa
                   </span>
@@ -177,7 +181,7 @@ function QnASection({ nameuser, roleuser, avataruser ,id_group_product}) {
                           >
                             💬 Phản hồi
                           </span>
-                          {(roleuser === 1 || roleuser === 2) && (
+                          {(user.role === 1 || user.role === 2) && (
                               <span className="reply-action" onClick={() => handleDeleteReply(reply.id)}>
                                 🗑️ Xóa
                               </span>

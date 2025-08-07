@@ -1,6 +1,5 @@
 .payment-infor {
     margin-top: -4%;
- 
 }
 .container-infor {
     height: 100%;
@@ -111,11 +110,7 @@
   .edit-icon {
     position: absolute;
     cursor: pointer;
-    font-size: 17px;
-    display: inline-block;
-    margin-top: 10px;
-    bottom: 15px;
-    right: 4px;
+    margin-left: 10px;
   }
   
   .payment-method {
@@ -266,4 +261,21 @@
   10% { opacity: 1; transform: translateY(0); }
   90% { opacity: 1; }
   100% { opacity: 0; transform: translateY(-10px); }
+}
+// Trong payment-infor.scss
+.spinner {
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border-left-color: #000;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

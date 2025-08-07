@@ -63,6 +63,7 @@ const addReview = async (req, res) => {
 // Kiểm tra người dùng đã mua sản phẩm chưa
 const hasPurchasedProduct = (req, res) => {
   const { userId, groupProductId } = req.query;
+  console.log('Billdetail',userId, groupProductId)
   const sql = `
     SELECT 1 FROM tbl_order_detail od
     JOIN tbl_order o ON o.code_order = od.code_order
@@ -70,7 +71,6 @@ const hasPurchasedProduct = (req, res) => {
     WHERE o.id_user = ? AND p.id_group_product = ? AND o.status = 3
     LIMIT 1
   `;
-
 
   db.query(sql, [userId, groupProductId], (err, result) => {
     if (err) {
@@ -86,7 +86,7 @@ const checkAlreadyReviewed = (req, res) => {
   const { userId, groupProductId } = req.query;
 
   const sql = `
-    SELECT id, id_user, comment, rating, tags
+    SELECT id, id_user, comment, rating, tags, created_at
     FROM tbl_reviews 
     WHERE id_user = ? AND id_group_product = ? 
     LIMIT 1
@@ -94,9 +94,30 @@ const checkAlreadyReviewed = (req, res) => {
 
   db.query(sql, [userId, groupProductId], (err, result) => {
     if (err) return res.status(500).json({ error: "Lỗi server" });
-    return res.json({ reviewed: result.length > 0, review: result[0] });
+
+    if (result.length === 0) {
+      return res.json({ reviewed: false, review: null });
+    }
+
+    const review = result[0];
+    const createdAt = new Date(review.created_at);
+    const now = new Date();
+    
+    const monthsDiff = (now.getFullYear() - createdAt.getFullYear()) * 12 + 
+                       (now.getMonth() - createdAt.getMonth());
+
+    const MAX_MONTHS = 2; // 👉 Thay đổi số tháng ở đây
+
+    const editable = monthsDiff < MAX_MONTHS;
+
+    return res.json({
+      reviewed: true,
+      review,
+      editable
+    });
   });
 };
+
 
 // PUT /api/reviews/:id
 const updateReview = (req, res) => {

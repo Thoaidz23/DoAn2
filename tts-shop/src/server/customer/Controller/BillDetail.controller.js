@@ -61,7 +61,7 @@ const getOrderDetail = (req, res) => {
         };
 
         const warrantyMap = {
-          0: 'Không duyệt bảo hành',
+          0: 'Từ chối bảo hành',
           1: 'Đang chờ duyệt',
           2: 'Đã duyệt bảo hành',
           3: 'Đang bảo hành',

@@ -19,6 +19,7 @@ function PurchaseHistory() {
   const [userInfo, setUserInfo] = useState(null);
   const [showRefund, setShowRefund] = useState(false);
   const [refundProduct, setRefundProduct] = useState(null);
+  const [loadingRefund, setLoadingRefund] = useState(false);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   console.log(user)
@@ -191,7 +192,7 @@ useEffect(() => {
 
                         <>
                           <button
-                            className="btn-refund"
+                            className="history-refund-button"
                             onClick={() => {
                               setRefundProduct(order);
                               setShowRefund(true);
@@ -204,46 +205,42 @@ useEffect(() => {
                               show={showRefund}
                               onClose={() => setShowRefund(false)}
                               code_order={refundProduct.code_order}
-                              onSubmit={() => {
+                              loading={loadingRefund}
+                              onSubmit={async () => {
+                                setLoadingRefund(true);
                                 const payload = {
                                   code_order: refundProduct.code_order,
                                   amount: refundProduct.total_price,
                                 };
-
-                              if (refundProduct.method === 3) {
-                                payload.capture_id = refundProduct.capture_id;
-                                axios.post("http://localhost:5000/api/paypal/refund", payload)
-                                  .then(() => {
-                                    alert("Hoàn tiền PayPal thành công!");
-                                    setShowRefund(false);
-                                    window.location.reload();
-                                  })
-                                  .catch((err) => {
-                                    console.error("Lỗi hoàn tiền PayPal:", err);
-                                    alert("Không thể hoàn tiền.");
-                                  });
-                              } else if (refundProduct.method === 1) {
-                                payload.capture_id = refundProduct.capture_id; // bạn cần lưu transId lúc tạo đơn thanh toán MoMo
-                                axios.post("http://localhost:5000/api/momo/refund", {
-                                orderId: refundProduct.code_order,
-                                requestId: `${refundProduct.code_order}-${Date.now()}`,
-                                transId: refundProduct.capture_id,
-                                amount: refundProduct.total_price
-                              })
-                              .then(() => {
-                                alert("Hoàn tiền MoMo thành công!");
-                                setShowRefund(false);
-                                window.location.reload();
-                              })
-                              .catch((err) => {
-                                console.error("Lỗi hoàn tiền MoMo:", err);
-                                alert("Không thể hoàn tiền MoMo.");
-                              });
                               
-                              }
-                            }}
+                                try {
+                                  if (refundProduct.method === 3) {
+                                    payload.capture_id = refundProduct.capture_id;
+                                    await axios.post("http://localhost:5000/api/paypal/refund", payload);
+                                    alert("Hoàn tiền PayPal thành công!");
+                                  } else if (refundProduct.method === 1) {
+                                    await axios.post("http://localhost:5000/api/momo/refund", {
+                                      orderId: refundProduct.code_order,
+                                      requestId: `${refundProduct.code_order}-${Date.now()}`,
+                                      transId: refundProduct.capture_id,
+                                      amount: refundProduct.total_price
+                                    });
+                                    alert("Hoàn tiền MoMo thành công!");
+                                  }
+                                
+                                  setShowRefund(false);
+                                  window.location.reload();
+                                
+                                } catch (err) {
+                                  console.error("Lỗi hoàn tiền:", err);
+                                  alert("Không thể hoàn tiền.");
+                                } finally {
+                                  setLoadingRefund(false);
+                                }
+                              }}
                             />
-                          )}
+                            
+                                                      )}
                           </>
                       )}
                       

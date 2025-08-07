@@ -286,6 +286,23 @@
               color: #fff;
             }
           }
+          .history-refund-button {
+            background-color: transparent;
+            border: 1px solid #35dcb2;
+            color: #115149;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: 0.3s;
+            position: absolute;
+            top: 30px;
+            font-weight: 400;
+            right: 5px;
+            &:hover {
+              background-color: #18a574;
+              color: #fff;
+            }
+          }
         }
       }
     }

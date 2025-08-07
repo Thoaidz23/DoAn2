@@ -6,11 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { useLocation } from "react-router-dom";
 
 const PaymentInfor = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
@@ -21,6 +22,10 @@ const PaymentInfor = () => {
   const [tempPhone, setTempPhone] = useState("");
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null);
+  const [isFromCart, setIsFromCart] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+
 useEffect(() => {
   const fetchExchangeRate = async () => {
     const cachedRate = localStorage.getItem("usdVndRate");
@@ -70,36 +75,50 @@ useEffect(() => {
     }
   }, [errorMessage]);
 
+
   useEffect(() => {
-    if (!user) {
+  if (!user) return;
+
+  const fetchData = async () => {
+    const itemsFromState = location.state?.items;
+
+    // MUA NGAY: lấy trực tiếp từ state
+    if (itemsFromState && itemsFromState.length > 0) {
+      setCartItems(itemsFromState);
+      setTempAddress(user.address || "");
+      setTempPhone(user.phone || "");
       setLoading(false);
-      return;
-    }
+      setIsFromCart(false);
 
-    const fetchCartData = async () => {
-      try {
-        const res = await axios.get(`http://localhost:5000/api/payment/${user.id}`);
-        setCartItems(res.data.product);
-        setTempAddress(res.data.address);
-        setTempPhone(res.data.phone);
-      } catch (err) {
-        console.error("Lỗi khi lấy giỏ hàng:", err);
-      }
-    };
-
-    const fetchUserInfo = async () => {
+      // Vẫn cần thông tin user để thanh toán
       try {
         const userResponse = await axios.get(`http://localhost:5000/api/account/${user.id}`);
         setUserInfo(userResponse.data);
       } catch (err) {
-        console.error("Lỗi khi lấy thông tin người dùng:", err);
+        console.error("Lỗi lấy thông tin user:", err);
       }
-    };
 
-    fetchCartData();
-    fetchUserInfo();
-    setLoading(false);
-  }, [user]);
+      return;
+    }
+
+    // GIỎ HÀNG THẬT
+    try {
+      const cartRes = await axios.get(`http://localhost:5000/api/payment/${user.id}`);
+      setCartItems(cartRes.data.product);
+      console.log(cartRes.data.product)
+      setTempAddress(cartRes.data.address);
+      setTempPhone(cartRes.data.phone);
+      const userRes = await axios.get(`http://localhost:5000/api/account/${user.id}`);
+      setUserInfo(userRes.data);
+    } catch (err) {
+      console.error("Lỗi khi tải dữ liệu:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchData();
+}, [user, location.state]);
 
   const totalPrice = cartItems.reduce((sum, item) => sum + Math.round(item.saleprice) * item.quantity, 0);
 
@@ -108,13 +127,13 @@ useEffect(() => {
   };
 
   const handleAddToPay = async () => {
+    
     if (selectedPayment === null) {
       setErrorMessage("Vui lòng chọn phương thức thanh toán!");
       return;
     }
-
     if (!user || cartItems.length === 0 || !userInfo) return;
-
+    setIsLoading(true);
     const payload = {
       email: user.email,
       id_user: user.id,
@@ -122,6 +141,7 @@ useEffect(() => {
       address: tempAddress || userInfo.address,
       phone: tempPhone || userInfo.phone,
       method: selectedPayment,
+      isFromCart,
       products: cartItems.map(item => ({
         id_product: item.id_product,
         quantity: item.quantity,
@@ -134,6 +154,7 @@ useEffect(() => {
 
     try {
       if (selectedPayment === 0) {
+        
         await axios.post("http://localhost:5000/api/pay/addpay", payload);
         navigate("/PurchaseHistory");
      } else if (selectedPayment === 1) {
@@ -156,6 +177,7 @@ const momoRes = await axios.post("http://localhost:5000/api/momo/create-payment-
     phone: tempPhone || userInfo.phone,
     method: 1,
     paystatus: 1,
+    isFromCart,
     products: cartItems.map(item => ({
       id_product: item.id_product,
       quantity: item.quantity,
@@ -211,7 +233,7 @@ if (momoRes.data.payUrl) {
           <h3>Đang tải giỏ hàng...</h3>
         ) : cartItems.length > 0 ? (
           cartItems.map((item) => (
-            <div className="info-card" key={item.id_product}>
+                        <div className="info-card" key={item.id_product}>
               <div className="product-section">
                 <img
                   src={`http://localhost:5000/images/product/${item.image}`}
@@ -219,7 +241,7 @@ if (momoRes.data.payUrl) {
                   className="product-img"
                 />
                 <div className="product-details">
-                  <h3 className="product-name">{item.name_group_product}</h3>
+                  <h3 className="product-name">{item.name_group_product} {item.name_color} {item.name_ram} {item.name_rom}</h3>
                   <p className="price">{Math.round(item.saleprice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup></p>
                 </div>
                 <p className="quantity">Số lượng: <span>{item.quantity}</span></p>
@@ -241,37 +263,60 @@ if (momoRes.data.payUrl) {
                   <p>
                     Địa chỉ: {
                       isEditingAddress ? (
-                        <input
+                        <>
+                          <input
                           type="text"
                           value={tempAddress}
                           onChange={(e) => setTempAddress(e.target.value)}
+                          placeholder={userInfo.address}
                           className="edit-address-input"
-                          style={{ width: "200%" }}
                         />
-                      ) : (
-                        tempAddress || userInfo.address
+                        <span className="edit-icon" onClick={() => setIsEditingAddress(prev => !prev)}>
+                          {isEditingAddress ? "✔" : "✎"}
+                        </span>
+                        </>                     
+                         ) : (
+                        <>
+                       <span>{tempAddress || userInfo.address}</span>
+                        <span className="edit-icon" onClick={() => setIsEditingAddress(prev => !prev)}>
+                          {isEditingAddress ? "✔" : "✎"}
+                        </span>
+                       </>
                       )
                     }
-                    <span className="edit-icon" onClick={() => setIsEditingAddress(prev => !prev)} style={{ top: "44%" }}>
-                      {isEditingAddress ? "✔" : "✎"}
-                    </span>
                   </p>
+                  
                   <p>
                     Số điện thoại: {
                       isEditingPhone ? (
-                        <input
+                        <>
+                          <input
                           type="text"
                           value={tempPhone}
-                          onChange={(e) => setTempPhone(e.target.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            // Chỉ cho nhập số, không cho ký tự
+                            if (/^\d*$/.test(val)) {
+                              setTempPhone(val);
+                            }
+                          }}
+                          maxLength={11}
+                          placeholder={userInfo.phone}
                           className="edit-address-input"
-                          />
+                        />
+                         <span className="edit-icon" onClick={() => setIsEditingPhone(prev => !prev)}>
+                          {isEditingPhone ? "✔" : "✎"}
+                        </span>
+                        </>
                       ) : (
-                        tempPhone || userInfo.phone
+                        <>
+                          <span>{tempPhone || userInfo.phone}</span>
+                          <span className="edit-icon" onClick={() => setIsEditingPhone(prev => !prev)}>
+                            {isEditingPhone ? "✔" : "✎"}
+                          </span>
+                        </>
                       )
                     }
-                    <span className="edit-icon" onClick={() => setIsEditingPhone(prev => !prev)}>
-                      {isEditingPhone ? "✔" : "✎"}
-                    </span>
                   </p>  
                 </div>
               </div>
@@ -281,16 +326,15 @@ if (momoRes.data.payUrl) {
 
         <h2 className="section-title section-header">PHƯƠNG THỨC THANH TOÁN</h2>
         <div className="info-card payment-options">
-          {totalPrice < 100000000 && (
-            <div className={`payment-option ${selectedPayment === 0 ? "active" : ""}`} onClick={() => handlePaymentSelect(0)}>
-              <img
-                src="https://th.bing.com/th/id/OIP.pr3kU9TsrcMbdI4tjJ8SDQAAAA?w=157&h=180&c=7&r=0&o=5&dpr=1.6&pid=1.7"
-                alt="COD Icon"
-                className="payment-icon cod-img"
-              />
-              <p>Thanh toán khi nhận hàng</p>
-            </div>
-          )}
+
+        <div className={`payment-option ${selectedPayment === 0 ? "active" : ""}`} onClick={() => handlePaymentSelect(0)}>
+          <img
+            src="https://th.bing.com/th/id/OIP.pr3kU9TsrcMbdI4tjJ8SDQAAAA?w=157&h=180&c=7&r=0&o=5&dpr=1.6&pid=1.7"
+            alt="COD Icon"
+            className="payment-icon cod-img"
+          />
+          <p>Thanh toán khi nhận hàng</p>
+        </div>
 
           <div className={`payment-option ${selectedPayment === 1 ? "active" : ""}`} onClick={() => handlePaymentSelect(1)}>
             <img
@@ -354,6 +398,7 @@ if (momoRes.data.payUrl) {
       paystatus: 1,
       code_order, // ✅ thêm dòng này
       capture_id: details.purchase_units[0].payments.captures[0].id,
+      isFromCart,
       products: cartItems.map(item => ({
         id_product: item.id_product,
         quantity: item.quantity,
@@ -381,8 +426,15 @@ if (momoRes.data.payUrl) {
 </PayPalScriptProvider>
 
           ) : (
-            <button className="checkout-button" onClick={handleAddToPay}>
-              Thanh toán
+            <button className="checkout-button" onClick={handleAddToPay} disabled={isLoading}>
+              {isLoading ? (
+                  <>
+                    <span className="spinner"></span>
+                      Đang thanh toán...
+                  </>
+                ) : (
+                  "Thanh toán"
+                )}
             </button>
           )}
         </div>
