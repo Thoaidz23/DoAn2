@@ -60,6 +60,7 @@ app.use("/api/momo", require("./customer/Routes/Momo.route"));
 app.use('/api/qna', require('./customer/Routes/QaA.route'));
 const warrantyRoutes = require('./customer/Routes/warranty.route');
 const paypalRoutes = require("./customer/Routes/Paypal.route");
+
 //admin
 app.use('/api/dashboards', dashboardRoutes);
 app.use('/api/orders', orderRoutes);
@@ -102,7 +103,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/footer', footer);
 app.use("/api", compareRoute);
 app.use('/api',searchSG)
-app.use("/api/reviews", reviewRoute);
+app.use("/api/customer-reviews", reviewRoute);
 app.use('/api/warranty', warrantyRoutes);
 app.use("/api/paypal", paypalRoutes);
 

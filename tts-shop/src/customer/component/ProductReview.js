@@ -20,6 +20,7 @@ const ProductReview = ({ productId }) => {
   const [hasPurchased, setHasPurchased] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [existingReview, setExistingReview] = useState(null);
+  const [editable, setEditable] = useState(true);
   const { user } = useContext(AuthContext);
 
   const convertToTimeAgo = (dateStr) => {
@@ -36,7 +37,7 @@ const ProductReview = ({ productId }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
+        const res = await axios.get(`http://localhost:5000/api/customer-reviews/${productId}`);
         const data = res.data.map((item) => ({
           ...item,
           tags: item.tags ? JSON.parse(item.tags) : [],
@@ -56,7 +57,7 @@ const ProductReview = ({ productId }) => {
     const fetchPurchaseStatus = async () => {
       try {
         if (user?.id) {
-          const res = await axios.get(`http://localhost:5000/api/reviews/check-purchased`, {
+          const res = await axios.get(`http://localhost:5000/api/customer-reviews/check-purchased`, {
             params: {
               userId: user.id,
               groupProductId: productId,
@@ -74,7 +75,7 @@ const ProductReview = ({ productId }) => {
   useEffect(() => {
     const checkReviewed = async () => {
       if (user?.id) {
-        const res = await axios.get(`http://localhost:5000/api/reviews/check-reviewed`, {
+        const res = await axios.get(`http://localhost:5000/api/customer-reviews/check-reviewed`, {
           params: {
             userId: user.id,
             groupProductId: productId,
@@ -82,6 +83,7 @@ const ProductReview = ({ productId }) => {
         });
         setHasReviewed(res.data.reviewed);
         setExistingReview(res.data.review || null);
+        setEditable(res.data.editable);
       }
     };
     checkReviewed();
@@ -118,13 +120,13 @@ const ProductReview = ({ productId }) => {
     setSubmitting(true);
     try {
       if (hasReviewed && existingReview?.id) {
-        await axios.put(`http://localhost:5000/api/reviews/${existingReview.id}`, {
+        await axios.put(`http://localhost:5000/api/customer-reviews/${existingReview.id}`, {
           rating,
           comment,
           tags,
         });
       } else {
-        await axios.post("http://localhost:5000/api/reviews", {
+        await axios.post("http://localhost:5000/api/customer-reviews", {
           id_group_product: productId,
           id_user: user?.id || 0,
           initials: user?.name?.charAt(0).toUpperCase() || "K",
@@ -136,7 +138,7 @@ const ProductReview = ({ productId }) => {
 
       alert(hasReviewed ? "Đánh giá đã được cập nhật!" : "Đánh giá đã được gửi!");
 
-      const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
+      const res = await axios.get(`http://localhost:5000/api/customer-reviews/${productId}`);
       const data = res.data.map((item) => ({
         ...item,
         tags: Array.isArray(item.tags)
@@ -190,12 +192,19 @@ const ProductReview = ({ productId }) => {
               ))}
             </div>
             <p className="total-reviews">{totalReviews} lượt đánh giá</p>
-            <WriteReviewButton
-              hasPurchased={hasPurchased}
-              hasReviewed={hasReviewed}
-              existingReview={existingReview}
-              onSubmit={handleSubmitReview}
-            />
+            {editable ? (
+                <WriteReviewButton
+                  hasPurchased={hasPurchased}
+                  hasReviewed={hasReviewed}
+                  existingReview={existingReview}
+                  onSubmit={handleSubmitReview}
+                />
+              ) : (
+                <p style={{ fontStyle: "italic", color: "gray", marginTop: "8px" }}>
+                  Bạn không thể chỉnh sửa đánh giá sau 2 tháng.
+                </p>
+              )}
+              
           </div>
 
           <div className="center-review">

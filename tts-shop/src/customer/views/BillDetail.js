@@ -17,29 +17,34 @@ function BillDetail() {
   const [showWarranty, setShowWarranty] = useState(false);
   const [warrantyProduct, setWarrantyProduct] = useState(null);
 
-
-
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
   const [reviewMap, setReviewMap] = useState({});
 
+  
   // 🔁 Lấy đánh giá cho các sản phẩm trong đơn hàng
  const fetchReviewsForProducts = async (productList, userId) => {
   const reviewsData = {};
-
+  console.log(productList, userId)
   await Promise.all(
     productList.map(async (item) => {
+      
       try {
-        const res = await axios.get("http://localhost:5000/api/reviews/check-reviewed", {
+        const res = await axios.get("http://localhost:5000/api/customer-reviews/check-reviewed", {
           params: {
             userId: userId, // ✅ lấy từ đối số truyền vào
             groupProductId: item.id_group_product,
           },
         });
-        if (res.data.reviewed) {
-          reviewsData[item.id_group_product] = res.data.review;
-        }
+       if (res.data.reviewed) {
+        reviewsData[item.id_group_product] = {
+          ...res.data.review,
+          editable: res.data.editable,
+        };
+        
+      }
+
       } catch (err) {
         console.error("Lỗi kiểm tra đánh giá:", err);
       }
@@ -62,14 +67,6 @@ function BillDetail() {
       console.error("Lỗi lấy chi tiết đơn hàng:", err);
     });
 }, [code_order]);
-
-// 👉 Gọi khi order đã có
-useEffect(() => {
-  if (order && products.length > 0) {
-    fetchReviewsForProducts(products, order.id_user);
-  }
-}, [order, products]);
-
 
   // 🔁 Chờ có order và products mới fetch đánh giá
   useEffect(() => {
@@ -108,20 +105,28 @@ useEffect(() => {
               {products.map((item, index) => {
                 const review = reviewMap[item.id_group_product];
                 const hasReviewed = !!review;
-            
-
+                const editable = review?.editable ?? true;
                 return (
                   <div className="item-detailbill" key={index}>
                     <img src={`http://localhost:5000/images/product/${item.image}`} alt={item.name_group_product} />
                     <div className="item-info-bill">
-                      <h4>{item.name_group_product}</h4>
+                      <h4>{item.name_group_product} {item.name_color} {item.name_ram} {item.name_rom}</h4>
                       <p>Giá : <span className="price-bill">{item.price.toLocaleString()}đ</span></p>
                       <p>Số lượng: <span className="billdetail-Quantity">{item.quantity_product}</span></p>
                       
                       {order.status_text === "Đã giao hàng" ?( 
                         <>  
-                        
-                         {new Date(item.date_end_warranty).getFullYear() - new Date(item.date_start_warranty).getFullYear() < 1 ? (
+                        {item.date_end_warranty == item.date_start_warranty ? (
+                          <>
+                           <p>
+                              Thời gian bảo hành <span style={{ color: "red" }}>trọn đời</span> tính từ 
+                              <span style={{ color: "red" }}> {item.date_start_warranty.slice(0, 10)} </span>
+                              
+                            </p>
+                          </>
+                        ):(
+                          <>
+                            {new Date(item.date_end_warranty).getFullYear() - new Date(item.date_start_warranty).getFullYear() < 1 ? (
                             <p>
                               Thời gian bảo hành <span style={{ color: "red" }}>6 tháng</span> tính từ 
                               <span style={{ color: "red" }}> {item.date_start_warranty.slice(0, 10)} </span>
@@ -138,18 +143,25 @@ useEffect(() => {
                               <span style={{ color: "red" }}> {item.date_end_warranty.slice(0, 10)} </span>
                             </p>
                           )}
-                          
+                          </>
+                        )}
 
                            {item.warranty_status_text && (
                              <p>Trạng thái bảo hành: {item.warranty_status_text}</p>
-                           )}
-                         
+                           )}                      
 
-                           {!["Đang chờ duyệt", "Đã duyệt bảo hành", "Đang bảo hành"].includes(item.warranty_status_text) && 
-                           new Date() <= new Date(item.date_end_warranty) && (
-
+                         {hasReviewed && (
+                        <p>
+                          Đánh giá: {"⭐".repeat(review.rating)}{" "}
+                          <span style={{ color: "#999" }}>({review.rating} sao)</span>
+                        </p>
+                      )}
+                      
+                      <div style={{ marginTop: "10px" }}>
+                        {!["Đang chờ duyệt", "Đã duyệt bảo hành", "Đang bảo hành"].includes(item.warranty_status_text) && 
+                           (item.date_end_warranty === item.date_start_warranty || new Date() <= new Date(item.date_end_warranty)) && (
                              <button
-                               className="btn-warranty"
+                               className="write-btn-review"
                                onClick={() => {
                                  setWarrantyProduct(item);
                                  setShowWarranty(true);
@@ -168,7 +180,7 @@ useEffect(() => {
                                 const payload = {
                                   ...data,
                                   id_user: order.id_user,
-                                  id_group_product: warrantyProduct.id_group_product,
+                                  id_product: warrantyProduct.id_product,
                                   code_order: order.code_order,
                                 };
                               
@@ -185,47 +197,41 @@ useEffect(() => {
                               }}
                             />
                           )}
+                       {editable ? (
+                          <WriteReviewButton
+                            hasPurchased={true}
+                            hasReviewed={hasReviewed}
+                            existingReview={review}
+                            onSubmit={(data) => {
+                              const payload = {
+                                id_group_product: item.id_group_product,
+                                id_user: order.id_user,
+                                initials: order.name_user?.charAt(0).toUpperCase() || "K",
+                                ...data,
+                              };
+                              const request = hasReviewed
+                                ? axios.put(`http://localhost:5000/api/customer-reviews/${review.id}`, payload)
+                                : axios.post("http://localhost:5000/api/customer-reviews", payload);
 
-                         {hasReviewed && (
-                        <p>
-                          Đánh giá: {"⭐".repeat(review.rating)}{" "}
-                          <span style={{ color: "#999" }}>({review.rating} sao)</span>
-                        </p>
-                      )}
-                      
-                      <div style={{ marginTop: "10px" }}>
-                       <WriteReviewButton
-                          hasPurchased={true}
-                          hasReviewed={hasReviewed}
-                          existingReview={review}
-                          onSubmit={(data) => {
-                          const payload = {
-                            id_group_product: item.id_group_product,
-                            id_user: order.id_user,
-                            initials: order.name_user?.charAt(0).toUpperCase() || "K",
-                            ...data,
-                          };
-                        
-                          const request = hasReviewed
-                            ? axios.put(`http://localhost:5000/api/reviews/${review.id}`, payload)
-                            : axios.post("http://localhost:5000/api/reviews", payload);
-                        
-                          request
-                            .then(() => {
-                              alert("Đánh giá đã được gửi thành công!");
-                            
-                              // 🔗 Chỉ chuyển hướng khi đang ở trang BillDetail
-                              if (location.pathname.includes("bill-detail")) {
-                                navigate(`/product/${item.id_group_product}`);
-                              }
-                            })
-                            .catch((err) => {
-                              console.error("Lỗi gửi đánh giá:", err);
-                              alert("Lỗi khi gửi đánh giá.");
-                            });
-                        }}
+                              request
+                                .then(() => {
+                                  alert("Đánh giá đã được gửi thành công!");
+                                  if (location.pathname.includes("bill-detail")) {
+                                    navigate(`/product/${item.id_group_product}`);
+                                  }
+                                })
+                                .catch((err) => {
+                                  console.error("Lỗi gửi đánh giá:", err);
+                                  alert("Lỗi khi gửi đánh giá.");
+                                });
+                            }}
+                          />
+                        ) : (
+                          <p style={{ color: "gray", fontStyle: "italic" }}>
+                            Bạn không thể sửa đánh giá sau 2 tháng.
+                          </p>
+                        )}
 
-                        />
 
                       </div>
                         </>

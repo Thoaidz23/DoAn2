@@ -9,10 +9,13 @@ const getPay = async (req, res) => {
   try {
     // Lấy chi tiết sản phẩm trong giỏ hàng
     const productQuery = `
-      SELECT c.*, gp.image, gp.name_group_product,c.price-((c.price/100)*gp.sale) as saleprice
+      SELECT c.*, gp.image, gp.name_group_product,c.price-((c.price/100)*gp.sale) as saleprice,r1.name_ram,r2.name_rom,cl.name_color
       FROM tbl_cart c 
       JOIN tbl_product p ON c.id_product = p.id_product 
       JOIN tbl_group_product gp ON gp.id_group_product = c.id_group_product
+      LEFT JOIN tbl_color cl ON p.id_color = cl.id_color
+      LEFT JOIN tbl_ram r1 ON p.id_ram = r1.id_ram
+      LEFT JOIN tbl_rom r2 ON p.id_rom = r2.id_rom  
       WHERE c.id_user = ?
     `;
 

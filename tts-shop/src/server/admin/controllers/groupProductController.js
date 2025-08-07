@@ -349,14 +349,22 @@ const getProductImages = async (req, res) => {
 const uploadProductImage = async (req, res) => {
   const { id } = req.params;
   const imagePath = req.file?.filename;
-  if (!imagePath) return res.status(400).json({ message: "Thiếu tệp ảnh" });
+
+  if (!imagePath) {
+    console.error("❌ Không có file upload! req.file:", req.file);
+    return res.status(400).json({ message: "Thiếu tệp ảnh" });
+  }
 
   try {
-    // thêm .promise()
-    await connection.promise().query("INSERT INTO tbl_product_images (id_group_product, name) VALUES (?, ?)", [id, imagePath]);
+    console.log("🖼 Đang thêm ảnh:", imagePath);
+    await connection
+      .promise()
+      .query("INSERT INTO tbl_product_images (id_group_product, name) VALUES (?, ?)", [id, imagePath]);
+
     res.status(201).json({ message: "Tải ảnh lên thành công" });
   } catch (err) {
-    res.status(500).json({ message: "Lỗi server khi thêm ảnh", error: err });
+    console.error("❌ Lỗi ghi DB khi upload ảnh:", err);
+    res.status(500).json({ message: "Lỗi server khi thêm ảnh", error: err.message });
   }
 };
 
