@@ -261,7 +261,7 @@ const DetailOrder = () => {
           {order.status !== 3 && order.status !== 5 && order.method === 0 && (
             <Button variant="danger" onClick={() => setShowCancelModal(true)}>
               Hủy đơn hàng
-            </Button>
+            </Button>                                                                   
           )}
 
           <Button variant="secondary" onClick={() => navigate(-1)}>
