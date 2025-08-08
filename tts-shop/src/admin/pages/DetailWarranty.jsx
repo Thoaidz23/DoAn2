@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Button, Table, Badge, Card } from "react-bootstrap";
+import { Button, Table, Badge, Card, Modal, Form } from "react-bootstrap";
 
 const getStatusLabel = (status) => {
   switch (status) {
@@ -40,6 +40,9 @@ const DetailWarranty = () => {
   const [warranty, setWarranty] = useState(null);
   const [error, setError] = useState("");
 
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+
   useEffect(() => {
     if (!id_product) {
       setError("Thiếu thông tin sản phẩm để truy vấn chi tiết bảo hành.");
@@ -68,6 +71,21 @@ const DetailWarranty = () => {
   if (!warranty) return <p className="p-3">Đang tải dữ liệu bảo hành...</p>;
 
   const statusButton = getNextStatusInfo(warranty.warranty_status);
+
+  const handleRejectWarranty = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/warranty-admin/${warranty.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: 0, reply: rejectReason })
+      });
+      if (!res.ok) throw new Error("Lỗi khi cập nhật từ chối bảo hành");
+      setWarranty(prev => ({ ...prev, warranty_status: 0, reply: rejectReason }));
+      setShowRejectModal(false);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div className="p-3 text-light" style={{ backgroundColor: "#1e1e2f", borderRadius: "12px" }}>
@@ -146,6 +164,13 @@ const DetailWarranty = () => {
             </tbody>
           </Table>
 
+          {/* Nếu bị từ chối thì hiện lý do */}
+          {warranty.warranty_status === 0 && warranty.reply && (
+            <div className="mt-3 p-3 bg-danger bg-opacity-25 rounded">
+              <strong>Lý do từ chối:</strong> {warranty.reply}
+            </div>
+          )}
+
           {/* TRẠNG THÁI + NÚT HÀNH ĐỘNG */}
           <div className="mt-3 mb-2">
             <h5>Trạng thái bảo hành: {getStatusLabel(warranty.warranty_status)}</h5>
@@ -172,10 +197,42 @@ const DetailWarranty = () => {
               </Button>
             )}
 
+            {/* Nút từ chối bảo hành */}
+            {warranty.warranty_status !== 4 && warranty.warranty_status !== 0 && (
+              <Button variant="danger" onClick={() => setShowRejectModal(true)}>
+                Từ chối bảo hành
+              </Button>
+            )}
+
+
             <Button variant="secondary" onClick={() => navigate(-1)}>Quay lại</Button>
           </div>
         </Card.Body>
       </Card>
+
+      {/* Modal nhập lý do từ chối */}
+      <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Từ chối bảo hành</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            as="textarea"
+            rows={4}
+            placeholder="Nhập lý do từ chối..."
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
+            Đóng
+          </Button>
+          <Button variant="danger" onClick={handleRejectWarranty} disabled={!rejectReason.trim()}>
+            Xác nhận từ chối
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

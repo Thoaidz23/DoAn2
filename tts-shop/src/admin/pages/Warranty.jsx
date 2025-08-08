@@ -26,18 +26,24 @@ const WarrantyRequests = () => {
       case 4:
         return <Badge bg="success">Bảo hành xong</Badge>;
       case 0:
-        return <Badge bg="success">Từ chối bảo hành</Badge>;
+        return <Badge bg="danger">Từ chối bảo hành</Badge>;
       default:
         return <Badge bg="secondary">Không xác định</Badge>;
     }
   };
 
   return (
-    <div className="container py-4">
-      <h3 className="mb-4 fw-bold text-center">Danh sách yêu cầu bảo hành</h3>
+  <div className="container py-4">
+    <h3 className="mb-4 fw-bold text-center">Danh sách yêu cầu bảo hành</h3>
 
-      <Card className="shadow rounded-4 border-0">
-        <Card.Body>
+    <Card className="shadow rounded-4 border-0">
+      <Card.Body>
+        {requests.length === 0 ? (
+          <div className="d-flex flex-column align-items-center justify-content-center py-5">
+            <i className="bi bi-inbox text-muted" style={{ fontSize: "3rem" }}></i>
+            <p className="text-muted mt-3 mb-0">Không có yêu cầu bảo hành nào.</p>
+          </div>
+        ) : (
           <Table striped bordered hover responsive className="align-middle text-center">
             <thead className="table-dark">
               <tr>
@@ -83,16 +89,16 @@ const WarrantyRequests = () => {
                     >
                       Xem chi tiết
                     </Button>
-
                   </td>
                 </tr>
               ))}
             </tbody>
           </Table>
-        </Card.Body>
-      </Card>
-    </div>
-  );
+        )}
+      </Card.Body>
+    </Card>
+  </div>
+);
 };
 
 export default WarrantyRequests;
