@@ -88,7 +88,7 @@ const getOrderByCode = (req, res) => {
 
   const query = `
     SELECT 
-      o.id_order, o.code_order, o.total_price, o.status, o.date, 
+      o.id_order, o.code_order, o.total_price, o.status, o.date, pi.capture_id,
       o.name_user, o.address, o.phone,
       u.id_user, u.name AS user_name, u.email,
       od.id_order_detail, od.quantity_product,
@@ -297,12 +297,64 @@ const markAsDelivered = (req, res) => {
       connection.query(updatePayment, [code], (err3) => {
         if (err3) return res.status(500).json({ error: "Lỗi khi cập nhật thanh toán" });
 
-        // cập nhật bảo hành như code cũ...
-        return res.json({ message: "Đơn hàng đã chuyển sang: Đã giao hàng" });
+        // --- Bắt đầu tính bảo hành ---
+        const getProductsInOrder = `
+          SELECT od.id_product, gp.warranty_level
+          FROM tbl_order_detail od
+          JOIN tbl_product p ON od.id_product = p.id_product
+          JOIN tbl_group_product gp ON p.id_group_product = gp.id_group_product 
+          WHERE od.code_order = ?;
+        `;
+
+        connection.query(getProductsInOrder, [code], (err4, products) => {
+          if (err4) {
+            console.error("Lỗi lấy sản phẩm để tính bảo hành:", err4);
+            return res.status(500).json({ error: "Lỗi khi tính bảo hành" });
+          }
+
+          const today = new Date();
+
+          products.forEach(prod => {
+            let endDate = new Date(today);
+
+            // Tính thời gian bảo hành theo warranty_level
+            switch (prod.warranty_level) {
+              case 1: endDate.setMonth(endDate.getMonth() + 6); break;
+              case 2: endDate.setFullYear(endDate.getFullYear() + 1); break;
+              case 3: endDate.setFullYear(endDate.getFullYear() + 2); break;
+              case 4: endDate.setFullYear(endDate.getFullYear() + 3); break;
+              case 0: endDate = null; break; // Trọn đời
+            }
+
+            const updateWarranty = `
+              UPDATE tbl_order_detail 
+              SET date_start_warranty = ?, date_end_warranty = ?
+              WHERE code_order = ? AND id_product = ?;
+            `;
+
+            connection.query(
+              updateWarranty,
+              [
+                today,
+                endDate ? endDate : null,
+                code,
+                prod.id_product
+              ],
+              (err5) => {
+                if (err5) {
+                  console.error("Lỗi cập nhật bảo hành:", err5);
+                }
+              }
+            );
+          });
+
+          return res.json({ message: "Đơn hàng đã chuyển sang: Đã giao hàng và bắt đầu bảo hành" });
+        });
       });
     });
   });
 };
+
 
 // Hủy đơn
 const cancelOrder = (req, res) => {

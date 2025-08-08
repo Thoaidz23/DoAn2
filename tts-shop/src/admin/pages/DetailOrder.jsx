@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Table, Badge, Card, Modal } from "react-bootstrap";
+import axios from "axios";
 
 const DetailOrder = () => {
   const { code } = useParams();
@@ -17,8 +18,31 @@ const DetailOrder = () => {
       .catch((err) => console.error("Lỗi khi lấy chi tiết đơn hàng:", err));
   }, [code]);
 
-  const handleCancelOrder = async () => {
+  const handleCancelAndRefund = async () => {
     try {
+      // 1. Hoàn tiền nếu đã thanh toán
+      if (order.paystatus === 1) {
+        if (order.method === 3) {
+          // PayPal
+          await axios.post("http://localhost:5000/api/paypal/refund", {
+            code_order: order.code_order,
+            amount: order.total_price,
+            capture_id: order.capture_id,
+          });
+          alert("Hoàn tiền PayPal thành công!");
+        } else if (order.method === 1) {
+          // MoMo
+          await axios.post("http://localhost:5000/api/momo/refund", {
+            orderId: order.code_order,
+            requestId: `${order.code_order}-${Date.now()}`,
+            transId: order.capture_id,
+            amount: order.total_price,
+          });
+          alert("Hoàn tiền MoMo thành công!");
+        }
+      }
+
+      // 2. Hủy đơn
       const res = await fetch(`http://localhost:5000/api/orders/${code}/cancel`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -26,11 +50,14 @@ const DetailOrder = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Lỗi khi hủy đơn");
-      alert("Đơn hàng đã được hủy thành công!");
+
+      alert("Hoàn tiền & hủy đơn thành công!");
       setShowCancelModal(false);
       navigate("/admin/order");
+
     } catch (err) {
-      alert(err.message);
+      console.error("Lỗi:", err);
+      alert("Không thể hoàn tiền hoặc hủy đơn.");
     }
   };
 
@@ -79,41 +106,40 @@ const DetailOrder = () => {
       </Card>
 
       {/* Lịch sử trạng thái */}
-<Card className="mb-4 bg-dark text-light shadow-sm">
-  <Card.Header className="border-bottom border-secondary">
-    <strong>Lịch sử trạng thái</strong>
-  </Card.Header>
-  <Card.Body>
-    {order.statusHistory && order.statusHistory.length > 0 ? (
-      <ul className="list-unstyled mb-0">
-        {order.statusHistory.map((item, idx) => (
-          <li key={idx} className="mb-2">
-            <Badge bg={
-              item.status === 0 ? "secondary" :
-              item.status === 1 ? "primary" :
-              item.status === 2 ? "warning" :
-              item.status === 3 ? "success" :
-              item.status === 4 ? "info" :
-              item.status === 5 ? "danger" : "dark"
-            }>
-              {item.status === 0 ? "Chờ xác nhận" :
-               item.status === 1 ? "Đã xác nhận" :
-               item.status === 2 ? "Đang vận chuyển" :
-               item.status === 3 ? "Đã giao hàng" :
-               item.status === 4 ? "Đang chờ hủy" :
-               item.status === 5 ? "Đã hủy" :
-               "Không xác định"}
-            </Badge>{" "}
-            - {new Date(item.time).toLocaleString("vi-VN")}
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p className="text-muted">Chưa có lịch sử trạng thái.</p>
-    )}
-  </Card.Body>
-</Card>
-
+      <Card className="mb-4 bg-dark text-light shadow-sm">
+        <Card.Header className="border-bottom border-secondary">
+          <strong>Lịch sử trạng thái</strong>
+        </Card.Header>
+        <Card.Body>
+          {order.statusHistory && order.statusHistory.length > 0 ? (
+            <ul className="list-unstyled mb-0">
+              {order.statusHistory.map((item, idx) => (
+                <li key={idx} className="mb-2">
+                  <Badge bg={
+                    item.status === 0 ? "secondary" :
+                    item.status === 1 ? "primary" :
+                    item.status === 2 ? "warning" :
+                    item.status === 3 ? "success" :
+                    item.status === 4 ? "info" :
+                    item.status === 5 ? "danger" : "dark"
+                  }>
+                    {item.status === 0 ? "Chờ xác nhận" :
+                     item.status === 1 ? "Đã xác nhận" :
+                     item.status === 2 ? "Đang vận chuyển" :
+                     item.status === 3 ? "Đã giao hàng" :
+                     item.status === 4 ? "Đang chờ hủy" :
+                     item.status === 5 ? "Đã hủy" :
+                     "Không xác định"}
+                  </Badge>{" "}
+                  - {new Date(item.time).toLocaleString("vi-VN")}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-muted">Chưa có lịch sử trạng thái.</p>
+          )}
+        </Card.Body>
+      </Card>
 
       {/* Danh sách sản phẩm */}
       <Card className="mb-4 bg-dark text-light shadow-sm">
@@ -224,9 +250,17 @@ const DetailOrder = () => {
             </Button>
           )}
 
-          {order.status !== 3 && order.status !== 5 && (
+          {/* Nút gộp hoàn tiền & hủy đơn */}
+          {order.status !== 3 && order.status !== 5 && order.paystatus === 1 && (
             <Button variant="danger" onClick={() => setShowCancelModal(true)}>
-              Xác nhận hủy đơn
+              Hoàn tiền & Hủy đơn
+            </Button>
+          )}
+          
+          {/* Nếu là COD thì chỉ hủy đơn */}
+          {order.status !== 3 && order.status !== 5 && order.method === 0 && (
+            <Button variant="danger" onClick={() => setShowCancelModal(true)}>
+              Hủy đơn hàng
             </Button>
           )}
 
@@ -236,10 +270,10 @@ const DetailOrder = () => {
         </div>
       </Card>
 
-      {/* Modal hủy đơn */}
+      {/* Modal Hoàn tiền & Hủy đơn */}
       <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Hủy đơn hàng</Modal.Title>
+          <Modal.Title>Hoàn tiền & Hủy đơn hàng</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <textarea
@@ -254,8 +288,8 @@ const DetailOrder = () => {
           <Button variant="secondary" onClick={() => setShowCancelModal(false)}>
             Đóng
           </Button>
-          <Button variant="danger" onClick={handleCancelOrder}>
-            Xác nhận hủy
+          <Button variant="danger" onClick={handleCancelAndRefund}>
+            Xác nhận
           </Button>
         </Modal.Footer>
       </Modal>
