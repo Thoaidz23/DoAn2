@@ -20,4 +20,7 @@ router.put('/:code/shipping', orderController.markAsShipping);
 // Từ 2 -> 3
 router.put('/:code/delivered', orderController.markAsDelivered);
 
+// Hủy
+router.put("/:code/cancel", orderController.cancelOrder);
+
 module.exports = router;  
