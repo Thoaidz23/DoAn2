@@ -5,10 +5,15 @@ exports.getReviewsByGroup = (req, res) => {
   const { id_group_product } = req.params;
 
   const sql = `
-    SELECT r.*, u.name, u.avatar
+    SELECT r.*, u.name, u.avatar, r1.name_ram, r2.name_rom,c.name_color, gp.name_group_product
     FROM tbl_reviews r
     JOIN tbl_user u ON u.id_user = r.id_user
-    WHERE id_group_product = ? 
+    JOIN tbl_product p ON p.id_product = r.id_product
+    JOIN tbl_group_product gp ON gp.id_group_product = r.id_group_product
+    LEFT JOIN tbl_color c ON c.id_color = p.id_color
+    LEFT JOIN tbl_ram r1 ON r1.id_ram = p.id_ram
+    LEFT JOIN tbl_rom r2 ON r2.id_rom = p.id_rom
+    WHERE r.id_group_product = ? 
     ORDER BY created_at DESC
   `;
 
