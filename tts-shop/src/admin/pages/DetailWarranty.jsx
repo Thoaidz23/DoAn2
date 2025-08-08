@@ -117,6 +117,30 @@ const DetailWarranty = () => {
         </Card.Body>
       </Card>
 
+      {/* LỊCH SỬ BẢO HÀNH */}
+{warranty.history && warranty.history.length > 0 && (
+  <div className="mt-4">
+    <h5>Lịch sử bảo hành:</h5>
+    <Table bordered hover responsive variant="dark" className="text-center align-middle">
+      <thead>
+        <tr>
+          <th>Trạng thái</th>
+          <th>Thời gian</th>
+        </tr>
+      </thead>
+      <tbody>
+        {warranty.history.map((h, idx) => (
+          <tr key={idx}>
+            <td>{getStatusLabel(h.status)}</td>
+            <td>{new Date(h.time).toLocaleString("vi-VN")}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  </div>
+)}
+
+
       {/* SẢN PHẨM BẢO HÀNH */}
       <Card className="mb-4 bg-dark text-light shadow-sm">
         <Card.Header className="border-bottom border-secondary">
