@@ -157,7 +157,16 @@
     }
   }
 }
-
+.write-btn-review {
+        background: #02705c ;
+        padding: 5px;
+        border-radius: 8px;
+        font-weight: 400;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
 @media (max-width: 768px) {
   .detailbill-content {
     width: 80%; /* Cho phép phần content tự động thu nhỏ */

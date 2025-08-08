@@ -1,25 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "../styles/ProductReview.scss";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import ReviewModal from "../component/ReviewModal";
-import WriteReviewButton from "../component/WriteReviewButton";
 
 const ProductReview = ({ productId }) => {
   const [filter, setFilter] = useState("Tất cả");
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [hoveredStar, setHoveredStar] = useState(0);
-  const [selectedRating, setSelectedRating] = useState(0);
-  const [comment, setComment] = useState("");
-  const [tags, setTags] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasPurchased, setHasPurchased] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [existingReview, setExistingReview] = useState(null);
+  const [editable, setEditable] = useState(true);
   const { user } = useContext(AuthContext);
 
   const convertToTimeAgo = (dateStr) => {
@@ -36,7 +31,7 @@ const ProductReview = ({ productId }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
+        const res = await axios.get(`http://localhost:5000/api/customer-reviews/${productId}`);
         const data = res.data.map((item) => ({
           ...item,
           tags: item.tags ? JSON.parse(item.tags) : [],
@@ -56,7 +51,7 @@ const ProductReview = ({ productId }) => {
     const fetchPurchaseStatus = async () => {
       try {
         if (user?.id) {
-          const res = await axios.get(`http://localhost:5000/api/reviews/check-purchased`, {
+          const res = await axios.get(`http://localhost:5000/api/customer-reviews/check-purchased`, {
             params: {
               userId: user.id,
               groupProductId: productId,
@@ -74,7 +69,7 @@ const ProductReview = ({ productId }) => {
   useEffect(() => {
     const checkReviewed = async () => {
       if (user?.id) {
-        const res = await axios.get(`http://localhost:5000/api/reviews/check-reviewed`, {
+        const res = await axios.get(`http://localhost:5000/api/customer-reviews/check-reviewed`, {
           params: {
             userId: user.id,
             groupProductId: productId,
@@ -82,6 +77,7 @@ const ProductReview = ({ productId }) => {
         });
         setHasReviewed(res.data.reviewed);
         setExistingReview(res.data.review || null);
+        setEditable(res.data.editable);
       }
     };
     checkReviewed();
@@ -118,13 +114,13 @@ const ProductReview = ({ productId }) => {
     setSubmitting(true);
     try {
       if (hasReviewed && existingReview?.id) {
-        await axios.put(`http://localhost:5000/api/reviews/${existingReview.id}`, {
+        await axios.put(`http://localhost:5000/api/customer-reviews/${existingReview.id}`, {
           rating,
           comment,
           tags,
         });
       } else {
-        await axios.post("http://localhost:5000/api/reviews", {
+        await axios.post("http://localhost:5000/api/customer-reviews", {
           id_group_product: productId,
           id_user: user?.id || 0,
           initials: user?.name?.charAt(0).toUpperCase() || "K",
@@ -136,14 +132,10 @@ const ProductReview = ({ productId }) => {
 
       alert(hasReviewed ? "Đánh giá đã được cập nhật!" : "Đánh giá đã được gửi!");
 
-      const res = await axios.get(`http://localhost:5000/api/reviews/${productId}`);
+      const res = await axios.get(`http://localhost:5000/api/customer-reviews/${productId}`);
       const data = res.data.map((item) => ({
         ...item,
-        tags: Array.isArray(item.tags)
-          ? item.tags
-          : item.tags
-          ? JSON.parse(item.tags)
-          : [],
+        tags: Array.isArray(item.tags) ? item.tags : item.tags ? JSON.parse(item.tags) : [],
         time: convertToTimeAgo(item.created_at),
       }));
 
@@ -158,24 +150,14 @@ const ProductReview = ({ productId }) => {
     }
   };
 
-  const tagSuggestions = [
-    "Chất lượng tốt",
-    "Giá cả hợp lý",
-    "Dễ sử dụng",
-    "Hiệu năng mượt mà",
-    "Thiết kế đẹp",
-    "Kết nối ổn định",
-  ];
-
   if (loading) return <p>Đang tải đánh giá...</p>;
 
   const filledStars = Math.round(rating);
 
-
   return (
     <div className="product-review-container">
       <div className="review-summary-container">
-        <h2 className="review-title" >Đánh giá sản phẩm</h2>
+        <h2 className="review-title">Đánh giá sản phẩm</h2>
         <div className="review-box">
           <div className="left-review">
             <div className="main-rating-review">
@@ -190,21 +172,20 @@ const ProductReview = ({ productId }) => {
               ))}
             </div>
             <p className="total-reviews">{totalReviews} lượt đánh giá</p>
-            <WriteReviewButton
-              hasPurchased={hasPurchased}
-              hasReviewed={hasReviewed}
-              existingReview={existingReview}
-              onSubmit={handleSubmitReview}
-            />
           </div>
 
           <div className="center-review">
             <div className="bar-group-review">
               {[5, 4, 3, 2, 1].map((star) => (
                 <div className="bar-row" key={star}>
-                  <span className="bar-label">{star} <span style={{ color: "#fcd34d" }}>★</span></span>
+                  <span className="bar-label">
+                    {star} <span style={{ color: "#fcd34d" }}>★</span>
+                  </span>
                   <div className="bar-track">
-                    <div className="bar-fill" style={{ width: `${(ratingCounts[5 - star] / totalReviews) * 100}%` }}></div>
+                    <div
+                      className="bar-fill"
+                      style={{ width: `${(ratingCounts[5 - star] / totalReviews) * 100}%` }}
+                    ></div>
                   </div>
                   <span className="bar-count">{ratingCounts[5 - star]} đánh giá</span>
                 </div>
@@ -261,6 +242,14 @@ const ProductReview = ({ productId }) => {
                     ))}
                   </div>
                 )}
+                {(item.name_ram || item.name_rom || item.name_color) && (
+                  <div className="product-variant-info">
+                    {item.name_ram && <span>RAM: {item.name_ram} </span>}
+                    {item.name_rom && <span>ROM: {item.name_rom} </span>}
+                    {item.name_color && <span>Màu: {item.name_color} </span>}
+                  </div>
+                )}
+
                 <p className="comment-review">{item.comment}</p>
                 <div className="time-review">
                   <i className="clock-icon-review">🕒</i> Đánh giá đã đăng vào {item.time}
@@ -279,13 +268,11 @@ const ProductReview = ({ productId }) => {
         )}
       </div>
 
+      {/* Modal chỉ render nếu cần mở từ nơi khác */}
       <ReviewModal
         show={showModal}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmitReview}
-        initialComment={comment}
-        initialRating={selectedRating}
-        initialTags={tags}
         submitting={submitting}
       />
     </div>

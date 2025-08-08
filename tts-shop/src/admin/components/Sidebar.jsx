@@ -14,7 +14,7 @@ import {
   BarChart2,
   Image,
   Layout,
-  Receipt,
+  Receipt, ShieldCheck
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -54,6 +54,7 @@ const handleLogout = () => {
       { label: "Danh mục thương hiệu", icon: <Tags size={18} />, path: "/admin/brandcategory" },
       { label: "Bài viết", icon: <FileText size={18} />, path: "/admin/post" },
       { label: "Danh mục bài viết", icon: <Newspaper size={18} />, path: "/admin/postcategory" },
+      { label: "Quản lý bảo hành", icon: <ShieldCheck size={18} />, path: "/admin/warranty" },
       { label: "Tài khoản nhân viên", icon: <UserCog size={18} />, path: "/admin/staffaccount" },
       { label: "Tài khoản khách hàng", icon: <Users size={18} />, path: "/admin/customeraccount" },
       { label: "Footer", icon: <Layout size={18} />, path: "/admin/footer" },

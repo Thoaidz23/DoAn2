@@ -27,6 +27,8 @@ const footerRoutes = require('./admin/routes/footerRoutes');
 const staffaccountRoutes = require('./admin/routes/staffaccountRoutes');
 const reviewRoutes = require("./admin/routes/reviewRoutes");
 const customerRoutes = require("./admin/routes/customerRoute");
+const warrantyAdminRoutes = require('./admin/routes/warrantyRoutes');
+
 
 
 //customer
@@ -58,6 +60,7 @@ app.use("/api/momo", require("./customer/Routes/Momo.route"));
 app.use('/api/qna', require('./customer/Routes/QaA.route'));
 const warrantyRoutes = require('./customer/Routes/warranty.route');
 const paypalRoutes = require("./customer/Routes/Paypal.route");
+
 //admin
 app.use('/api/dashboards', dashboardRoutes);
 app.use('/api/orders', orderRoutes);
@@ -71,6 +74,7 @@ app.use('/api/footers', footerRoutes);
 app.use('/api/staffaccounts', staffaccountRoutes);
 app.use("/api", customerRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use('/api/warranty-admin', warrantyAdminRoutes);
 
 
 //customer
@@ -99,7 +103,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/footer', footer);
 app.use("/api", compareRoute);
 app.use('/api',searchSG)
-app.use("/api/reviews", reviewRoute);
+app.use("/api/customer-reviews", reviewRoute);
 app.use('/api/warranty', warrantyRoutes);
 app.use("/api/paypal", paypalRoutes);
 

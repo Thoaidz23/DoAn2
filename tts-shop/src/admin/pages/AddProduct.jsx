@@ -12,6 +12,7 @@ const AddProduct = () => {
     price: "",
     id_category_product: "",
     id_category_brand: "",
+    warranty_level: "",
   });
 
   const [previewImage, setPreviewImage] = useState(null);
@@ -75,12 +76,10 @@ const AddProduct = () => {
   data.append("price", formData.price);
   data.append("id_category_product", formData.id_category_product);
   data.append("id_category_brand", formData.id_category_brand);
-  data.append("image", formData.image); // Ảnh đại diện
-
+  data.append("image", formData.image);
   data.append("configurations", JSON.stringify(configurations));
-
-// Gửi thông số kỹ thuật
-    data.append("parameters", JSON.stringify(parameters));
+  data.append("parameters", JSON.stringify(parameters));
+  data.append("warranty_level", formData.warranty_level);
 
   try {
     const res = await fetch("http://localhost:5000/api/products/add", {
@@ -351,6 +350,24 @@ const AddProduct = () => {
             )}
           </div>
         ))}
+        <Form.Group className="mb-3">
+        <Form.Label>Chế độ bảo hành</Form.Label>
+        <Form.Control
+          as="select"
+          name="warranty_level"
+          value={formData.warranty_level}
+          onChange={(e) => setFormData({ ...formData, warranty_level: e.target.value })}
+          required
+        >
+          <option value="">Chọn chế độ bảo hành</option>
+          <option value="0">Trọn đời</option>
+          <option value="1">6 tháng</option>
+          <option value="2">1 năm</option>
+          <option value="3">2 năm</option>
+          <option value="4">3 năm</option>
+        </Form.Control>
+      </Form.Group>
+
         <Button variant="success" type="submit">Thêm sản phẩm</Button>
       </Form>
     </Card>

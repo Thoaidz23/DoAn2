@@ -5,10 +5,11 @@
     hasPurchased = false,
     hasReviewed = false,
     existingReview = null,
+    codeOrder,
     onSubmit,
   }) => {
     const [showModal, setShowModal] = useState(false);
-
+    console.log(codeOrder)
     const handleOpen = () => {
       setShowModal(true);
     };
@@ -21,7 +22,7 @@
 useEffect(() => {
   const targetId = localStorage.getItem("scrollToId");
   if (!targetId) return;
-
+  
   const interval = setInterval(() => {
     const el = document.getElementById(targetId);
     if (el) {
@@ -57,6 +58,8 @@ useEffect(() => {
         border: none;
         cursor: pointer;
         transition: background 0.3s;
+        width:auto;
+        margin:0 5px;
       }
     `}
   </style>
@@ -67,10 +70,10 @@ useEffect(() => {
           show={showModal}
           onClose={handleClose}
           onSubmit={(data) => {
-            onSubmit(data);
+            onSubmit({ ...data, code_order: codeOrder });
             handleClose();
             localStorage.setItem("scrollToId", "write-review-btn");
-            window.location.reload();
+            // window.location.reload();
           }}
           initialComment={existingReview?.comment || ""}
           initialRating={existingReview?.rating || 0}

@@ -88,142 +88,54 @@ const getColorOptions = (req, res) => {
   });
 };
 
-// 8. Thêm nhóm sản phẩm mới cùng cấu hình và thông số kỹ thuật
-const addProduct = async (req, res) => {
-  const { name_group_product, content, id_category_product, id_category_brand, discount } = req.body;
-
-   console.log("📦 req.body:", req.body);
-  console.log("👉 classifications thô:", req.body.classifications);
-  console.log("👉 parameters thô:", req.body.parameters);
-
-  let parameters = [];
-  let classifications = [];
-
-  try {
-    parameters = req.body.parameters ? JSON.parse(req.body.parameters) : [];
-    classifications = req.body.configurations ? JSON.parse(req.body.configurations) : [];
-  } catch (error) {
-    return res.status(400).json({ message: 'Dữ liệu không hợp lệ.' });
-  }
-
-  const image = req.file?.filename || null;
-
-  const conn = await mysql.createConnection({ host: 'localhost', user: 'root', password: '', database: 'ttsshop' });
-
-  try {
-    await conn.beginTransaction();
-
-    const [groupResult] = await conn.execute(
-      `INSERT INTO tbl_group_product (name_group_product, content, image, id_category_product, id_category_brand, is_del) 
-       VALUES (?, ?, ?, ?, ?, 0)`,
-      [name_group_product, content, image, id_category_product, id_category_brand]
-    );
-    const id_group_product = groupResult.insertId;
-
-    for (const config of classifications) {
-  const { ram, rom, color, quantity, price } = config;
-  console.log("🟡 Thêm cấu hình:", config);
-  try {
-    await conn.execute(
-      `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [id_group_product, ram, rom, color, quantity, price]
-    );
-    console.log("✅ Đã thêm sản phẩm con vào tbl_product");
-  } catch (err) {
-    console.error("❌ Lỗi khi thêm sản phẩm con:", err);
-  }
-}
-
-
-
-    for (const param of parameters) {
-      const { attribute, value } = param;
-      await conn.execute(
-        `INSERT INTO tbl_parameter (id_group_product, attribute, value) 
-         VALUES (?, ?, ?)`,
-        [id_group_product, attribute, value]
-      );
-    }
-
-    await conn.commit();
-    res.status(201).json({ message: "Thêm sản phẩm thành công!" });
-
-  } catch (err) {
-    await conn.rollback();
-    res.status(500).json({ error: "Lỗi khi thêm sản phẩm!" });
-
-  } finally {
-    await conn.end();
-  }
-};
+// // 8. Thêm nhóm sản phẩm mới cùng cấu hình và thông số kỹ thuật
 // const addProduct = async (req, res) => {
-//   const { name_group_product, content, id_category_product, id_category_brand } = req.body;
+//   const { name_group_product, content, id_category_product, id_category_brand, discount, warranty_level } = req.body;
+
+//    console.log("📦 req.body:", req.body);
+//   console.log("👉 classifications thô:", req.body.classifications);
+//   console.log("👉 parameters thô:", req.body.parameters);
+
 //   let parameters = [];
 //   let classifications = [];
 
 //   try {
 //     parameters = req.body.parameters ? JSON.parse(req.body.parameters) : [];
-//     classifications = req.body.classifications ? JSON.parse(req.body.classifications) : [];
+//     classifications = req.body.configurations ? JSON.parse(req.body.configurations) : [];
 //   } catch (error) {
-//     console.error("❌ Lỗi khi parse JSON:", error);
 //     return res.status(400).json({ message: 'Dữ liệu không hợp lệ.' });
 //   }
 
 //   const image = req.file?.filename || null;
 
-//   const conn = await mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: '',
-//     database: 'ttsshop',
-//   });
+//   const conn = await mysql.createConnection({ host: 'localhost', user: 'root', password: '', database: 'ttsshop' });
 
 //   try {
 //     await conn.beginTransaction();
-//     console.log("📥 Bắt đầu thêm nhóm sản phẩm...");
 
 //     const [groupResult] = await conn.execute(
-//       `INSERT INTO tbl_group_product (name_group_product, content, image, id_category_product, id_category_brand, is_del) 
-//        VALUES (?, ?, ?, ?, ?, 0)`,
-//       [name_group_product, content, image, id_category_product, id_category_brand]
+//       `INSERT INTO tbl_group_product (name_group_product, content, image, id_category_product, id_category_brand, is_del, warranty_level) 
+//        VALUES (?, ?, ?, ?, ?, 0, ?)`,
+//       [name_group_product, content, image, id_category_product, id_category_brand, warranty_level]
 //     );
-
 //     const id_group_product = groupResult.insertId;
-//     console.log("✅ Đã thêm nhóm sản phẩm, ID:", id_group_product);
-
-//     // Helper để ép kiểu số hoặc null
-//     const toIntOrNull = (val) =>
-//       val === "" || val === null || val === undefined ? null : parseInt(val);
 
 //     for (const config of classifications) {
-//       const { ram, rom, color, quantity, price } = config;
-//       console.log("➕ Thêm cấu hình:", {
-//         ram,
-//         rom,
-//         color,
-//         quantity,
-//         price,
-//       });
-
-//       await conn.execute(
-//         `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price) 
-//          VALUES (?, ?, ?, ?, ?, ?)`,
-//         [
-//           id_group_product,
-//           toIntOrNull(ram),
-//           toIntOrNull(rom),
-//           toIntOrNull(color),
-//           parseInt(quantity),
-//           parseFloat(price),
-//         ]
-//       );
-//     }
-
+//   const { ram, rom, color, quantity, price } = config;
+//   console.log("🟡 Thêm cấu hình:", config);
+//   try {
+//     await conn.execute(
+//       `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price) 
+//        VALUES (?, ?, ?, ?, ?, ?)`,
+//       [id_group_product, ram, rom, color, quantity, price]
+//     );
+//     console.log("✅ Đã thêm sản phẩm con vào tbl_product");
+//   } catch (err) {
+//     console.error("❌ Lỗi khi thêm sản phẩm con:", err);
+//   }
+// }
 //     for (const param of parameters) {
 //       const { attribute, value } = param;
-//       console.log("🧩 Thêm thông số kỹ thuật:", attribute, "=", value);
-
 //       await conn.execute(
 //         `INSERT INTO tbl_parameter (id_group_product, attribute, value) 
 //          VALUES (?, ?, ?)`,
@@ -232,18 +144,105 @@ const addProduct = async (req, res) => {
 //     }
 
 //     await conn.commit();
-//     console.log("✅ Hoàn tất thêm sản phẩm.");
 //     res.status(201).json({ message: "Thêm sản phẩm thành công!" });
 
 //   } catch (err) {
 //     await conn.rollback();
-//     console.error("❌ Lỗi khi thêm sản phẩm:", err);
-//     res.status(500).json({ error: "Lỗi khi thêm sản phẩm!", detail: err.message });
+//     res.status(500).json({ error: "Lỗi khi thêm sản phẩm!" });
 
 //   } finally {
 //     await conn.end();
 //   }
 // };
+
+// 8. Thêm nhóm sản phẩm mới cùng cấu hình và thông số kỹ thuật
+const addProduct = async (req, res) => {
+  const { name_group_product, content, id_category_product, id_category_brand, discount, warranty_level } = req.body;
+
+  console.log("================== 📥 BẮT ĐẦU THÊM SẢN PHẨM ==================");
+  console.log("📦 TOÀN BỘ req.body:", req.body);
+  console.log("📝 name_group_product:", name_group_product);
+  console.log("📝 content:", content);
+  console.log("🔢 id_category_product:", id_category_product);
+  console.log("🏷️ id_category_brand:", id_category_brand);
+  console.log("💸 discount:", discount);
+  console.log("🛡️ warranty_level (gốc):", warranty_level);
+  console.log("🔍 typeof warranty_level:", typeof warranty_level);
+  console.log("🖼️ image:", req.file);
+  console.log("👉 configurations (raw):", req.body.configurations);
+  console.log("👉 parameters (raw):", req.body.parameters);
+
+  let parameters = [];
+  let classifications = [];
+
+  try {
+    parameters = req.body.parameters ? JSON.parse(req.body.parameters) : [];
+    classifications = req.body.configurations ? JSON.parse(req.body.configurations) : [];
+    console.log("✅ Đã parse configurations:", classifications);
+    console.log("✅ Đã parse parameters:", parameters);
+  } catch (error) {
+    console.error("❌ LỖI khi parse JSON:", error);
+    return res.status(400).json({ message: 'Dữ liệu không hợp lệ.' });
+  }
+
+  const image = req.file?.filename || null;
+  console.log("📸 Tên file ảnh:", image);
+
+  const conn = await mysql.createConnection({ host: 'localhost', user: 'root', password: '', database: 'ttsshop' });
+
+  try {
+    await conn.beginTransaction();
+    console.log("🚀 Bắt đầu transaction INSERT tbl_group_product");
+
+    const [groupResult] = await conn.execute(
+      `INSERT INTO tbl_group_product (name_group_product, content, image, id_category_product, id_category_brand, is_del, warranty_level) 
+       VALUES (?, ?, ?, ?, ?, 0, ?)`,
+      [name_group_product, content, image, id_category_product, id_category_brand, warranty_level]
+    );
+
+    console.log("✅ ĐÃ INSERT tbl_group_product");
+    const id_group_product = groupResult.insertId;
+    console.log("🆔 id_group_product mới:", id_group_product);
+
+    for (const config of classifications) {
+      const { ram, rom, color, quantity, price } = config;
+      console.log("🟡 ĐANG THÊM cấu hình:", config);
+      try {
+        await conn.execute(
+          `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price) 
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [id_group_product, ram, rom, color, quantity, price]
+        );
+        console.log("✅ Đã thêm vào tbl_product:", { ram, rom, color });
+      } catch (err) {
+        console.error("❌ Lỗi khi thêm tbl_product:", err);
+      }
+    }
+
+    for (const param of parameters) {
+      const { attribute, value } = param;
+      console.log("➕ Đang thêm thông số kỹ thuật:", param);
+      await conn.execute(
+        `INSERT INTO tbl_parameter (id_group_product, attribute, value) 
+         VALUES (?, ?, ?)`,
+        [id_group_product, attribute, value]
+      );
+    }
+
+    await conn.commit();
+    console.log("🎉 Commit thành công. ĐÃ THÊM SẢN PHẨM!");
+    res.status(201).json({ message: "Thêm sản phẩm thành công!" });
+
+  } catch (err) {
+    console.error("💥 LỖI trong quá trình thêm:", err);
+    await conn.rollback();
+    res.status(500).json({ error: "Lỗi khi thêm sản phẩm!" });
+
+  } finally {
+    await conn.end();
+    console.log("🔚 Kết thúc addProduct()");
+  }
+};
 
 
 // 9. Cập nhật nhóm sản phẩm
@@ -350,14 +349,22 @@ const getProductImages = async (req, res) => {
 const uploadProductImage = async (req, res) => {
   const { id } = req.params;
   const imagePath = req.file?.filename;
-  if (!imagePath) return res.status(400).json({ message: "Thiếu tệp ảnh" });
+
+  if (!imagePath) {
+    console.error("❌ Không có file upload! req.file:", req.file);
+    return res.status(400).json({ message: "Thiếu tệp ảnh" });
+  }
 
   try {
-    // thêm .promise()
-    await connection.promise().query("INSERT INTO tbl_product_images (id_group_product, name) VALUES (?, ?)", [id, imagePath]);
+    console.log("🖼 Đang thêm ảnh:", imagePath);
+    await connection
+      .promise()
+      .query("INSERT INTO tbl_product_images (id_group_product, name) VALUES (?, ?)", [id, imagePath]);
+
     res.status(201).json({ message: "Tải ảnh lên thành công" });
   } catch (err) {
-    res.status(500).json({ message: "Lỗi server khi thêm ảnh", error: err });
+    console.error("❌ Lỗi ghi DB khi upload ảnh:", err);
+    res.status(500).json({ message: "Lỗi server khi thêm ảnh", error: err.message });
   }
 };
 

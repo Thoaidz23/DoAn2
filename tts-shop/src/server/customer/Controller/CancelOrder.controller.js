@@ -1,15 +1,76 @@
 const connection = require('../../db');
+const { refundMomoSandbox } = require('./Momo.controller');
+const { refundPaypalPayment } = require('./Paypal.controller');
 
-const Cancel = (req, res) => {
+const Cancel = async (req, res) => {
   const { code_order } = req.params;
-  const sql = `UPDATE tbl_order SET status = 4 WHERE code_order = ?`;
 
-  connection.query(sql, [code_order], (err, result) => {
-    if (err) return res.status(500).json({ error: 'Lỗi máy chủ' });
-    if (result.affectedRows === 0) return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+  try {
+    // 1. Lấy thông tin thanh toán
+    const [paymentRows] = await connection.promise().query(
+      `SELECT paystatus, method, capture_id FROM tbl_payment_infor WHERE code_order = ?`,
+      [code_order]
+    );
 
-    res.json({ message: 'Yêu cầu hủy đơn thành công' });
-  });
+    if (paymentRows.length === 0) {
+      return res.status(404).json({ message: 'Không tìm thấy đơn hàng thanh toán' });
+    }
+
+    const { paystatus, method, capture_id } = paymentRows[0];
+
+    // 2. Lấy số tiền hoàn
+    const [orderRows] = await connection.promise().query(
+      `SELECT total_price FROM tbl_order WHERE code_order = ?`,
+      [code_order]
+    );
+    const amount = orderRows[0]?.total_price || 0;
+
+    // 3. Nếu đã thanh toán, hoàn tiền trước
+    if (paystatus === 1) {
+      if (method === 1) {
+        // ✅ MoMo
+        const requestId = `${code_order}_refund_${Date.now()}`;
+        const result = await new Promise((resolve) => {
+          const fakeRes = {
+            status: (code) => ({ json: (obj) => resolve({ code, ...obj }) }),
+            json: (obj) => resolve({ code: 200, ...obj })
+          };
+          req.body = { orderId: code_order, requestId, amount, transId: capture_id };
+          refundMomoSandbox(req, fakeRes);
+        });
+        if (result.code !== 200) {
+          return res.status(result.code).json({ message: 'Hoàn tiền MoMo thất bại', detail: result });
+        }
+      }
+
+      if (method === 3) {
+        // ✅ PayPal
+        const result = await new Promise((resolve) => {
+          const fakeRes = {
+            status: (code) => ({ json: (obj) => resolve({ code, ...obj }) }),
+            json: (obj) => resolve({ code: 200, ...obj })
+          };
+          req.body = { code_order, capture_id, amount };
+          refundPaypalPayment(req, fakeRes);
+        });
+        if (result.code !== 200) {
+          return res.status(result.code).json({ message: 'Hoàn tiền PayPal thất bại', detail: result });
+        }
+      }
+    }
+
+    // 4. Sau khi hoàn tiền (hoặc nếu chưa thanh toán), cập nhật trạng thái đơn hàng
+    await connection.promise().query(
+      `UPDATE tbl_order SET status = 4 WHERE code_order = ?`,
+      [code_order]
+    );
+
+    return res.json({ message: 'Hủy đơn hàng và hoàn tiền (nếu có) thành công' });
+
+  } catch (err) {
+    console.error("❌ Lỗi hủy đơn hàng:", err);
+    return res.status(500).json({ message: 'Lỗi máy chủ khi xử lý hủy đơn hàng' });
+  }
 };
 
 module.exports = { Cancel };

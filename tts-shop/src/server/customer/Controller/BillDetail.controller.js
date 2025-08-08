@@ -17,16 +17,21 @@ const getOrderDetail = (req, res) => {
 
 
   const queryProducts = `
-    SELECT d.*, gp.name_group_product, gp.image, p.price, p.id_group_product
+    SELECT d.*, gp.name_group_product, gp.image, p.price, p.id_group_product , ram.name_ram, rom.name_rom, c.name_color
     FROM tbl_order_detail d
     JOIN tbl_product p ON d.id_product = p.id_product
     JOIN tbl_group_product gp ON gp.id_group_product = p.id_group_product
+    LEFT JOIN tbl_ram ram ON ram.id_ram = p.id_ram
+    LEFT JOIN tbl_rom rom ON rom.id_rom = p.id_rom
+    LEFT JOIN tbl_color c ON c.id_color = p.id_color
     WHERE d.code_order = ?
   `;
 
   const queryWarranties = `
-    SELECT * FROM tbl_warranty_requests
-    WHERE code_order = ?
+    SELECT w.*, p.id_group_product
+    FROM tbl_warranty_requests w
+    JOIN tbl_product p ON w.id_product = p.id_product
+    WHERE w.code_order = ?
   `;
 
   connection.query(queryOrder, [code_order], (err, orderResults) => {
@@ -56,7 +61,7 @@ const getOrderDetail = (req, res) => {
         };
 
         const warrantyMap = {
-          0: 'Không duyệt bảo hành',
+          0: 'Từ chối bảo hành',
           1: 'Đang chờ duyệt',
           2: 'Đã duyệt bảo hành',
           3: 'Đang bảo hành',
@@ -67,29 +72,36 @@ const getOrderDetail = (req, res) => {
         order.paystatus_text = order.paystatus === 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
 
         const productsWithWarranty = productResults.map(product => {
-          const matchingWarranties = warrantyResults.filter(
-            w => w.id_group_product === product.id_group_product
-          );
+  const matchingWarranties = warrantyResults.filter(
+    w => w.id_product === product.id_product
+  );
 
-          let warranty_status_text = null;
+  let warranty_status_text = '';
+  let issue = null;
 
-          if (matchingWarranties.length === 1) {
-            const status = matchingWarranties[0].status;
-            warranty_status_text = warrantyMap[status] || 'Không rõ';
-          } else if (matchingWarranties.length > 1) {
-            const active = matchingWarranties.find(w => w.status !== 3);
-            if (active) {
-              warranty_status_text = warrantyMap[active.status] || 'Không rõ';
-            } else {
-              warranty_status_text = `Đã bảo hành (${matchingWarranties.length} lần)`;
-            }
-          }
+  if (matchingWarranties.length > 0) {
+    const latestWarranty = matchingWarranties.reduce((latest, current) => {
+      return new Date(current.request_time) > new Date(latest.request_time) ? current : latest;
+    });
 
-          return {
-            ...product,
-            warranty_status_text,
-          };
-        });
+    const completedCount = matchingWarranties.filter(w => w.status === 4).length;
+
+    if (latestWarranty.status === 4) {
+      warranty_status_text = `Đã bảo hành (${completedCount} lần)`;
+    } else {
+      warranty_status_text = warrantyMap[latestWarranty.status] || 'Không rõ';
+    }
+
+    issue = latestWarranty.issue || null;
+  }
+
+  return {
+    ...product,
+    warranty_status_text,
+    issue, // ✅ giờ luôn có dữ liệu nếu có trong DB
+  };
+});
+
 
         res.json({
           order,
