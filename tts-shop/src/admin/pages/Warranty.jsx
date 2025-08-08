@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Table, Card, Badge, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const WarrantyRequests = () => {
   const [requests, setRequests] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:5000/api/warranty-admin")
@@ -23,28 +25,11 @@ const WarrantyRequests = () => {
         return <Badge bg="info">Đang bảo hành</Badge>;
       case 4:
         return <Badge bg="success">Bảo hành xong</Badge>;
+      case 0:
+        return <Badge bg="success">Từ chối bảo hành</Badge>;
       default:
         return <Badge bg="secondary">Không xác định</Badge>;
     }
-  };
-
-  const handleUpdateStatus = (id, nextStatus) => {
-    fetch(`http://localhost:5000/api/warranty-admin/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: nextStatus }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setRequests((prev) =>
-          prev.map((req) =>
-            req.id === id ? { ...req, status: nextStatus } : req
-          )
-        );
-      })
-      .catch((err) => console.error("Lỗi cập nhật trạng thái:", err));
   };
 
   return (
@@ -63,7 +48,7 @@ const WarrantyRequests = () => {
                 <th>Lỗi mô tả</th>
                 <th>Thời gian gửi</th>
                 <th>Trạng thái</th>
-                <th>Xử lý</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -88,36 +73,17 @@ const WarrantyRequests = () => {
                   </td>
                   <td>{getStatusLabel(req.status)}</td>
                   <td>
-                    {req.status === 1 && (
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => handleUpdateStatus(req.id, 2)}
-                      >
-                        Duyệt bảo hành
-                      </Button>
-                    )}
-                    {req.status === 2 && (
-                      <Button
-                        size="sm"
-                        variant="info"
-                        onClick={() => handleUpdateStatus(req.id, 3)}
-                      >
-                        Đang bảo hành
-                      </Button>
-                    )}
-                    {req.status === 3 && (
-                      <Button
-                        size="sm"
-                        variant="success"
-                        onClick={() => handleUpdateStatus(req.id, 4)}
-                      >
-                        Bảo hành xong
-                      </Button>
-                    )}
-                    {req.status >= 4 && (
-                      <Badge bg="secondary">Đã hoàn tất</Badge>
-                    )}
+                    <Button
+                      variant="info"
+                      onClick={() =>
+                        navigate(`/admin/warranty/${req.code_order}`, {
+                          state: { id_product: req.id_product }
+                        })
+                      }
+                    >
+                      Xem chi tiết
+                    </Button>
+
                   </td>
                 </tr>
               ))}

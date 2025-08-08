@@ -37,6 +37,7 @@ import PrintOrder from "./pages/PrintOrder";
 import ReviewList from "./pages/ReviewList";
 import CommentList from "./pages/CommentList";
 import Warranty from "./pages/Warranty";
+import DetailWarranty from "./pages/DetailWarranty";
 
 
 function App() {
@@ -87,6 +88,7 @@ function App() {
            <Route path="/admin/product/:id_group_product/reviews" element={<ReviewList />} />
            <Route path="/admin/product/:id_group_product/comments" element={<CommentList />} />
            <Route path="/admin/warranty" element={<Warranty />} />
+           <Route path="/admin/warranty/:code" element={<DetailWarranty />} />
 
             {/* Route khác sau này */}
           </Routes>
