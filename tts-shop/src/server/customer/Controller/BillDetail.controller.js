@@ -21,9 +21,9 @@ const getOrderDetail = (req, res) => {
     FROM tbl_order_detail d
     JOIN tbl_product p ON d.id_product = p.id_product
     JOIN tbl_group_product gp ON gp.id_group_product = p.id_group_product
-    JOIN tbl_ram ram ON ram.id_ram = p.id_ram
-    JOIN tbl_rom rom ON rom.id_rom = p.id_rom
-    JOIN tbl_color c ON c.id_color = p.id_color
+    LEFT JOIN tbl_ram ram ON ram.id_ram = p.id_ram
+    LEFT JOIN tbl_rom rom ON rom.id_rom = p.id_rom
+    LEFT JOIN tbl_color c ON c.id_color = p.id_color
     WHERE d.code_order = ?
   `;
 
@@ -72,32 +72,35 @@ const getOrderDetail = (req, res) => {
         order.paystatus_text = order.paystatus === 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
 
         const productsWithWarranty = productResults.map(product => {
-        const matchingWarranties = warrantyResults.filter(
-          w => w.id_product === product.id_product
-        );
-      
-        let warranty_status_text = '';
-      
-        if (matchingWarranties.length > 0) {
-          // Lấy bảo hành mới nhất (theo request_time hoặc id nếu cần)
-          const latestWarranty = matchingWarranties.reduce((latest, current) => {
-            return new Date(current.request_time) > new Date(latest.request_time) ? current : latest;
-          });
-        
-          const completedCount = matchingWarranties.filter(w => w.status === 4).length;
-        
-          if (latestWarranty.status === 4) {
-            warranty_status_text = `Đã bảo hành (${completedCount} lần)`;
-          } else {
-            warranty_status_text = warrantyMap[latestWarranty.status] || 'Không rõ';
-          }
-        }
-      
-        return {
-          ...product,
-          warranty_status_text,
-        };
-      });
+  const matchingWarranties = warrantyResults.filter(
+    w => w.id_product === product.id_product
+  );
+
+  let warranty_status_text = '';
+  let issue = null;
+
+  if (matchingWarranties.length > 0) {
+    const latestWarranty = matchingWarranties.reduce((latest, current) => {
+      return new Date(current.request_time) > new Date(latest.request_time) ? current : latest;
+    });
+
+    const completedCount = matchingWarranties.filter(w => w.status === 4).length;
+
+    if (latestWarranty.status === 4) {
+      warranty_status_text = `Đã bảo hành (${completedCount} lần)`;
+    } else {
+      warranty_status_text = warrantyMap[latestWarranty.status] || 'Không rõ';
+    }
+
+    issue = latestWarranty.issue || null;
+  }
+
+  return {
+    ...product,
+    warranty_status_text,
+    issue, // ✅ giờ luôn có dữ liệu nếu có trong DB
+  };
+});
 
 
         res.json({

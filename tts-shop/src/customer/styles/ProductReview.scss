@@ -195,6 +195,15 @@
   }
 }
 
+.product-variant-info {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #666;
+
+  span {
+    margin-right: 10px;
+  }
+}
 .review-items-review {
   display: flex;
   flex-direction: column;

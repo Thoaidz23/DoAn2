@@ -35,6 +35,7 @@ function BillDetail() {
           params: {
             userId: userId, // ✅ lấy từ đối số truyền vào
             groupProductId: item.id_group_product,
+            code_order: code_order,
           },
         });
        if (res.data.reviewed) {
@@ -42,7 +43,6 @@ function BillDetail() {
           ...res.data.review,
           editable: res.data.editable,
         };
-        
       }
 
       } catch (err) {
@@ -53,14 +53,16 @@ function BillDetail() {
 
   setReviewMap(reviewsData);
 };
-
+  
 
   // 🧾 Lấy thông tin đơn hàng và sản phẩm
   useEffect(() => {
   axios.get(`http://localhost:5000/api/bill-detail/${code_order}`)
     .then(res => {
       setOrder(res.data.order);
+      console.log(res.data.order)
       setProducts(res.data.products);
+      console.log(res.data.products)
       // KHÔNG gọi fetchReviewsForProducts ở đây nữa
     })
     .catch(err => {
@@ -77,7 +79,7 @@ function BillDetail() {
 
   if (!order) return <div>Đang tải dữ liệu...</div>;
 
-  
+
   
   return (
     <div className="billdetail-container">
@@ -147,7 +149,15 @@ function BillDetail() {
                         )}
 
                            {item.warranty_status_text && (
+                             <>
                              <p>Trạng thái bảo hành: {item.warranty_status_text}</p>
+                             {item.issue && (
+                                <p style={{ color: "#555", fontStyle: "italic" }}>
+                                  Lý do gửi bảo hành: {item.issue}
+                                </p>
+                              )}
+                             </>
+
                            )}                      
 
                          {hasReviewed && (
@@ -202,23 +212,25 @@ function BillDetail() {
                             hasPurchased={true}
                             hasReviewed={hasReviewed}
                             existingReview={review}
+                            codeOrder= {order.code_order}
                             onSubmit={(data) => {
                               const payload = {
                                 id_group_product: item.id_group_product,
                                 id_user: order.id_user,
                                 initials: order.name_user?.charAt(0).toUpperCase() || "K",
+                                code_order: order.code_order,
+                                id_product: item.id_product,
                                 ...data,
                               };
                               const request = hasReviewed
                                 ? axios.put(`http://localhost:5000/api/customer-reviews/${review.id}`, payload)
                                 : axios.post("http://localhost:5000/api/customer-reviews", payload);
-
+                              
                               request
                                 .then(() => {
                                   alert("Đánh giá đã được gửi thành công!");
-                                  if (location.pathname.includes("bill-detail")) {
-                                    navigate(`/product/${item.id_group_product}`);
-                                  }
+                                  // ❗ Cập nhật lại danh sách đánh giá sau khi gửi thành công
+                                  fetchReviewsForProducts(products, order.id_user);
                                 })
                                 .catch((err) => {
                                   console.error("Lỗi gửi đánh giá:", err);
@@ -226,6 +238,7 @@ function BillDetail() {
                                 });
                             }}
                           />
+                          
                         ) : (
                           <p style={{ color: "gray", fontStyle: "italic" }}>
                             Bạn không thể sửa đánh giá sau 2 tháng.
