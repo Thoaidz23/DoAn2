@@ -361,7 +361,7 @@
   }
 }
 @media (max-width: 576px) {
-    .order-summary {
+  .order-summary {
     padding: 10px;
     gap: 8px;
 
@@ -370,7 +370,7 @@
       padding: 0 5px;
 
       h2 {
-        font-size: 15px  !important;
+        font-size: 15px !important;
       }
 
       p {
@@ -378,9 +378,15 @@
       }
     }
   }
+  .history-order-name {
+    margin-top: 25px !important;
+    font-size: 15px !important;
+  }
+ 
   .purchase-history-content {
     margin-top: 60px !important;
   }
+
   .filter-buttons {
     flex-wrap: nowrap !important;
     overflow-x: auto;
@@ -391,6 +397,100 @@
     button {
       flex: 0 0 auto;
       white-space: nowrap;
+    }
+  }
+
+  // 🔻 Ẩn trạng thái đơn hàng & trạng thái thanh toán
+  .history-order-status {
+    display: none !important;
+  }
+
+  // 🔻 Chỉnh nhỏ chữ cho các nút hành động
+  .history-detail-button,
+  .history-cancel-button {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    top: auto !important;
+    bottom: 5px;
+    right: 5px;
+    position: absolute;
+  }
+
+  // Nếu muốn dồn 2 nút về dưới cùng bên phải:
+  .history-order-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: relative;
+    padding-top: 10px;
+  }
+}
+@media (max-width: 576px) {
+  .history-order-item {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center;
+
+    .history-order-left {
+      margin-bottom: 10px;
+
+      .history-order-item-image {
+        width: 100px !important;
+        height: 100px !important;
+      }
+    }
+
+    .history-order-right {
+      margin-left: 0 !important;
+      width: 100%;
+
+      .history-order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row !important;
+        margin-bottom: 8px;
+        padding: 0 10px;
+
+        .history-order-name {
+          font-size: 15px !important;
+          margin: 0 !important;
+          color: #212529;
+        }
+
+        .history-order-time {
+          position: static !important;
+          font-size: 12px;
+          color: #717171;
+        }
+      }
+
+      .history-order-price {
+        font-size: 14px;
+        margin-top: 8px;
+        text-align: center;
+      }
+
+      .history-order-status {
+        display: none !important;
+      }
+
+      .history-order-actions {
+        flex-direction: row !important;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 15px;
+        padding-top: 0;
+        position: static;
+
+        .history-detail-button,
+        .history-cancel-button {
+          position: static !important;
+          font-size: 12px !important;
+          padding: 6px 10px !important;
+        }
+      }
     }
   }
 }
