@@ -15,6 +15,7 @@ const ReviewModal = ({
   show,
   onClose,
   onSubmit,
+  code_order,
   initialComment = "",
   initialRating = 0,
   initialTags = [],
@@ -47,7 +48,7 @@ const ReviewModal = ({
     }
 
     setMessage({ type: "success", text: "Gửi đánh giá thành công!" });
-    onSubmit({ rating: selectedRating, comment, tags });
+    onSubmit({ rating: selectedRating, comment, tags ,code_order });
 
     // reset form
     setComment("");

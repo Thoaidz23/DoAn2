@@ -5,10 +5,11 @@
     hasPurchased = false,
     hasReviewed = false,
     existingReview = null,
+    codeOrder,
     onSubmit,
   }) => {
     const [showModal, setShowModal] = useState(false);
-    
+    console.log(codeOrder)
     const handleOpen = () => {
       setShowModal(true);
     };
@@ -69,7 +70,7 @@ useEffect(() => {
           show={showModal}
           onClose={handleClose}
           onSubmit={(data) => {
-            onSubmit(data);
+            onSubmit({ ...data, code_order: codeOrder });
             handleClose();
             localStorage.setItem("scrollToId", "write-review-btn");
             // window.location.reload();
