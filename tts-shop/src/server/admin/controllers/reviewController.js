@@ -21,21 +21,22 @@ exports.getReviewsByGroup = (req, res) => {
   });
 };
 
-// Xóa đánh giá
-exports.deleteReview = (req, res) => {
+// Toggle ẩn/hiện đánh giá
+exports.toggleReviewStatus = (req, res) => {
   const { id } = req.params;
+  const { lock_reviews } = req.body; // 0 = hiện, 1 = ẩn
 
-  const sql = "DELETE FROM tbl_reviews WHERE id = ?";
-  db.query(sql, [id], (err, result) => {
+  const sql = "UPDATE `tbl_reviews` SET `lock_reviews` = ? WHERE id = ?";
+  db.query(sql, [lock_reviews, id], (err, result) => {
     if (err) {
-      console.error("Lỗi xóa đánh giá:", err);
-      return res.status(500).json({ error: "Xóa thất bại" });
+      console.error("Lỗi cập nhật đánh giá:", err);
+      return res.status(500).json({ error: "Cập nhật thất bại" });
     }
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Không tìm thấy đánh giá" });
     }
 
-    res.json({ message: "Xóa thành công" });
+    res.json({ message: "Cập nhật thành công" });
   });
 };

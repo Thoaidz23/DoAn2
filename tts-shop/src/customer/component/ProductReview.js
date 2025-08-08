@@ -217,7 +217,9 @@ const ProductReview = ({ productId }) => {
         </div>
 
         <div className="review-items-review">
-          {displayedReviews.map((item, i) => (
+          {displayedReviews
+          .filter(item => item.lock_reviews == 0)
+          .map((item, i) => (
             <div key={i} className="review-item-review">
               <div className="avatar"><img src={item.avatar} alt="avatar" /></div>
               <div className="content-review">

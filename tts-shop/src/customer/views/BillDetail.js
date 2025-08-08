@@ -156,6 +156,11 @@ function BillDetail() {
                                   Lý do gửi bảo hành: {item.issue}
                                 </p>
                               )}
+                              {item.reply && (
+                                <p style={{ color: "red", fontStyle: "italic" }}>
+                                  Phản hồi từ shop: {item.reply}
+                                </p>
+                              )}
                              </>
 
                            )}                      

@@ -78,7 +78,7 @@ const getOrderDetail = (req, res) => {
 
   let warranty_status_text = '';
   let issue = null;
-
+  let reply = null;
   if (matchingWarranties.length > 0) {
     const latestWarranty = matchingWarranties.reduce((latest, current) => {
       return new Date(current.request_time) > new Date(latest.request_time) ? current : latest;
@@ -93,12 +93,14 @@ const getOrderDetail = (req, res) => {
     }
 
     issue = latestWarranty.issue || null;
+    reply = latestWarranty.reply || null;
   }
 
   return {
     ...product,
     warranty_status_text,
     issue, // ✅ giờ luôn có dữ liệu nếu có trong DB
+    reply,
   };
 });
 
