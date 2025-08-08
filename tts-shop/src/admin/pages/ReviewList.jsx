@@ -27,25 +27,31 @@ const ReviewList = () => {
   }
 };
 
+const handleToggleStatus = async (id, currentStatus) => {
+  const actionText = currentStatus === 1 ? "hiện lại" : "ẩn";
+  if (!window.confirm(`Bạn có chắc muốn ${actionText} đánh giá này?`)) return;
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc muốn xóa đánh giá này?")) return;
-    try {
-      const res = await fetch(`http://localhost:5000/api/reviews/${id}`, {
-        method: "DELETE",
-      });
+  try {
+    const res = await fetch(`http://localhost:5000/api/reviews/${id}/toggle`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lock_reviews: currentStatus === 1 ? 0 : 1 })
+    });
 
-      if (res.ok) {
-        alert("Xóa thành công");
-        setReviews(reviews.filter((r) => r.id !== id));
-      } else {
-        alert("Xóa thất bại");
-      }
-    } catch (err) {
-      console.error("Lỗi khi xóa:", err);
-      alert("Lỗi mạng hoặc server");
+    if (res.ok) {
+      alert(`Đã ${actionText} đánh giá`);
+      setReviews(reviews.map(r =>
+        r.id === id ? { ...r, lock_reviews: currentStatus === 1 ? 0 : 1 } : r
+      ));
+    } else {
+      alert("Cập nhật thất bại");
     }
-  };
+  } catch (err) {
+    console.error("Lỗi khi cập nhật:", err);
+    alert("Lỗi mạng hoặc server");
+  }
+};
+
 
   useEffect(() => {
     fetchReviews();
@@ -85,11 +91,28 @@ const ReviewList = () => {
                 <td>{r.rating} ⭐</td>
                 <td>{r.comment}</td>
                 <td>{new Date(r.created_at).toLocaleString()}</td>
-                <td>
-                  <Button variant="danger" size="sm" onClick={() => handleDelete(r.id)}>
-                    Xóa
-                  </Button>
+                
+                  <td>
+                  {r.lock_reviews === 1 ? (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleToggleStatus(r.id, r.lock_reviews)}
+                    >
+                      Đã ẩn
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleToggleStatus(r.id, r.lock_reviews)}
+                    >
+                      Ẩn
+                    </Button>
+                  )}
                 </td>
+
+                
               </tr>
             ))}
           </tbody>

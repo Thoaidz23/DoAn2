@@ -27,21 +27,18 @@ function QnASection({ id_group_product}) {
     
   }, [id_group_product]);
 
-  const handleDeleteQuestion = (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa câu hỏi này?")) {
-      axios.delete(`http://localhost:5000/api/qna/question/${id}`).then(() => {
-        fetchComments();
-      });
-    }
-  };
+  const handleToggleLockComment = (id) => {
+  axios.put(`http://localhost:5000/api/qna/comment/${id}/lock`).then(() => {
+    fetchComments();
+  });
+};
 
-  const handleDeleteReply = (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa phản hồi này?")) {
-      axios.delete(`http://localhost:5000/api/qna/reply/${id}`).then(() => {
-        fetchComments();
-      });
-    }
-  };
+const handleToggleLockReply = (id) => {
+  axios.put(`http://localhost:5000/api/qna/reply/${id}/lock`).then(() => {
+    fetchComments();
+  });
+};
+
 
 
   const handleSendQuestion = () => {
@@ -127,95 +124,115 @@ function QnASection({ id_group_product}) {
 
 
       <div className="comment-list">
-        {visibleComments.map((comment) => (
-          <div className="item-comment" key={comment.id}>
-            <div className="avatar">{renderAvatar(comment)}</div>
-            <div className="comment-body">
-              <div className="comment-header">
-                <strong>{getDisplayName(comment)}</strong>
-                <span>· {new Date(comment.time).toLocaleDateString()}</span>
-              </div>
-              <p>{comment.content}</p>
-                <span className="reply-action" onClick={() => setActiveReplyInput(`comment-${comment.id}`)}>💬 Phản hồi</span>
-                {(user?.role === 1 || user?.role === 2) && (
-                  <span className="reply-action" onClick={() => handleDeleteQuestion(comment.id)}>
-                    🗑️ Xóa
-                  </span>
-                )}
+        {visibleComments
+  .filter(comment => {
+    // User thường thì ẩn comment bị khóa
+    if (user?.role === 3 && comment.lock_comment === 1) return false;
+    return true;
+  })
+  .map((comment) => (
+    <div 
+      className={`item-comment ${comment.lock_comment === 1 ? "locked" : ""}`} 
+      key={comment.id}
+    >
+      <div className="avatar">{renderAvatar(comment)}</div>
+      <div className="comment-body">
+        <div className="comment-header">
+          <strong>{getDisplayName(comment)}</strong>
+          <span>· {new Date(comment.time).toLocaleDateString()}</span>
+        </div>
+        <p>{comment.content}</p>
+        <span className="reply-action" onClick={() => setActiveReplyInput(`comment-${comment.id}`)}>💬 Phản hồi</span>
+        {(user?.role === 1 || user?.role === 2) && (
+          <span className="reply-action" onClick={() => handleToggleLockComment(comment.id)}>
+            🚫 Ẩn/Hiện
+          </span>
+        )}
 
-              {activeReplyInput === `comment-${comment.id}` && (
+        {activeReplyInput === `comment-${comment.id}` && (
+          <div className="reply-input-box">
+            <input
+              type="text"
+              placeholder="Nhập phản hồi của bạn..."
+              value={replyTexts[`comment-${comment.id}`] || ""}
+              onChange={(e) =>
+                setReplyTexts((prev) => ({ ...prev, [`comment-${comment.id}`]: e.target.value }))
+              }
+            />
+            <button onClick={() => handleSendReply(comment.id, `comment-${comment.id}`)}>Gửi</button>
+          </div>
+        )}
+
+        {comment.replies.length > 0 && (
+  <>
+    {(user?.role === 1 || user?.role === 2 || 
+      comment.replies.some(r => r.lock_reply === 0)) && (
+      <div className="toggle-reply" onClick={() => toggleReplies(comment.id)}>
+        {showReplies === comment.id 
+          ? "Thu gọn phản hồi ⯅" 
+          : `Xem tất cả ${comment.replies.length} phản hồi ⯆`}
+      </div>
+    )}
+
+    {showReplies === comment.id &&
+      comment.replies
+        .filter(reply => {
+          if (user?.role === 3 && reply.lock_reply === 1) return false;
+          return true;
+        })
+        .map((reply) => (
+          <div className={`reply ${reply.lock_reply === 1 ? "locked" : ""}`} key={reply.id}>
+            <div className="admin-avatar">{renderAvatar(reply)}</div>
+            <div className="reply-body">
+              <div className="reply-header">
+                <strong>{getDisplayName(reply)}</strong>
+                {reply.role === 1 && <span className="tag admin">Quản trị viên</span>}
+                {reply.role === 2 && <span className="tag staff">Nhân viên</span>}
+                <span>· {new Date(reply.time).toLocaleDateString()}</span>
+              </div>
+              <p>{reply.content}</p>
+              <span
+                className="reply-action"
+                onClick={() => setActiveReplyInput(`reply-${comment.id}-${reply.id}`)}
+              >
+                💬 Phản hồi
+              </span>
+              {(user?.role === 1 || user?.role === 2) && (
+                <span className="reply-action" onClick={() => handleToggleLockReply(reply.id)}>
+                  🚫 Ẩn/Hiện
+                </span>
+              )}
+
+              {activeReplyInput === `reply-${comment.id}-${reply.id}` && (
                 <div className="reply-input-box">
                   <input
                     type="text"
-                    placeholder="Nhập phản hồi của bạn..."
-                    value={replyTexts[`comment-${comment.id}`] || ""}
+                    placeholder="Nhập phản hồi..."
+                    value={replyTexts[`reply-${comment.id}-${reply.id}`] || ""}
                     onChange={(e) =>
-                      setReplyTexts((prev) => ({ ...prev, [`comment-${comment.id}`]: e.target.value }))
+                      setReplyTexts((prev) => ({
+                        ...prev,
+                        [`reply-${comment.id}-${reply.id}`]: e.target.value,
+                      }))
                     }
                   />
-                  <button onClick={() => handleSendReply(comment.id, `comment-${comment.id}`)}>Gửi</button>
+                  <button
+                    onClick={() => handleSendReply(comment.id, `reply-${comment.id}-${reply.id}`)}
+                  >
+                    Gửi
+                  </button>
                 </div>
-              )}
-
-              {comment.replies.length > 0 && (
-                <>
-                  <div className="toggle-reply" onClick={() => toggleReplies(comment.id)}>
-                    {showReplies === comment.id ? "Thu gọn phản hồi ⯅" : `Xem tất cả ${comment.replies.length} phản hồi ⯆`}
-                  </div>
-
-                  {showReplies === comment.id &&
-                    comment.replies.map((reply) => (
-                      <div className="reply" key={reply.id}>
-                        <div className="admin-avatar">{renderAvatar(reply)}</div>
-                        <div className="reply-body">
-                          <div className="reply-header">
-                            <strong>{getDisplayName(reply)}</strong>
-                            {reply.role === 1 && <span className="tag admin">Quản trị viên</span>}
-                            {reply.role === 2 && <span className="tag staff">Nhân viên</span>}
-                            <span>· {new Date(reply.time).toLocaleDateString()}</span>
-                          </div>
-                          <p>{reply.content}</p>
-                          <span
-                            className="reply-action"
-                            onClick={() => setActiveReplyInput(`reply-${comment.id}-${reply.id}`)}
-                          >
-                            💬 Phản hồi
-                          </span>
-                          {(user.role === 1 || user.role === 2) && (
-                              <span className="reply-action" onClick={() => handleDeleteReply(reply.id)}>
-                                🗑️ Xóa
-                              </span>
-                            )}
-
-
-                          {activeReplyInput === `reply-${comment.id}-${reply.id}` && (
-                            <div className="reply-input-box">
-                              <input
-                                type="text"
-                                placeholder="Nhập phản hồi..."
-                                value={replyTexts[`reply-${comment.id}-${reply.id}`] || ""}
-                                onChange={(e) =>
-                                  setReplyTexts((prev) => ({
-                                    ...prev,
-                                    [`reply-${comment.id}-${reply.id}`]: e.target.value,
-                                  }))
-                                }
-                              />
-                              <button
-                                onClick={() => handleSendReply(comment.id, `reply-${comment.id}-${reply.id}`)}
-                              >
-                                Gửi
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                </>
               )}
             </div>
           </div>
         ))}
+  </>
+)}
+
+      </div>
+    </div>
+  ))}
+
 
         {comments.length > 2 && !showAllComments && (
           <div className="view-more-comments">

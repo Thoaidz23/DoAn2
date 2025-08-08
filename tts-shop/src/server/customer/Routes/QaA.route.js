@@ -8,7 +8,8 @@ router.post('/question', qnaController.postQuestion);
 router.post('/reply', qnaController.postReply);
 
 // ✅ Thêm các route xóa
-router.delete("/question/:id", qnaController.deleteQuestion);
-router.delete("/reply/:id", qnaController.deleteReply);
+router.put("/comment/:id/lock", qnaController.toggleLockComment);
+router.put("/reply/:id/lock", qnaController.toggleLockReply);
+
 
 module.exports = router;

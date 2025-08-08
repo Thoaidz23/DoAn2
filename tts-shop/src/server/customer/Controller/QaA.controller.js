@@ -12,22 +12,27 @@ const getAllQnA = (req, res) => {
         return res.status(500).json({ message: "Server error" });
       }
 
-      pool.query("SELECT * FROM tbl_qna_replies ORDER BY time ASC", (err2, replies) => {
-        if (err2) {
-          console.error("Lỗi khi lấy replies:", err2);
-          return res.status(500).json({ message: "Server error" });
+      pool.query(
+        "SELECT * FROM tbl_qna_replies ORDER BY time ASC",
+        (err2, replies) => {
+          if (err2) {
+            console.error("Lỗi khi lấy replies:", err2);
+            return res.status(500).json({ message: "Server error" });
+          }
+
+          const result = comments.map((comment) => ({
+            ...comment,
+            replies: replies.filter((r) => r.comment_id === comment.id),
+          }));
+
+          res.json(result);
         }
-
-        const result = comments.map((comment) => ({
-          ...comment,
-          replies: replies.filter((r) => r.comment_id === comment.id),
-        }));
-
-        res.json(result);
-      });
+      );
     }
   );
 };
+
+
 
 const postQuestion = (req, res) => {
   const { name, avatar, content, id_group_product } = req.body;
@@ -61,45 +66,45 @@ const postReply = (req, res) => {
   );
 };
 
-// Xóa câu hỏi
-const deleteQuestion = (req, res) => {
+// Ẩn/hiện câu hỏi
+const toggleLockComment = (req, res) => {
   const { id } = req.params;
 
-  // Xóa phản hồi trước để tránh lỗi khóa ngoại
-  pool.query("DELETE FROM tbl_qna_replies WHERE comment_id = ?", [id], (err1) => {
-    if (err1) {
-      return res.status(500).json({ message: "Lỗi khi xóa phản hồi" });
-    }
-
-    pool.query("DELETE FROM tbl_qna_comments WHERE id = ?", [id], (err2) => {
-      if (err2) {
-        return res.status(500).json({ message: "Lỗi khi xóa câu hỏi" });
+  pool.query(
+    "UPDATE tbl_qna_comments SET lock_comment = IF(lock_comment = 1, 0, 1) WHERE id = ?",
+    [id],
+    (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Lỗi khi cập nhật trạng thái câu hỏi" });
       }
-
-      res.json({ message: "✅ Đã xóa câu hỏi và các phản hồi liên quan" });
-    });
-  });
+      res.json({ message: "✅ Đã thay đổi trạng thái hiển thị câu hỏi" });
+    }
+  );
 };
 
-// Xóa phản hồi
-const deleteReply = (req, res) => {
+// Ẩn/hiện phản hồi
+const toggleLockReply = (req, res) => {
   const { id } = req.params;
 
-  pool.query("DELETE FROM tbl_qna_replies WHERE id = ?", [id], (err) => {
-    if (err) {
-      return res.status(500).json({ message: "Lỗi khi xóa phản hồi" });
+  pool.query(
+    "UPDATE tbl_qna_replies SET lock_reply = IF(lock_reply = 1, 0, 1) WHERE id = ?",
+    [id],
+    (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Lỗi khi cập nhật trạng thái phản hồi" });
+      }
+      res.json({ message: "✅ Đã thay đổi trạng thái hiển thị phản hồi" });
     }
-
-    res.json({ message: "✅ Đã xóa phản hồi" });
-  });
+  );
 };
+
 
 module.exports = {
   getAllQnA,
   postQuestion,
   postReply,
-  deleteQuestion,
-  deleteReply,
+  toggleLockComment,
+  toggleLockReply,
 };
 
 
