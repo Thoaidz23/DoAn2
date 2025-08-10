@@ -1,0 +1,57 @@
+/* ConfirmDialog.scss */
+.confirm-overlay {
+    h3{
+        font-size: 20px;
+    }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.confirm-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px;
+  text-align: center;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.confirm-actions button {
+  flex: 1; /* Đều nhau */
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.btn-cancel {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn-cancel:hover {
+  background-color: #b3b3b3;
+}
+
+.btn-confirm {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.btn-confirm:hover {
+  background-color: #218838;
+}

@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from "react";
-import "../styles/ProductReview.scss";
+import ConfirmDialog from "./ConfirmDialog"; // import thêm
+import "../styles/BillDetail.scss";
 
 const tagSuggestions = [
   "Chất lượng tốt",
@@ -27,28 +27,36 @@ const ReviewModal = ({
   const [tags, setTags] = useState(initialTags);
   const [message, setMessage] = useState({ type: "", text: "" });
 
+  const [showConfirm, setShowConfirm] = useState(false); // thêm state popup
+
   useEffect(() => {
     if (show) {
-      console.log("initialTags", initialTags);
       setComment(initialComment);
       setSelectedRating(initialRating);
       setTags(initialTags);
       setHoveredStar(0);
     }
   }, [show, initialComment, initialRating, initialTags]);
-  const handleSubmit = () => {
+
+  const handleSendClick = () => {
+    // Kiểm tra dữ liệu trước khi mở popup
     if (comment.trim().length < 10) {
       setMessage({ type: "error", text: "Vui lòng nhập tối thiểu 10 ký tự." });
       return;
     }
-
     if (selectedRating === 0) {
       setMessage({ type: "error", text: "Vui lòng chọn số sao đánh giá." });
       return;
     }
+    setShowConfirm(true); // mở popup xác nhận
+  };
+
+  const confirmSend = () => {
+    setShowConfirm(false);
 
     setMessage({ type: "success", text: "Gửi đánh giá thành công!" });
-    onSubmit({ rating: selectedRating, comment, tags ,code_order });
+
+    onSubmit({ rating: selectedRating, comment, tags, code_order });
 
     // reset form
     setComment("");
@@ -70,13 +78,6 @@ const ReviewModal = ({
   return (
     <div className="review-modal-overlay">
       <div className="review-modal">
-        {/* Thông báo */}
-        {message.text && (
-          <div className={`review-message ${message.type === "success" ? "success" : ""}`}>
-            {message.text}
-          </div>
-        )}
-
         <div className="modal-header">
           <h3>Đánh giá & nhận xét</h3>
           <button className="close-modal" onClick={onClose}>×</button>
@@ -128,14 +129,29 @@ const ReviewModal = ({
           onChange={(e) => setComment(e.target.value)}
         />
 
+        {message.text && (
+          <div className={`review-message-box ${message.type}`}>
+            <i className={`icon-${message.type}`}></i> {message.text}
+          </div>
+        )}
+
         <button
           className="submit-review-btn"
           disabled={submitting}
-          onClick={handleSubmit}
+          onClick={handleSendClick}
         >
           {submitting ? "Đang gửi..." : "GỬI ĐÁNH GIÁ"}
         </button>
       </div>
+
+      {/* Popup xác nhận */}
+      <ConfirmDialog
+        show={showConfirm}
+        title="Xác nhận gửi đánh giá"
+        message="Bạn có chắc muốn gửi đánh giá này?"
+        onConfirm={confirmSend}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 };

@@ -7,13 +7,10 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import WriteReviewButton from "../component/WriteReviewButton";
 import WarrantyModal from "../component/WarrantyModal";
-
+import MessageBox from "../component/MessageBox"; // import thêm
 
 function BillDetail() {
   const { code_order } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const [showWarranty, setShowWarranty] = useState(false);
   const [warrantyProduct, setWarrantyProduct] = useState(null);
 
@@ -21,7 +18,15 @@ function BillDetail() {
   const [products, setProducts] = useState([]);
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
   const [reviewMap, setReviewMap] = useState({});
-
+  const [message, setMessage] = useState("");
+const [messageType, setMessageType] = useState("success");
+const showMessage = (msg, type = "success") => {
+  setMessage(msg);
+  setMessageType(type);
+  setTimeout(() => {
+    setMessage("");
+  }, 3000); // Tự ẩn sau 3s
+};
   
   // 🔁 Lấy đánh giá cho các sản phẩm trong đơn hàng
  const fetchReviewsForProducts = async (productList, userId) => {
@@ -196,13 +201,13 @@ function BillDetail() {
                               
                                 axios.post("http://localhost:5000/api/warranty", payload)
                                   .then(() => {
-                                    alert("Yêu cầu bảo hành đã được gửi!");
+                                    showMessage("Yêu cầu bảo hành đã được gửi!", "success");
                                     setShowWarranty(false);
                                     window.location.reload();
                                   })
                                   .catch((err) => {
                                     console.error("Lỗi gửi bảo hành:", err);
-                                    alert("Gửi yêu cầu bảo hành thất bại.");
+                                    showMessage("Gửi yêu cầu bảo hành thất bại.", "error");
                                   });
                               }}
                             />
@@ -228,13 +233,13 @@ function BillDetail() {
                               
                               request
                                 .then(() => {
-                                  alert("Đánh giá đã được gửi thành công!");
+                                  showMessage("Đánh giá đã được gửi thành công!", "success");
                                   // ❗ Cập nhật lại danh sách đánh giá sau khi gửi thành công
                                   fetchReviewsForProducts(products, order.id_user);
                                 })
                                 .catch((err) => {
                                   console.error("Lỗi gửi đánh giá:", err);
-                                  alert("Lỗi khi gửi đánh giá.");
+                                  showMessage("Lỗi khi gửi đánh giá.", "error");
                                 });
                             }}
                           />
@@ -295,7 +300,13 @@ function BillDetail() {
           </div>
         </div>
       </div>
+      <MessageBox
+  type={messageType}
+  message={message}
+  onClose={() => setMessage("")}
+/>
     </div>
+    
   );
 }
 
