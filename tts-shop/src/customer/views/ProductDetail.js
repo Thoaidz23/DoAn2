@@ -17,7 +17,6 @@ import CompareModal from './../component/CompareModal';
 import "../styles/ProductReview.scss"
 import FloatingCart from '../component/FloatingCart';
 
-
 const ProductDetail = () => {
   const [compareSelected, setCompareSelected] = useState([]);
    const [showModal, setShowModal] = useState(false);
@@ -123,14 +122,31 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-
   if (!user) {
     setShowBuyNowError(true);
     setTimeout(() => setShowBuyNowError(false), 3000);
     return;
   }
-  navigate(`/cartpage`);
-  handleAddToCart();
+
+  const selectedItem = {
+  id_product: selectedProduct.id_product,
+  quantity,
+  saleprice: selectedProduct.sale > 0 ? selectedProduct.saleprice : selectedProduct.price, // ✅ dùng đúng trường
+  name_group_product: selectedProduct.name_group_product,
+  id_group_product: selectedProduct.id_group_product,
+  image: selectedProduct.gp_image, // ✅ là file ảnh
+  name_color: selectedProduct.name_color,
+  name_ram: selectedProduct.name_ram,
+  name_rom: selectedProduct.name_rom,
+};
+  console.log(selectedItem)
+
+  navigate('/Payment-Infor', {
+    state: {
+      items: [selectedItem],
+      isBuyNow: true // dùng để phân biệt mua từ "Buy now"
+    }
+  });
 };
 
 
@@ -505,9 +521,6 @@ const getAvailableOptions = (field) => {
 
 {/* Hoi dap */}
 <QnASection
-  nameuser={user.name}
-  avataruser={user.avatar}
-  roleuser={user.role}
   id_group_product={selectedProduct.id_group_product}
 />
   <Col>

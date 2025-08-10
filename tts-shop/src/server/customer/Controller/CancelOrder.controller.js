@@ -21,9 +21,12 @@ const Cancel = async (req, res) => {
     const { paystatus, method, capture_id, status } = paymentRows[0];
 
     // 2. Kiểm tra trạng thái đơn: nếu status = 0 hoặc 1 thì không cho hủy
-    if (status !== 0 || status !== 1) {
-      return res.status(400).json({ message: 'Đơn hàng không được phép hủy vì trạng thái hiện tại không phù hợp.' });
-    }
+    const allowedStatuses = [0, 1];
+if (!allowedStatuses.includes(status)) {
+  return res.status(400).json({ message: 'Đơn hàng không được phép hủy vì trạng thái hiện tại không phù hợp.' });
+}
+
+
 
     // 3. Lấy số tiền hoàn
     const [orderRows] = await connection.promise().query(

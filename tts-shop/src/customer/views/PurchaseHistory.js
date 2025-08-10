@@ -87,6 +87,7 @@ useEffect(() => {
     try {
       const res = await axios.put(`http://localhost:5000/api/bill-detail/cancel/${confirmModal.orderCode}`);
       setErrorMessage1(res.data.message || 'Yêu cầu hủy đơn thành công');
+      console.log('modal',confirmModal.orderCode)
       const updatedOrders = await axios.get(`http://localhost:5000/api/orders/purchase-history/${user.id}`);
       setOrders(updatedOrders.data);
     } catch (err) {
@@ -96,7 +97,6 @@ useEffect(() => {
       setConfirmModal({ show: false, orderCode: '' });
     }
   };
-
   return (
     <div className="PurchaseHistory_container">
         {errorMessage1 && (
@@ -243,7 +243,8 @@ useEffect(() => {
                             )}
                           </>
                       )}
-                      {order.status === 0 || order.status === 1 && (
+                      {(order.status === 0 || order.status === 1) && (
+                        
                         <button
                           className="history-cancel-button"
                           onClick={() => setConfirmModal({ show: true, orderCode: order.code_order })}
