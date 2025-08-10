@@ -30,6 +30,7 @@ function MenuBar() {
     if (!brandsByCategory[category.id_category_product]) {
       axios.get(`http://localhost:5000/api/category/${category.id_category_product}/brands`)
         .then(res => {
+          console.log("Brands for category", category.id_category_product, res.data);
           setBrandsByCategory(prev => ({
             ...prev,
             [category.id_category_product]: res.data

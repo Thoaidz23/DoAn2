@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Container, ListGroup, Image, Button, Form } from "react-bootstrap";
+import { Container, ListGroup, Image, Button, Form, Modal } from "react-bootstrap";
 import "../styles/CartPage.scss";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useNavigate } from "react-router-dom"; // 👈 điều hướng đến trang khác
@@ -10,6 +10,7 @@ const CartPage = () => {
   const Paynavigate = useNavigate(); // 👈 điều hướng đến trang thanh toán
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showMaxQtyModal, setShowMaxQtyModal] = useState(false);
 
   const { user } = useContext(AuthContext); // Lấy user từ context
   // Lấy dữ liệu giỏ hàng khi trang load
@@ -71,6 +72,29 @@ const CartPage = () => {
 
   return (
       <>
+      
+     <Modal show={showMaxQtyModal} onHide={() => setShowMaxQtyModal(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title style={{ fontWeight: '700', fontSize: '1.5rem', color: '#d9534f' }}>
+      Thông báo
+    </Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body style={{ fontSize: '1rem', lineHeight: '1.6', color: '#333' }}>
+    <p><strong>Số lượng sản phẩm đã đạt đến mức tối đa.</strong></p>
+    <p>Quý khách vui lòng liên hệ nhanh:</p>
+    <p style={{color:'red'}}>
+      Thông tin chi tiết ở cuối trang
+    </p>
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button variant="primary" onClick={() => setShowMaxQtyModal(false)} style={{ fontWeight: '600', padding: '0.5rem 1.5rem' }}>
+      Đóng
+    </Button>
+  </Modal.Footer>
+</Modal>
+
       {loading ? (
         <div>Đang tải...</div>
       ) : cartItems.length === 0 ? (
@@ -129,16 +153,37 @@ const CartPage = () => {
                 <div className="flex-grow-1">
                   <h5 className="mb-1">{item.name_group_product} {item.name_color} {item.name_ram} {item.name_rom}</h5>
                   <Form.Group controlId={`quantity-${item.id_cart}`} className="mb-0 d-flex align-items-center gap-2">
-                    <Form.Label className="mb-0">Số lượng:</Form.Label>
-                    <Form.Control
-                      type="number"
-                      min="1"
-                      max="5"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(item.id_cart, e.target.value)}
-                      style={{ width: "70px" }}
-                    />
-                  </Form.Group>
+  <Form.Label className="mb-0">Số lượng:</Form.Label>
+  <Form.Control
+  type="number"
+  min="1"
+  max="6"
+  step="1"
+  value={item.quantity}
+  onChange={(e) => {
+  let val = e.target.value;
+  console.log("Input value:", val);
+
+  if (val.includes('.')) {
+    val = val.split('.')[0];
+  }
+  val = Number(val);
+
+  if (isNaN(val) || val < 1) val = 1;
+
+  if (val > 5) {
+    console.log("Show modal triggered");
+    setShowMaxQtyModal(true);
+    val = 5;
+  }
+
+  handleQuantityChange(item.id_cart, val);
+}}
+  style={{ width: "70px" }}
+/>
+
+</Form.Group>
+
                 </div>
                 <div className="text-end">
                   <strong className="text-danger">

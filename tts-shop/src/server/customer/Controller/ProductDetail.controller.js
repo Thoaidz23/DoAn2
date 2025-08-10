@@ -10,6 +10,7 @@ const getProductDetail = async (req, res) => {
       SELECT p.*, p.price-((p.price/100)*gp.sale) as saleprice,
              gp.name_group_product,
              gp.id_category_product,
+             gp.id_category_brand,
              gp.image as gp_image,
              gp.sale,
              cp.name_category_product,

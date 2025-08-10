@@ -13,7 +13,7 @@ const Cancel = async (req, res) => {
       WHERE p.code_order = ?`,
       [code_order]
     );
-    console.log(paymentRows)
+    
     if (paymentRows.length === 0) {
       return res.status(404).json({ message: 'Không tìm thấy đơn hàng thanh toán' });
     }

@@ -113,7 +113,7 @@ useEffect(() => {
     } catch (err) {
       console.error("Lỗi khi tải dữ liệu:", err);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
