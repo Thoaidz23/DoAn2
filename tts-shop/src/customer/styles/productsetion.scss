@@ -1,0 +1,18 @@
+.section-product-one-content-item {
+  position: relative;
+  overflow: hidden; // ✅ giữ cho ribbon không bị lòi ra ngoài khung
+}
+
+.sale-badge {
+  position: absolute;
+  top: 15px;
+  right: -30px; // đẩy sang để ribbon nằm gọn trong khung
+  background-color: hwb(61 30% 0%);
+  color: red;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 35px; // dài để tạo hiệu ứng chéo
+  transform: rotate(45deg);
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}

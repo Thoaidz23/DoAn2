@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
+import "../styles/productsetion.scss"
 function ProductSection({ title, visibleProducts, handleNext, handlePrev, brandsByCategory = {}, id_category_product }) {
   const [filteredProducts, setFilteredProducts] = useState(visibleProducts);
   const navigate = useNavigate();
