@@ -119,6 +119,24 @@
       }
     }
   }
+.product-one-content-item {
+  position: relative; // ✅ để đặt sale-badge tuyệt đối
+  overflow: hidden;   // ✅ tránh lòi ra ngoài
+}
+
+.sale-badge {
+  position: absolute;
+  top: 12px;
+  right: -30px; // căn để ribbon nằm gọn
+  background-color: hwb(61 30% 0%); // giữ màu bạn đã dùng
+  color: red;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 35px; // dài để tạo hiệu ứng chéo
+  transform: rotate(45deg); // nghiêng 45 độ
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
 
   /* Khi có ít hơn 3 sản phẩm */
 .product-one-content-items.few-items {
