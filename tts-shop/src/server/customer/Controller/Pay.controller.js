@@ -2,6 +2,9 @@ const pool = require('../../db');
 const nodemailer = require("nodemailer");
 const path = require('path');
 
+// =====================
+// Hàm tạo mã đơn hàng
+// =====================
 const generateCodeOrder = () => {
   const letters = Array.from({ length: 4 }, () =>
     String.fromCharCode(65 + Math.floor(Math.random() * 26))
@@ -10,18 +13,22 @@ const generateCodeOrder = () => {
   return letters + numbers;
 };
 
-// ✅ API tạo code_order không lưu DB
+// =====================
+// API tạo code_order (Không lưu DB)
+// =====================
 const generateOrderCode = (req, res) => {
   const { id_user } = req.body;
   if (!id_user) {
     return res.status(400).json({ message: 'Thiếu id_user' });
   }
-
   const code_order = generateCodeOrder();
   return res.status(200).json({ code_order });
 };
 
-const addToPayRaw = ({ id_user, products, name_user, address, phone, method, email, paystatus = 0 ,capture_id = null,isFromCart }) => {
+// =====================
+// Hàm xử lý đặt hàng (Dùng Promise)
+// =====================
+const addToPayRaw = ({ id_user, products, name_user, address, phone, method, email, paystatus = 0, capture_id = null, isFromCart }) => {
   return new Promise((resolve, reject) => {
     const code_order = generateCodeOrder();
     const total_price = products.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -55,7 +62,7 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
               VALUES ?
             `;
             const detailValues = products.map(item => [code_order, item.id_product, item.quantity]);
-                    
+
             conn.query(insertDetailQuery, [detailValues], (err2) => {
               if (err2) {
                 return conn.rollback(() => {
@@ -63,7 +70,7 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
                   reject('Lỗi chi tiết đơn hàng');
                 });
               }
-            
+
               const insertPaymentQuery = `
                 INSERT INTO tbl_payment_infor (code_order, method, paystatus, capture_id)
                 VALUES (?, ?, ?, ?)
@@ -75,25 +82,39 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
                     reject('Lỗi thêm payment_infor');
                   });
                 }
-              
-                conn.commit(errCommit => {
-                  if (errCommit) {
+
+                // ✅ Thêm vào bảng trạng thái đơn hàng mới
+                const insertOrderStatusQuery = `
+                  INSERT INTO tbl_order_time (code_order, status, time)
+                  VALUES (?, 0, NOW())
+                `;
+                conn.query(insertOrderStatusQuery, [code_order], (err4) => {
+                  if (err4) {
                     return conn.rollback(() => {
                       conn.release();
-                      reject('Lỗi commit');
+                      reject('Lỗi thêm trạng thái đơn hàng');
                     });
                   }
-                
-                  conn.release();
-                  sendOrderConfirmationEmail(email, code_order, products, total_price)
-                    .then(() => resolve('Đặt hàng thành công'))
-                    .catch((errMail) => resolve('Đặt hàng xong nhưng không gửi được email'));
+
+                  conn.commit(errCommit => {
+                    if (errCommit) {
+                      return conn.rollback(() => {
+                        conn.release();
+                        reject('Lỗi commit');
+                      });
+                    }
+
+                    conn.release();
+                    sendOrderConfirmationEmail(email, code_order, products, total_price)
+                      .then(() => resolve('Đặt hàng thành công'))
+                      .catch(() => resolve('Đặt hàng xong nhưng không gửi được email'));
+                  });
                 });
               });
             });
           };
-          
-          // 👉 Chỉ xóa giỏ hàng nếu từ cart
+
+          // 👉 Xóa giỏ hàng nếu từ cart
           if (isFromCart) {
             const deleteCartQuery = `DELETE FROM tbl_cart WHERE id_user = ?`;
             conn.query(deleteCartQuery, [id_user], (errDel) => {
@@ -108,14 +129,16 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
           } else {
             proceed();
           }
-          
-                    
         });
       });
     });
   });
 };
 
+
+// =====================
+// API xử lý đặt hàng
+// =====================
 const addToPay = async (req, res) => {
   try {
     await addToPayRaw(req.body);
@@ -126,16 +149,17 @@ const addToPay = async (req, res) => {
   }
 };
 
+// =====================
+// Gửi email xác nhận đơn hàng
+// =====================
 const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) => {
-  if (!email) {
-    throw new Error('Không có email người nhận.');
-  }
+  if (!email) throw new Error('Không có email người nhận.');
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'truongthuong1512@gmail.com',
-      pass: 'lljvbafslfcjbltv',
+      pass: 'lljvbafslfcjbltv', // ⚠️ Nên lưu vào biến môi trường
     },
   });
 
@@ -147,8 +171,8 @@ const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) 
 
   const itemListHtml = items.map((item, index) => `
     <li style="display: flex; align-items: center; margin-bottom: 8px; width:100%">
-      <img src="cid:product${index}" style="width: 100px; height: auto; vertical-align: middle; margin-right: 10px;" />
-      <div style="flex-grow: 1; text-align: right; right:0">
+      <img src="cid:product${index}" style="width: 100px; height: auto; margin-right: 10px;" />
+      <div style="flex-grow: 1; text-align: right;">
         <div>${item.name_group_product}</div>
         <div>SL: ${item.quantity}</div>
         <div>Giá: ${item.price.toLocaleString()}đ</div>
@@ -159,23 +183,18 @@ const sendOrderConfirmationEmail = async (email, orderCode, items, totalAmount) 
   const mailOptions = {
     from: 'truongthuong1512@gmail.com',
     to: email,
-    subject: 'Xác nhận đơn hàng từ hệ thống',
+    subject: 'Xác nhận đơn hàng từ TTSshop',
     html: `
-      <h3>Đơn hàng của bạn đã được đặt thành công ở TTSshop</h3>
+      <h3>Đơn hàng của bạn đã được đặt thành công tại TTSshop</h3>
       <p><strong>Mã đơn hàng:</strong> ${orderCode}</p>
       <ul style="list-style-type: none; padding: 0; margin: 0; width:400px">${itemListHtml}</ul>
       <p><strong>Tổng tiền:</strong> ${totalAmount.toLocaleString()}đ</p>
       <p>Cảm ơn bạn đã mua hàng!</p>
     `,
-    attachments: attachments
+    attachments
   };
 
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (err) {
-    console.error('❌ Lỗi khi gửi email:', err);
-    throw new Error('Không thể gửi email xác nhận.');
-  }
+  await transporter.sendMail(mailOptions);
 };
 
 module.exports = {

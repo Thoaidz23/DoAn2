@@ -240,11 +240,10 @@ useEffect(() => {
                               }}
                             />
                             
-                                                      )}
+                            )}
                           </>
                       )}
-                      
-                      {order.status === 0&& (
+                      {order.status === 0 || order.status === 1 && (
                         <button
                           className="history-cancel-button"
                           onClick={() => setConfirmModal({ show: true, orderCode: order.code_order })}

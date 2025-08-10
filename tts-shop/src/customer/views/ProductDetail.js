@@ -216,6 +216,8 @@ const getAvailableOptions = (field) => {
   categoryName={selectedProduct?.name_category_product}
   brandName={selectedProduct?.name_category_brand}
   productname={selectedProduct?.name_group_product}
+  categoryID={selectedProduct?.id_category_product}
+  brandID={selectedProduct?.id_category_brand}
 />
 
     <div className="Product-detail-content">
@@ -384,10 +386,19 @@ const getAvailableOptions = (field) => {
                     type="number"
                     min="1"
                     max="5"
+                    step="1"
                     value={quantity}
-                    onChange={(e) =>
-                      setQuantity(Math.max(1, Number(e.target.value)))
+                   onChange={(e) => {
+                    let val = e.target.value;
+                    // Loại bỏ phần thập phân nếu có
+                    if (val.includes('.')) {
+                      val = val.split('.')[0];
                     }
+                    val = Number(val);
+                    if (isNaN(val) || val < 1) val = 1;
+                    else if (val > 5) val = 5;
+                    setQuantity(val);
+                  }}
                   />
                 </Form.Group>
               </Col>

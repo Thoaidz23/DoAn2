@@ -56,6 +56,7 @@ function Product() {
     if (category) setCategoryName(data[0]?.name_category_product || "");
     if (brand) setBrandName(data[0]?.name_category_brand || "");
   }
+ 
 })
 
       .catch((err) => {
@@ -87,11 +88,12 @@ function Product() {
 
   return (
     <div>
-
          <TopHeadBar
           searchText={searchText}
           categoryName={categoryName}
           brandName={brandName}
+          categoryID={categoryId}
+          brandID={brandId}
         />
 
       <div className="container-search">

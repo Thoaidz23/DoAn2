@@ -105,6 +105,17 @@ const showMessage = (msg, type = "success") => {
               <div className="status-bill">
                 Trạng thái: <span className="confirmed-bill">{order.status_text}</span>
               </div>
+              <div className="status-bill">
+                Trạng thái: <span className="confirmed-bill">{order.status_text}</span>
+              </div>
+
+              {/* Chỉ hiện nếu có lý do hủy đơn */}
+              {order.cancel_reason && (
+                <div style={{color:'red'}}>
+                  <span style={{fontWeight:'700'}}>Lý do hủy đơn: </span> <span className="confirmed-bill">{order.cancel_reason}</span>
+                </div>
+              )}
+
             </div>
 
             <div className="title-productbill">Sản phẩm của bạn</div>
@@ -159,6 +170,11 @@ const showMessage = (msg, type = "success") => {
                              {item.issue && (
                                 <p style={{ color: "#555", fontStyle: "italic" }}>
                                   Lý do gửi bảo hành: {item.issue}
+                                </p>
+                              )}
+                              {item.reply && (
+                                <p style={{ color: "red", fontStyle: "italic" }}>
+                                  Phản hồi từ shop: {item.reply}
                                 </p>
                               )}
                              </>
