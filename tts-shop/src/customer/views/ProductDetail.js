@@ -98,7 +98,7 @@ const ProductDetail = () => {
         id_user: user.id,
         id_product: selectedProduct.id_product,
         quantity,
-        price:selectedProduct.price*quantity,
+        price:selectedProduct.price,
         id_group_product:selectedProduct.id_group_product,
       }
       

@@ -11,6 +11,7 @@ const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMaxQtyModal, setShowMaxQtyModal] = useState(false);
+  const [showOver50MModal, setShowOver50MModal] = useState(false);
 
   const { user } = useContext(AuthContext); // Lấy user từ context
   // Lấy dữ liệu giỏ hàng khi trang load
@@ -90,6 +91,31 @@ const CartPage = () => {
 
   <Modal.Footer>
     <Button variant="primary" onClick={() => setShowMaxQtyModal(false)} style={{ fontWeight: '600', padding: '0.5rem 1.5rem' }}>
+      Đóng
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+<Modal
+  show={showOver50MModal}
+  onHide={() => setShowOver50MModal(false)}
+  centered
+>
+  <Modal.Header closeButton>
+    <Modal.Title style={{ fontWeight: '700', fontSize: '1.5rem', color: '#d9534f' }}>
+      Thông báo
+    </Modal.Title>
+  </Modal.Header>
+  <Modal.Body style={{ fontSize: '1rem', lineHeight: '1.6', color: '#333' }}>
+    <p><strong>Tổng giá trị đơn hàng vượt quá 50 triệu đồng.</strong></p>
+    <p>Quý khách vui lòng liên hệ trực tiếp với shop để được hỗ trợ thanh toán.</p>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button
+      variant="primary"
+      onClick={() => setShowOver50MModal(false)}
+      style={{ fontWeight: '600', padding: '0.5rem 1.5rem' }}
+    >
       Đóng
     </Button>
   </Modal.Footer>
@@ -209,9 +235,20 @@ const CartPage = () => {
                   })}
                 </span>
               </h5>
-              <Button variant="success" size="lg" onClick={() => Paynavigate("/Payment-Infor")}>
-                Thanh toán
-              </Button>
+             <Button
+              variant="success"
+              size="lg"
+              onClick={() => {
+                if (total > 50000000) {
+                  setShowOver50MModal(true); // Mở modal thông báo
+                } else {
+                  Paynavigate("/Payment-Infor");
+                }
+              }}
+            >
+              Thanh toán
+            </Button>
+            
             </div>
           </div>
         </Container>

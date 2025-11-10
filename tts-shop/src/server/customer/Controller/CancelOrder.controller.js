@@ -1,9 +1,11 @@
 const connection = require('../../db');
 const { refundMomoSandbox } = require('./Momo.controller');
 const { refundPaypalPayment } = require('./Paypal.controller');
+
 const Cancel = async (req, res) => {
   const { code_order } = req.params;
-
+const { customer_cancel_reason } = req.body;
+console.log(customer_cancel_reason)
   try {
     // 1. Lấy thông tin thanh toán và trạng thái đơn
     const [paymentRows] = await connection.promise().query(
@@ -70,10 +72,19 @@ if (!allowedStatuses.includes(status)) {
     }
 
     // 5. Cập nhật trạng thái đơn hàng thành hủy (4)
-    await connection.promise().query(
-      `UPDATE tbl_order SET status = 4 WHERE code_order = ?`,
-      [code_order]
-    );
+   // 5. Cập nhật trạng thái đơn hàng thành hủy (4)
+await connection.promise().query(
+  `UPDATE tbl_order SET status = 4, customer_cancel_reason = ? WHERE code_order = ?`,
+  [customer_cancel_reason,code_order]
+);
+
+// 6. Lưu lịch sử thay đổi trạng thái vào bảng tbl_order_time
+await connection.promise().query(
+  `INSERT INTO tbl_order_time (code_order, status, time) 
+   VALUES (?, ?, NOW())`,
+  [code_order, 4]
+);
+
 
     return res.json({ message: 'Hủy đơn hàng và hoàn tiền (nếu có) thành công' });
 

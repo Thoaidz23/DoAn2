@@ -14,7 +14,7 @@ const insertOrderTime = (code_order, status) => {
 // Lấy tất cả đơn hàng
 const getOrders = (req, res) => {
   const query = `
-    SELECT o.id_order, o.code_order, u.name, o.total_price, o.status, o.date, 
+    SELECT o.id_order, o.code_order, u.name, o.total_price, o.status, o.date,
            o.name_user, o.address, o.phone, p.method, p.paystatus 
     FROM tbl_order o 
     JOIN tbl_user u ON o.id_user = u.id_user 
@@ -37,7 +37,7 @@ const getOrderByCode = (req, res) => {
 
   const query = `
     SELECT 
-      o.id_order, o.code_order, o.total_price, o.status, o.date, pi.capture_id,
+      o.id_order, o.code_order, o.total_price, o.status, o.date, pi.capture_id, o.customer_cancel_reason,
       o.name_user, o.address, o.phone,
       u.id_user, u.name AS user_name, u.email,
       od.id_order_detail, od.quantity_product,

@@ -14,7 +14,10 @@ const DetailOrder = () => {
   useEffect(() => {
     fetch(`http://localhost:5000/api/orders/${code}`)
       .then((res) => res.json())
-      .then((data) => setOrder(data))
+       .then((data) => {
+      console.log("Dữ liệu đơn hàng:", data); // log ngay khi nhận được
+      setOrder(data);
+    })
       .catch((err) => console.error("Lỗi khi lấy chi tiết đơn hàng:", err));
   }, [code]);
 
@@ -46,7 +49,10 @@ const DetailOrder = () => {
       const res = await fetch(`http://localhost:5000/api/orders/${code}/cancel`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason: cancelReason }),
+        body: JSON.stringify({ 
+  reason: order.customer_cancel_reason || cancelReason 
+}),
+
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Lỗi khi hủy đơn");
@@ -271,28 +277,38 @@ const DetailOrder = () => {
       </Card>
 
       {/* Modal Hoàn tiền & Hủy đơn */}
-      <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Hoàn tiền & Hủy đơn hàng</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <textarea
-            className="form-control"
-            placeholder="Nhập lý do hủy đơn..."
-            rows={4}
-            value={cancelReason}
-            onChange={(e) => setCancelReason(e.target.value)}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowCancelModal(false)}>
-            Đóng
-          </Button>
-          <Button variant="danger" onClick={handleCancelAndRefund}>
-            Xác nhận
-          </Button>
-        </Modal.Footer>
-      </Modal>
+<Modal show={showCancelModal} onHide={() => setShowCancelModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Hoàn tiền & Hủy đơn hàng</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {order.customer_cancel_reason ? (
+      <div>
+        <strong>Lý do khách hủy:</strong>
+        <p className="mt-2 p-2 bg-light text-dark rounded">
+          {order.customer_cancel_reason}
+        </p>
+      </div>
+    ) : (
+      <textarea
+        className="form-control"
+        placeholder="Nhập lý do hủy đơn..."
+        rows={4}
+        value={cancelReason}
+        onChange={(e) => setCancelReason(e.target.value)}
+      />
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowCancelModal(false)}>
+      Đóng
+    </Button>
+    <Button variant="danger" onClick={handleCancelAndRefund}>
+      Xác nhận
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </div>
   );
 };

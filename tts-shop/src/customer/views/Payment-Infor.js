@@ -287,37 +287,63 @@ if (momoRes.data.payUrl) {
                   </p>
                   
                   <p>
-                    Số điện thoại: {
-                      isEditingPhone ? (
-                        <>
-                          <input
-                          type="text"
-                          value={tempPhone}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            // Chỉ cho nhập số, không cho ký tự
-                            if (/^\d*$/.test(val)) {
-                              setTempPhone(val);
-                            }
-                          }}
-                          maxLength={11}
-                          placeholder={userInfo.phone}
-                          className="edit-address-input"
-                        />
-                         <span className="edit-icon" onClick={() => setIsEditingPhone(prev => !prev)}>
-                          {isEditingPhone ? "✔" : "✎"}
-                        </span>
-                        </>
-                      ) : (
-                        <>
-                          <span>{tempPhone || userInfo.phone}</span>
-                          <span className="edit-icon" onClick={() => setIsEditingPhone(prev => !prev)}>
-                            {isEditingPhone ? "✔" : "✎"}
-                          </span>
-                        </>
-                      )
-                    }
-                  </p>  
+  Số điện thoại: {
+    isEditingPhone ? (
+      <>
+        <input
+          type="text"
+          value={tempPhone}
+          onChange={(e) => {
+            const val = e.target.value;
+            // Chỉ cho nhập số, tối đa 12 số
+            if (/^\d{0,12}$/.test(val)) {
+              setTempPhone(val);
+            }
+          }}
+          minLength={10}
+          maxLength={12}
+          placeholder={userInfo.phone}
+          className="edit-address-input"
+        />
+        <span
+          className="edit-icon"
+          onClick={() => {
+            // Kiểm tra độ dài trước khi tắt chế độ edit
+            if (tempPhone.length >= 10 && tempPhone.length <= 12) {
+              setIsEditingPhone(false);
+            } else {
+              alert("Số điện thoại phải từ 10 đến 12 chữ số.");
+            }
+          }}
+        >
+          <span
+  className="edit-icon"
+  onClick={() => {
+    if (tempPhone.length >= 10 && tempPhone.length <= 12) {
+      setIsEditingPhone(false);
+    } else {
+      // Nếu không hợp lệ thì đặt lại tempPhone = số mặc định
+      setTempPhone(userInfo.phone || "");
+      setIsEditingPhone(false);
+    }
+  }}
+>
+  {isEditingPhone ? "✔" : "✎"}
+</span>
+
+        </span>
+      </>
+    ) : (
+      <>
+        <span>{tempPhone || userInfo.phone}</span>
+        <span className="edit-icon" onClick={() => setIsEditingPhone(true)}>
+          ✎
+        </span>
+      </>
+    )
+  }
+</p>
+
                 </div>
               </div>
             </div>
@@ -402,11 +428,12 @@ if (momoRes.data.payUrl) {
       products: cartItems.map(item => ({
         id_product: item.id_product,
         quantity: item.quantity,
-        price: Math.round(item.saleprice),
+        price: Math.round(item.saleprice) * item.quantity, // ✅ tổng giá sản phẩm
         id_group_product: item.id_group_product,
         name_group_product: item.name_group_product,
         image: item.image,
-      })),
+      }))
+      
     };
   console.log("🧾 PayPal details:", details);
 

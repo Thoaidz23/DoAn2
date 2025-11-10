@@ -20,6 +20,7 @@ function PurchaseHistory() {
   const [showRefund, setShowRefund] = useState(false);
   const [refundProduct, setRefundProduct] = useState(null);
   const [loadingRefund, setLoadingRefund] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   console.log(user)
@@ -84,19 +85,30 @@ useEffect(() => {
   });
 
   const handleCancelOrder = async () => {
-    try {
-      const res = await axios.put(`http://localhost:5000/api/bill-detail/cancel/${confirmModal.orderCode}`);
-      setErrorMessage1(res.data.message || 'Yêu cầu hủy đơn thành công');
-      console.log('modal',confirmModal.orderCode)
-      const updatedOrders = await axios.get(`http://localhost:5000/api/orders/purchase-history/${user.id}`);
-      setOrders(updatedOrders.data);
-    } catch (err) {
-      console.error('Lỗi hủy đơn:', err);
-      setErrorMessage1('Hủy đơn không thành công!');
-    } finally {
-      setConfirmModal({ show: false, orderCode: '' });
-    }
-  };
+  if (!cancelReason.trim()) {
+    alert("Vui lòng nhập lý do hủy đơn.");
+    return;
+  }
+
+  try {
+    const res = await axios.put(
+      `http://localhost:5000/api/bill-detail/cancel/${confirmModal.orderCode}`,
+      { customer_cancel_reason: cancelReason } // gửi lý do kèm theo
+      
+    );
+    console.log(cancelReason)
+    setErrorMessage1(res.data.message || 'Yêu cầu hủy đơn thành công');
+    const updatedOrders = await axios.get(`http://localhost:5000/api/orders/purchase-history/${user.id}`);
+    setOrders(updatedOrders.data);
+  } catch (err) {
+    console.error('Lỗi hủy đơn:', err);
+    setErrorMessage1('Hủy đơn không thành công!');
+  } finally {
+    setConfirmModal({ show: false, orderCode: '' });
+    setCancelReason(""); // reset lý do
+  }
+};
+
   return (
     <div className="PurchaseHistory_container">
         {errorMessage1 && (
@@ -191,7 +203,7 @@ useEffect(() => {
                       {order.paystatus == 1 && (order.method == 3 || order.method == 1) && order.status != 3 && (
 
                         <>
-                          <button
+                          {/* <button
                             className="history-refund-button"
                             onClick={() => {
                               setRefundProduct(order);
@@ -199,7 +211,7 @@ useEffect(() => {
                             }}
                           >
                             Hoàn tiền
-                          </button>
+                          </button> */}
                           {showRefund && refundProduct && (
                             <RefundModal
                               show={showRefund}
@@ -271,16 +283,27 @@ useEffect(() => {
 
       {/* Confirm Modal */}
       {confirmModal.show && (
-        <div className="custom-confirm-modal">
-          <div className="modal-content">
-            <p>Bạn có chắc muốn yêu cầu hủy đơn {confirmModal.orderCode}?</p>
-            <div className="modal-buttons">
-              <button onClick={handleCancelOrder}>Đồng ý</button>
-              <button onClick={() => setConfirmModal({ show: false, orderCode: '' })}>Hủy</button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className="custom-confirm-modal">
+    <div className="modal-content">
+      <p>Bạn có chắc muốn yêu cầu hủy đơn {confirmModal.orderCode}?</p>
+      <p>Lý do hủy đơn</p>
+      <textarea
+        placeholder="Thay đổi địa chỉ, đổi ý, ...."
+        value={cancelReason}
+        onChange={(e) => setCancelReason(e.target.value)}
+        style={{ width: "100%", minHeight: "80px", marginBottom: "10px" }}
+      />
+      <div className="modal-buttons">
+        <button onClick={handleCancelOrder}>Đồng ý</button>
+        <button onClick={() => {
+          setConfirmModal({ show: false, orderCode: '' });
+          setCancelReason("");
+        }}>Hủy</button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

@@ -8,18 +8,25 @@ import axios from "axios";
 import WriteReviewButton from "../component/WriteReviewButton";
 import WarrantyModal from "../component/WarrantyModal";
 import MessageBox from "../component/MessageBox"; // import thêm
+import OrderHistoryModal from "../component/OrderHistoryModal";
+import WarrantyHistoryModal from "../component/WarrantyHistoryModal";
 
 function BillDetail() {
   const { code_order } = useParams();
   const [showWarranty, setShowWarranty] = useState(false);
   const [warrantyProduct, setWarrantyProduct] = useState(null);
-
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
   const [activeMenu, setActiveMenu] = useState('Lịch sử mua hàng');
   const [reviewMap, setReviewMap] = useState({});
   const [message, setMessage] = useState("");
 const [messageType, setMessageType] = useState("success");
+const [statusHistory, setStatusHistory] = useState([]);
+const [showWarrantyHistory, setShowWarrantyHistory] = useState(false);
+const [selectedWarrantyHistory, setSelectedWarrantyHistory] = useState([]);
+
 const showMessage = (msg, type = "success") => {
   setMessage(msg);
   setMessageType(type);
@@ -27,7 +34,11 @@ const showMessage = (msg, type = "success") => {
     setMessage("");
   }, 3000); // Tự ẩn sau 3s
 };
-  
+  const openWarrantyHistory = (history) => {
+  setSelectedWarrantyHistory(history);
+  setShowWarrantyHistory(true);
+};
+
   // 🔁 Lấy đánh giá cho các sản phẩm trong đơn hàng
  const fetchReviewsForProducts = async (productList, userId) => {
   const reviewsData = {};
@@ -59,6 +70,18 @@ const showMessage = (msg, type = "success") => {
   setReviewMap(reviewsData);
 };
   
+  useEffect(() => {
+  axios.get(`http://localhost:5000/api/bill-detail/${code_order}`)
+    .then(res => {
+      setOrder(res.data.order);
+      setProducts(res.data.products);
+      setStatusHistory(res.data.statusHistory); // ✅ Lưu riêng
+    })
+    .catch(err => {
+      console.error("Lỗi lấy chi tiết đơn hàng:", err);
+    });
+}, [code_order]);
+
 
   // 🧾 Lấy thông tin đơn hàng và sản phẩm
   useEffect(() => {
@@ -85,7 +108,6 @@ const showMessage = (msg, type = "success") => {
   if (!order) return <div>Đang tải dữ liệu...</div>;
 
 
-  
   return (
     <div className="billdetail-container">
       <div className="container">
@@ -102,12 +124,24 @@ const showMessage = (msg, type = "success") => {
               <p><strong>Mã đơn hàng:</strong> <span className="highlight">{order.code_order}</span></p>
               <p>Ngày mua: {order.date_formatted}</p>
               <p>Thời gian: {order.time_formatted}</p>
+             
+             
               <div className="status-bill">
-                Trạng thái: <span className="confirmed-bill">{order.status_text}</span>
-              </div>
-              <div className="status-bill">
-                Trạng thái: <span className="confirmed-bill">{order.status_text}</span>
-              </div>
+  Trạng thái: <span className="confirmed-bill">{order.status_text}</span>
+  <button 
+    className="btn btn-link p-0 ms-2"
+    onClick={() => setShowHistoryModal(true)}
+  >
+    Xem lịch sử
+  </button>
+</div>
+
+<OrderHistoryModal
+  show={showHistoryModal}
+  onClose={() => setShowHistoryModal(false)}
+  statusHistory={statusHistory}
+/>
+
 
               {/* Chỉ hiện nếu có lý do hủy đơn */}
               {order.cancel_reason && (
@@ -179,7 +213,16 @@ const showMessage = (msg, type = "success") => {
                               )}
                              </>
 
-                           )}                      
+                           )}           
+                           {item.warrantyRequests && item.warrantyRequests.length > 0 && (
+  <button
+    className="btn btn-link p-0 mt-1"
+    onClick={() => openWarrantyHistory(item.warrantyRequests.flatMap(w => w.history))}
+  >
+    Xem lịch sử bảo hành
+  </button>
+)}
+           
 
                          {hasReviewed && (
                         <p>
@@ -201,6 +244,7 @@ const showMessage = (msg, type = "success") => {
                                Gửi yêu cầu bảo hành
                              </button>
                            )}
+                           
                             {showWarranty && warrantyProduct && (
                             <WarrantyModal
                               show={showWarranty}
@@ -316,6 +360,12 @@ const showMessage = (msg, type = "success") => {
           </div>
         </div>
       </div>
+      <WarrantyHistoryModal
+  show={showWarrantyHistory}
+  onClose={() => setShowWarrantyHistory(false)}
+  history={selectedWarrantyHistory}
+/>
+
       <MessageBox
   type={messageType}
   message={message}
@@ -324,6 +374,7 @@ const showMessage = (msg, type = "success") => {
     </div>
     
   );
+  
 }
 
 export default BillDetail;

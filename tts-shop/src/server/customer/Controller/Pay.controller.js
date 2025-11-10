@@ -58,10 +58,10 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
 
           const proceed = () => {
             const insertDetailQuery = `
-              INSERT INTO tbl_order_detail (code_order, id_product, quantity_product)
+              INSERT INTO tbl_order_detail (code_order, id_product, quantity_product,price )
               VALUES ?
             `;
-            const detailValues = products.map(item => [code_order, item.id_product, item.quantity]);
+            const detailValues = products.map(item => [code_order, item.id_product, item.quantity,item.price]);
 
             conn.query(insertDetailQuery, [detailValues], (err2) => {
               if (err2) {

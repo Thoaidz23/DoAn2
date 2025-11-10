@@ -66,8 +66,8 @@ const handleLogout = () => {
       { label: "Banner", icon: <Image size={18} />, path: "/admin/banner" },
       { label: "Sản phẩm", icon: <Box size={18} />, path: "/admin/product" },
       { label: "Bài viết", icon: <FileText size={18} />, path: "/admin/post" },
+      { label: "Quản lý bảo hành", icon: <ShieldCheck size={18} />, path: "/admin/warranty" },
       { label: "Tài khoản khách hàng", icon: <Users size={18} />, path: "/admin/customeraccount" },
-
     ];
   }
 
