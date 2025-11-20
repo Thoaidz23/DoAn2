@@ -3,12 +3,9 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "../styles/SearchProduct.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min";
-import "bootstrap-icons/font/bootstrap-icons.css";
 import { Link } from "react-router-dom";
-import TopHeadBar from "../component/TopHeadBar.js"; // Cập nhật đường dẫn theo vị trí thực tế
+import TopHeadBar from "../component/TopHeadBar";
 import Pagination from "../component/Pagination";
-
 
 function Product() {
   const location = useLocation();
@@ -17,6 +14,7 @@ function Product() {
   const [categoryName, setCategoryName] = useState("");
   const [brandName, setBrandName] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [specs, setSpecs] = useState("");
 
   const query = new URLSearchParams(location.search);
   const brandId = query.get("brand");
@@ -24,149 +22,107 @@ function Product() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
-
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filtered.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filtered.length / productsPerPage);
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const brand = query.get("brand");
-    const category = query.get("category");
-    const search = query.get("search");
-    const price = query.get("price");
-     setSearchText(search || ""); 
+  const brand = query.get("brand");
+  const category = query.get("category");
+  const search = query.get("search");
+  const specsQuery = query.get("specs");
+  const categorySearch = query.get("category_search");
+  const price = query.get("price"); // <-- thêm dòng này
 
-    axios.get(`http://localhost:5000/api/searchproduct`, {
-      params: {
-        brand,
-        category,
-        search,
-        price,
-      },
-    } )
-      .then((res) => {
-  const data = Array.isArray(res.data) ? res.data : [];
-  setProducts(data);
+  setSearchText(search || "");
+  setSpecs(specsQuery || "");
+  setCurrentPage(1);
 
-  if (data.length > 0) {
-    if (category) setCategoryName(data[0]?.name_category_product || "");
-    if (brand) setBrandName(data[0]?.name_category_brand || "");
-  }
- 
-})
+  axios.get(`http://localhost:5000/api/searchproduct`, {
+    params: { brand, category, search, specs: specsQuery, category_search: categorySearch, price } // <-- gửi price lên backend
+  })
+  .then(res => {
+    const data = Array.isArray(res.data) ? res.data : [];
+    setProducts(data);
+    setFiltered(data);
 
-      .catch((err) => {
-        console.error(err);
-        setProducts([]);
-      });
-  }, [location.search]); // 👈 theo dõi thay đổi query string
-  
-  
-
-  useEffect(() => {
-    let result = [...products];
-    if (brandId) {
-      result = result.filter((p) => String(p.id_category_brand) === brandId);
+    if (data.length > 0) {
+      setCategoryName(category ? data[0]?.name_category_product || "" : "");
+      setBrandName(brand ? data[0]?.name_category_brand || "" : "");
     }
-    
-    if (categoryId) {
-      result = result.filter((p) => String(p.id_category_product) === categoryId);
-    }
-    
+  })
+  .catch(err => { console.error(err); setProducts([]); setFiltered([]); });
+}, [location.search]);
 
-    if (searchText) {
-      const searchLower = searchText.toLowerCase();
-      result = result.filter((p) => p.name_group_product.toLowerCase().includes(searchLower));
-    }
 
-    setFiltered(result);
-  }, [brandId, categoryId, searchText, products]);
+  const cleanText = (text) => text ? text.replace(/&nbsp;/g, ' ').trim() : "";
+
+  const getTitleText = () => {
+    const totalCount = products.length;
+    let title = `Tìm thấy ${totalCount} sản phẩm`;
+    let keywordDisplay = "";
+
+    if (searchText) keywordDisplay += ` "${searchText}"`;
+    if (specs) keywordDisplay += ` (Filter: ${specs.split(',').join(', ')})`;
+    if (categoryName) keywordDisplay += ` Danh mục: ${categoryName}`;
+    if (brandName) keywordDisplay += ` Hãng: ${brandName}`;
+    if (!searchText && !specs && !categoryName && !brandName) return `Tìm kiếm chung`;
+
+    return `${title} cho từ khóa${keywordDisplay}`;
+  };
 
   return (
     <div>
-         <TopHeadBar
-          searchText={searchText}
-          categoryName={categoryName}
-          brandName={brandName}
-          categoryID={categoryId}
-          brandID={brandId}
-        />
-
+      <TopHeadBar searchText={searchText} categoryName={categoryName} brandName={brandName} categoryID={categoryId} brandID={brandId} />
       <div className="container-search">
-        <div className="product-one-content" style={{maxWidth:"1800px",margin:"auto"}}>
+        <div className="product-one-content" style={{ maxWidth: "1800px", margin: "auto" }}>
           <div className="container">
             <div className="product-one-content-title">
-              {searchText === "" ?(
-                <>
-                   <h2 style={{margin:"10px 0 20px 0",width:"1200px",textAlign:"center"}}>Tìm thấy {products.length} sản phẩm "<strong>{categoryName} {brandName}</strong>"</h2>
-                </>
-              ) : (
-                <>
-                  <h2 style={{margin:"10px 0 20px 0",width:"1200px",textAlign:"center"}}>Tìm thấy {products.length} sản phẩm cho từ khóa "<strong>{searchText}</strong>"</h2>
-                </>
-              )}
-              
+              <h2 style={{ margin: "10px 0 20px 0", width: "1200px", textAlign: "center" }}>
+                <strong>{cleanText(getTitleText())}</strong>
+              </h2>
             </div>
             <div className="product-one-content-items">
-              {filtered.length > 0 ? (
-                currentProducts.map((product) => (
-                  <div className="product-one-content-item" key={product.id_group_product} >
-                    <Link to={`/product/${product.id_group_product}`}>
-                      <img src={`http://localhost:5000/images/product/${product.image}`} alt={product.name_group_product} />
-                    </Link>
-                    <div className="product-one-content-item-text">
-                      <ul>
-                        <li>
-                          <Link to={`/product/${product.id_group_product}`} style={{ textDecoration: "none", color: "inherit" }}>
-                            {product.name_group_product}
-                          </Link>
-                        </li>
-                        <li>Online giá rẻ</li>
-                         {product.sale > 0 ? (
+              {filtered.length > 0 ? currentProducts.map(product => (
+                <div className="product-one-content-item" key={product.id_group_product}>
+                  <Link to={`/product/${product.id_group_product}`}>
+                    <img src={`http://localhost:5000/images/product/${product.image}`} alt={product.name_group_product} />
+                  </Link>
+                  <div className="product-one-content-item-text">
+                    <ul>
+                      <li>
+                        <Link to={`/product/${product.id_group_product}`} style={{ textDecoration: "none", color: "inherit" }}>
+                          {product.name_group_product}
+                        </Link>
+                      </li>
+                      <li>Online giá rẻ</li>
+                      {product.sale > 0 ? (
                         <>
-                          <li className="old-price">
-                            {Math.round(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
-                          </li>
-                          <li className="new-price">
-                            {Math.round(product.saleprice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
-                          </li>
+                          <li className="old-price">{Math.round(product.price).toLocaleString()}<sup>đ</sup></li>
+                          <li className="new-price">{Math.round(product.saleprice).toLocaleString()}<sup>đ</sup></li>
                           <li className="sale-badge">Giảm {product.sale}%</li>
                         </>
                       ) : (
-                        <li className="new-price">
-                          {Math.round(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}<sup>đ</sup>
-                        </li>
+                        <li className="new-price">{Math.round(product.price).toLocaleString()}<sup>đ</sup></li>
                       )}
-                      </ul>
-                    </div>
+                    </ul>
                   </div>
-                ))
-              ) : (
-                  <img src="no-products.png" alt="Không có sản phẩm" style={{marginLeft:"50%"}} />
-                
-                
-
+                </div>
+              )) : (
+                <div style={{ textAlign: "center", marginTop: "50px" ,marginLeft:"50%"}}>
+                  <img src="no-products.png" alt="Không có sản phẩm" />
+                  <p>Không tìm thấy sản phẩm nào.</p>
+                </div>
               )}
             </div>
           </div>
         </div>
       </div>
-      {totalPages > 1 && (
-  <Pagination
-    currentPage={currentPage}
-    totalPages={totalPages}
-    paginate={paginate}
-  />
-)}
-
+      {totalPages > 1 && <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />}
     </div>
-    
   );
-  
 }
 
 export default Product;
