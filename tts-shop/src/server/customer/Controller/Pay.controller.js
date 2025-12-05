@@ -105,9 +105,17 @@ const addToPayRaw = ({ id_user, products, name_user, address, phone, method, ema
                     }
 
                     conn.release();
+                    
                     sendOrderConfirmationEmail(email, code_order, products, total_price)
-                      .then(() => resolve('Đặt hàng thành công'))
+                      .then(() => {
+                        resolve('Đặt hàng thành công')
+                        // Tạo phiếu xuất tự động dựa trên sản phẩm trong đơn hàng
+                        
+                          .then(({ code_stock }) => console.log('Tạo phiếu xuất thành công:', code_stock))
+                          .catch(err => console.error('Lỗi tạo phiếu xuất tự động:', err));
+                      })
                       .catch(() => resolve('Đặt hàng xong nhưng không gửi được email'));
+                                  
                   });
                 });
               });

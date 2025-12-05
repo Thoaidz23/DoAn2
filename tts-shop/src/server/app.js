@@ -28,8 +28,8 @@ const staffaccountRoutes = require('./admin/routes/staffaccountRoutes');
 const reviewRoutes = require("./admin/routes/reviewRoutes");
 const customerRoutes = require("./admin/routes/customerRoute");
 const warrantyAdminRoutes = require('./admin/routes/warrantyRoutes');
-
-
+const stockRoutes = require("./admin/routes/stockRoutes");
+const stockAdjust = require("./admin/routes/stockAdjust");
 
 //customer
 const HProductRoute = require('./customer/Routes/Home.routes')
@@ -75,7 +75,8 @@ app.use('/api/staffaccounts', staffaccountRoutes);
 app.use("/api", customerRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use('/api/warranty-admin', warrantyAdminRoutes);
-
+app.use("/api/stock", stockRoutes);
+app.use("/api/stock-adjust", stockAdjust);
 
 //customer
 app.use('/api/Home',HProductRoute)

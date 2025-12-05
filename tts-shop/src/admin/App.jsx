@@ -38,7 +38,14 @@ import ReviewList from "./pages/ReviewList";
 import CommentList from "./pages/CommentList";
 import Warranty from "./pages/Warranty";
 import DetailWarranty from "./pages/DetailWarranty";
-
+import ImportDetail from "./pages/ImportDetail"
+import HistoryPage from './pages/HistoryPage';
+import ImportPage from './pages/ImportPage';
+import StockWarningPage from './pages/StockWarningPage';
+import StockAdjustCreate from './pages/StockAdjustCreate';
+import StockAdjustDetail from './pages/StockAdjustDetail';
+import StockAdjustList from './pages/StockAdjustList';
+import StockHistory from "./pages/StockHistory";
 
 function App() {
   return (
@@ -89,7 +96,14 @@ function App() {
            <Route path="/admin/product/:id_group_product/comments" element={<CommentList />} />
            <Route path="/admin/warranty" element={<Warranty />} />
            <Route path="/admin/warranty/:code" element={<DetailWarranty />} />
-
+            <Route path="/admin/import-detail/:id" element={<ImportDetail></ImportDetail>} />
+            <Route path="/admin/history-page" element={<HistoryPage />} />
+            <Route path="/admin/import-page" element={<ImportPage />} />
+            <Route path="/admin/stockwarning-page" element={<StockWarningPage />} />
+            <Route path="/admin/stockadjust-list" element={<StockAdjustList />} />
+            <Route path="/admin/stockadjust-create" element={<StockAdjustCreate />} />
+            <Route path="/admin/stockadjust-detail/:id" element={<StockAdjustDetail />} />
+            <Route path="/stock-history/:id_product" element={<StockHistory />} />
             {/* Route khác sau này */}
           </Routes>
         </div>
@@ -101,3 +115,5 @@ function App() {
 
 
 export default App;
+
+

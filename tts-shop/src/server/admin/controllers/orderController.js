@@ -1,3 +1,4 @@
+const { Code } = require('lucide-react');
 const connection = require('../../db');
 
 // Hàm ghi lịch sử trạng thái
@@ -129,7 +130,7 @@ const updateOrder = (req, res) => {
           return new Promise((resolve, reject) => {
             const updateQtyQuery = `
               UPDATE tbl_product 
-              SET quantity = quantity - ? 
+              SET quantity = ? 
               WHERE id_product = ? AND quantity >= ?
             `;
             connection.query(updateQtyQuery, [product.quantity_product, product.id_product, product.quantity_product], (err) => {
@@ -191,31 +192,160 @@ const printOrderIfUnconfirmed = (req, res) => {
   });
 };
 
-// Giao hàng (1 -> 2)
-const markAsShipping = (req, res) => {
+
+function generateStockCode() {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let code = '';
+  for (let i = 0; i < 4; i++) {
+    code += letters.charAt(Math.floor(Math.random() * letters.length));
+  }
+  const numbers = Math.floor(1000 + Math.random() * 9000);
+  return code + numbers;
+}
+
+// Wrapper query Promise
+function queryPromise(conn, sql, params) {
+  return new Promise((resolve, reject) => {
+    conn.query(sql, params, (err, results) => {
+      if (err) reject(err);
+      else resolve(results);
+    });
+  });
+}
+
+const markAsShipping = async (req, res) => {
   const { code } = req.params;
+  const { id } = req.body;
+  console.log("[SHIPPING] incoming:", { code, id });
 
-  const getStatusQuery = 'SELECT status FROM tbl_order WHERE code_order = ?';
-  connection.query(getStatusQuery, [code], (err, result) => {
-    if (err) return res.status(500).json({ error: "Lỗi khi truy vấn" });
-    if (result.length === 0) return res.status(404).json({ message: "Đơn hàng không tồn tại" });
+  if (!id) {
+    return res.status(400).json({ message: "Thiếu id nhân viên" });
+  }
 
-    if (result[0].status === 1) {
-      const updateQuery = 'UPDATE tbl_order SET status = 2 WHERE code_order = ?';
-      connection.query(updateQuery, [code], async (err2) => {
-        if (err2) return res.status(500).json({ error: "Lỗi khi cập nhật trạng thái" });
+  connection.getConnection((err, conn) => {
+    if (err) return res.status(500).json({ error: "Không kết nối được CSDL" });
 
-        try {
-          await insertOrderTime(code, 2);
-        } catch (e) {
-          console.error("Lỗi lưu lịch sử trạng thái:", e);
+    conn.beginTransaction(async (txErr) => {
+      if (txErr) {
+        conn.release();
+        return res.status(500).json({ error: "Không thể bắt đầu transaction" });
+      }
+
+      try {
+        // 1) Kiểm tra trạng thái đơn
+        const statusRows = await queryPromise(
+          conn,
+          "SELECT status FROM tbl_order WHERE code_order = ?",
+          [code]
+        );
+
+        if (!statusRows.length)
+          throw { status: 404, message: "Đơn hàng không tồn tại" };
+
+        if (statusRows[0].status !== 1)
+          throw { status: 400, message: "Chỉ chuyển từ trạng thái 1 sang 2" };
+
+        // 2) Lấy chi tiết sản phẩm
+        const orderItems = await queryPromise(
+          conn,
+          `SELECT od.id_product, od.quantity_product AS quantity, p.price
+           FROM tbl_order_detail od
+           JOIN tbl_product p ON od.id_product = p.id_product
+           WHERE od.code_order = ?`,
+          [code]
+        );
+
+        if (!orderItems.length)
+          throw { status: 400, message: "Đơn hàng không có sản phẩm" };
+
+        console.log("[SHIPPING] orderItems:", orderItems);
+
+        // 3) Kiểm tra tồn kho và trừ
+        for (const item of orderItems) {
+          const product = await queryPromise(
+            conn,
+            "SELECT quantity FROM tbl_product WHERE id_product = ?",
+            [item.id_product]
+          );
+
+          if (!product.length)
+            throw { status: 400, message: `Sản phẩm ${item.id_product} không tồn tại` };
+
+          const available = product[0].quantity;
+
+          if (item.quantity > available)
+            throw {
+              status: 400,
+              message: `Sản phẩm ID ${item.id_product} chỉ còn ${available}`,
+            };
+
+          await queryPromise(
+            conn,
+            "UPDATE tbl_product SET quantity = quantity - ? WHERE id_product = ?",
+            [item.quantity, item.id_product]
+          );
         }
 
-        return res.json({ message: "Đơn hàng đã chuyển sang: Đang vận chuyển" });
-      });
-    } else {
-      return res.status(400).json({ message: "Chỉ có thể từ đã xác nhận sang đang vận chuyển" });
-    }
+        // 4) Tạo phiếu xuất (tbl_stock)
+        const code_stock = generateStockCode();
+        console.log("[SHIPPING] code_stock:", code_stock);
+
+        const insertStock = await queryPromise(
+          conn,
+          `INSERT INTO tbl_stock (code_stock, type, note, supplier, id_employee, code_order)
+           VALUES (?, 'EXPORT', 'Phiếu xuất tự động khi duyệt đơn', '', ?, ?)`,
+          [code_stock, id, code]
+        );
+
+        const id_stock = insertStock.insertId;
+        console.log("[SHIPPING] created stock:", { id_stock });
+
+        // 5) Thêm chi tiết phiếu xuất (tbl_stock_detail)
+        for (const item of orderItems) {
+          const price = item.price ? item.price : 0;
+
+          await queryPromise(
+            conn,
+            `INSERT INTO tbl_stock_detail (id_stock, id_product, quantity, price)
+             VALUES (?, ?, ?, ?)`,
+            [id_stock, item.id_product, item.quantity, price]
+          );
+        }
+
+        // 6) Cập nhật trạng thái đơn
+        await queryPromise(
+          conn,
+          "UPDATE tbl_order SET status = 2 WHERE code_order = ?",
+          [code]
+        );
+
+        conn.commit((commitErr) => {
+          if (commitErr) {
+            return conn.rollback(() => {
+              conn.release();
+              res.status(500).json({ error: "Lỗi commit" });
+            });
+          }
+
+          conn.release();
+          res.json({
+            message: "Chuyển trạng thái → Đang vận chuyển + tạo phiếu xuất thành công",
+            code_stock,
+            id_stock,
+          });
+        });
+
+      } catch (error) {
+        console.error("[SHIPPING] error:", error);
+        conn.rollback(() => {
+          conn.release();
+          if (error.status)
+            return res.status(error.status).json({ message: error.message });
+
+          return res.status(500).json({ error: "Lỗi xử lý" });
+        });
+      }
+    });
   });
 };
 

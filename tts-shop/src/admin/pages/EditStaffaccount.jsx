@@ -10,17 +10,20 @@ const EditStaff = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [role, setRole] = useState(2); // mặc định 2
   const [error, setError] = useState("");
-
+  console.log(id,name,email,phone,address,role)
   useEffect(() => {
     // Lấy dữ liệu nhân viên theo id
     axios.get(`http://localhost:5000/api/staffaccounts/edit/${id}`)
       .then((res) => {
         const staff = res.data;
+        console.log(staff)
         setName(staff.name || "");
         setEmail(staff.email || "");
         setPhone(staff.phone || "");
         setAddress(staff.address || "");
+        setRole(staff.role); 
       })
       .catch((err) => {
         console.error("Lỗi khi lấy thông tin nhân viên:", err);
@@ -43,6 +46,7 @@ const EditStaff = () => {
         email,
         phone,
         address,
+        role,
       });
 
       alert("Cập nhật nhân viên thành công");
@@ -59,7 +63,7 @@ const EditStaff = () => {
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <form onSubmit={handleSubmit} style={{width:"100%", marginTop:"-180px"}}>
+      <form onSubmit={handleSubmit} style={{ width: "100%", marginTop: "-180px" }}>
         <div className="mb-3">
           <label className="form-label">Tên nhân viên</label>
           <input
@@ -101,6 +105,19 @@ const EditStaff = () => {
             value={address}
             onChange={(e) => setAddress(e.target.value)}
           />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Phân loại nhân viên</label>
+          <select
+            className="form-select"
+            value={role}
+            onChange={(e) => setRole(Number(e.target.value))}
+            required
+          >
+            <option value={2}>Nhân viên bán hàng</option>
+            <option value={4}>Quản lý kho</option>
+          </select>
         </div>
 
         <button type="submit" className="btn btn-primary">Lưu thay đổi</button>

@@ -2,7 +2,7 @@ const connection = require('../../db');
 
 // Lấy danh sách nhân viên (role = 2)
 const getStaffs = (req, res) => {
-  const query = 'SELECT id_user, name, email, phone, address FROM tbl_user WHERE role = 2';
+  const query = 'SELECT id_user, name, email, phone, address,role FROM tbl_user WHERE role = 2 OR role = 4';
   connection.query(query, (err, results) => {
     if (err) {
       console.error("Lỗi truy vấn:", err);
@@ -17,7 +17,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const addStaff = (req, res) => {
-  const { name, email, phone, address } = req.body;  // Bỏ password lấy từ req.body
+  const { name, email, phone, address, role } = req.body; // Lấy role từ client
 
   // Thay vì lấy password từ client, ta cố định mật khẩu là demo@123
   const password = "demo@123";
@@ -25,6 +25,9 @@ const addStaff = (req, res) => {
   if (!name || !email || !phone) {
     return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin: name, email, phone" });
   }
+
+  // Chỉ chấp nhận role = 2 hoặc 4, mặc định là 2
+  const staffRole = (role === 2 || role === 4) ? role : 2;
 
   bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
     if (err) {
@@ -35,23 +38,28 @@ const addStaff = (req, res) => {
     console.log("Hashed password:", hashedPassword);
 
     const query = `INSERT INTO tbl_user (name, email, phone, address, password, role, lock_account) 
-                   VALUES (?, ?, ?, ?, ?, 2, 0)`;
+                   VALUES (?, ?, ?, ?, ?, ?, 0)`;
 
-    connection.query(query, [name, email, phone, address, hashedPassword], (err, result) => {
-      if (err) {
-        console.error("Lỗi thêm nhân viên:", err);
-        return res.status(500).json({ message: "Lỗi máy chủ khi thêm nhân viên" });
+    connection.query(
+      query,
+      [name, email, phone, address, hashedPassword, staffRole],
+      (err, result) => {
+        if (err) {
+          console.error("Lỗi thêm nhân viên:", err);
+          return res.status(500).json({ message: "Lỗi máy chủ khi thêm nhân viên" });
+        }
+        res.status(201).json({ message: `Thêm nhân viên thành công với mật khẩu mặc định! (role=${staffRole})` });
       }
-      res.status(201).json({ message: "Thêm nhân viên thành công với mật khẩu mặc định!" });
-    });
+    );
   });
 };
+
 
 
 // Lấy thông tin nhân viên theo ID
 const getStaffById = (req, res) => {
   const { id } = req.params;
-  const query = 'SELECT id_user, name, email, phone, address FROM tbl_user WHERE id_user = ? AND role = 2';
+  const query = 'SELECT id_user, name, email, phone, address, role FROM tbl_user WHERE id_user = ?';
 
   connection.query(query, [id], (err, results) => {
     if (err) {
@@ -70,10 +78,10 @@ const getStaffById = (req, res) => {
 // Sửa thông tin nhân viên
 const editStaff = (req, res) => {
   const { id } = req.params;
-  const { name, email, phone, address } = req.body;
-
-  const query = 'UPDATE tbl_user SET name = ?, email = ?, phone = ?, address = ? WHERE id_user = ? AND role = 2';
-  connection.query(query, [name, email, phone, address, id], (err, result) => {
+  const { name, email, phone, address, role } = req.body;
+  console.log(id,name, email, phone, address, role)
+  const query = 'UPDATE tbl_user SET name = ?, email = ?, phone = ?, address = ?, role = ? WHERE id_user = ?';
+  connection.query(query, [name, email, phone, address, role, id], (err, result) => {
     if (err) {
       console.error("Lỗi khi cập nhật nhân viên:", err);
       return res.status(500).json({ message: "Lỗi máy chủ khi cập nhật nhân viên" });
@@ -86,7 +94,7 @@ const editStaff = (req, res) => {
 // Xóa nhân viên
 const deleteStaff = (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM tbl_user WHERE id_user = ? AND role = 2';
+  const query = 'DELETE FROM tbl_user WHERE id_user = ? ';
 
   connection.query(query, [id], (err, result) => {
     if (err) {

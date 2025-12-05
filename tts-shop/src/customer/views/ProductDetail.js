@@ -456,28 +456,44 @@ const getAvailableOptions = (field) => {
               </Col>
             
             </Row>
+
             <div className="d-grid gap-2 mb-4">
-              {selectedProduct.quantity === 0 || selectedProduct.quantity < quantity  ? (
-                <Button
-                className="buy-btn"
-                size="lg"
-                onClick={handleBuyNow}
-               style={{opacity: "0.5", pointerEvents: "none" }}
-              >
-                <BagCheck className="me-2" /> Mua ngay
-              </Button>
-            ):(
-                <Button
-                className="buy-btn"
-                size="lg"
-                onClick={handleBuyNow}
-              >
-                <BagCheck className="me-2" /> Mua ngay
-              </Button>   
-            )}
-              
-              
-            </div>
+  {selectedProduct.quantity === null ? (
+    <Button
+      className="buy-btn"
+      size="lg"
+      style={{ opacity: "0.5", pointerEvents: "none" }}
+    >
+      <BagCheck className="me-2" /> Sắp có hàng
+    </Button>
+  ) : selectedProduct.quantity === 0 ? (
+    <Button
+      className="buy-btn"
+      size="lg"
+      style={{ opacity: "0.5", pointerEvents: "none" }}
+    >
+      <BagCheck className="me-2" /> Hết hàng
+    </Button>
+  ) : selectedProduct.quantity < quantity ? (
+    <Button
+      className="buy-btn"
+      size="lg"
+      style={{ opacity: "0.5", pointerEvents: "none" }}
+    >
+      <BagCheck className="me-2" /> Không đủ số lượng
+    </Button>
+  ) : (
+    <Button
+      className="buy-btn"
+      size="lg"
+      onClick={handleBuyNow}
+    >
+      <BagCheck className="me-2" /> Mua ngay
+    </Button>
+  )}
+</div>
+
+          
           </Col>
         </Row>
 

@@ -23,7 +23,7 @@ const AddProduct = () => {
   const [romOptions, setRomOptions] = useState([]);
   const [colorOptions, setColorOptions] = useState([]);
   const [configurations, setConfigurations] = useState([
-    { ram: "", rom: "", color: "", quantity: "", price: "" },
+    { ram: "", rom: "", color: "", price: "" },
   ]);
   const [parameters, setParameters] = useState([ // Thêm state cho thông số kỹ thuật
     { attribute: "", value: "" },
@@ -40,7 +40,7 @@ const AddProduct = () => {
   };
 
   const handleAddRow = () => {
-    setConfigurations([...configurations, { ram: "", rom: "", color: "", quantity: "", price: "" }]);
+    setConfigurations([...configurations, { ram: "", rom: "", color: "", price: "" }]);
   };
 
   const handleRemoveRow = (index) => {
@@ -311,7 +311,7 @@ const AddProduct = () => {
                 ))}
               </Form.Control>
             </div>
-            <div className="col-2">
+            {/* <div className="col-2">
               <Form.Control
                 type="number"
                 name="quantity"
@@ -324,7 +324,7 @@ const AddProduct = () => {
                 }}
                 placeholder="Số lượng"
               />
-            </div>
+            </div> */}
             <div className="col-2">
               <Form.Control
                 type="text"

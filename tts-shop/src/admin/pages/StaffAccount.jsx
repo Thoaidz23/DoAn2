@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const Staff = () => {
   const [staffs, setStaffs] = useState([]);
-
+  console.log(staffs)
   useEffect(() => {
     fetch("http://localhost:5000/api/staffaccounts")
       .then((res) => res.json())
@@ -45,6 +45,7 @@ const Staff = () => {
               <th className="text-center align-middle">Email</th>
               <th className="text-center align-middle">Số điện thoại</th>
               <th className="text-center align-middle">Địa chỉ</th>
+              <th className="text-center align-middle">Phân loại</th>
               <th className="text-center align-middle">Hành động</th>
             </tr>
           </thead>
@@ -57,6 +58,9 @@ const Staff = () => {
                   <td className="text-center">{staff.email}</td>
                   <td className="text-center">{staff.phone}</td>
                   <td className="text-center">{staff.address}</td>
+                   <td className="text-center">
+                    {staff.role === 2 ? "Nhân viên bán hàng" : staff.role === 4 ? "Quản lý kho" : "Không xác định"}
+                  </td>                 
                   <td className="text-center">
                     <Link to={`/admin/staffaccount/edit/${staff.id_user}`}>
                       <button className="btn btn-sm btn-warning me-2">Sửa</button>

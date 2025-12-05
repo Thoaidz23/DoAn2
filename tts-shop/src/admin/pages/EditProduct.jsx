@@ -51,7 +51,6 @@ const EditProduct = () => {
               id_ram: item.id_ram,
               id_rom: item.id_rom,
               id_color: item.id_color,
-              quantity: item.quantity,
               price: item.price,
             });
           }
@@ -126,7 +125,7 @@ const EditProduct = () => {
 
  const handleAddClassification = () => {
   const isIncomplete = classifications.some(
-    cls => !cls.id_ram || !cls.id_rom || !cls.id_color || !cls.quantity || !cls.price
+    cls => !cls.id_ram || !cls.id_rom || !cls.id_color || !cls.price
   );
 
   if (isIncomplete) {
@@ -141,7 +140,6 @@ const EditProduct = () => {
       id_ram: "",
       id_rom: "",
       id_color: "",
-      quantity: "",
       price: "",
     },
   ]);
@@ -152,7 +150,7 @@ const EditProduct = () => {
     e.preventDefault();
 
     for (const cls of classifications) {
-      if (!cls.quantity || !cls.price) {
+      if ( !cls.price) {
         return alert("Vui lòng điền đầy đủ thông tin phân loại.");
       }
     }
@@ -176,7 +174,6 @@ const EditProduct = () => {
       ram: cls.id_ram || null,
       rom: cls.id_rom || null,
       color: cls.id_color || null,
-      quantity: cls.quantity,
       price: cls.price, // giữ nguyên giá
       discount: discount, // chỉ lưu % khuyến mãi
     }));
@@ -187,7 +184,6 @@ const EditProduct = () => {
         id_ram: "",
         id_rom: "",
         id_color: "",
-        quantity: "",
         price: "",
         isNew: true,
       },
@@ -349,12 +345,12 @@ const EditProduct = () => {
                 ))}
               </Form.Select>
               
-              <Form.Control
+              {/* <Form.Control
                 type="number"
                 placeholder="Số lượng"
                 value={cls.quantity}
                 onChange={(e) => handleClassificationChange(idx, "quantity", e.target.value)}
-              />
+              /> */}
               <Form.Control
                 type="number"
                 placeholder="Giá"

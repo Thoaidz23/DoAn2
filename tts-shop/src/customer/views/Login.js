@@ -11,6 +11,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false); // ✅ Thêm state cho showPassword
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false); // ✅ Thêm state cho loading
+  const internalRoles = [1, 2, 4];
 
   const handleLogin = async () => {
   setLoading(true);
@@ -24,7 +25,13 @@ const Login = () => {
 
     const { token, user } = res.data;
     login(user, token); // ✅ Gọi login từ context
-    window.location.href = user.role === 1 ? "/admin/dashboard" : "/";
+    
+    if (internalRoles.includes(user.role)) {
+      window.location.href = "/admin/dashboard";
+    } else {
+      window.location.href = "/";
+    }
+
   } catch (error) {
     // Xử lý các lỗi riêng biệt
     if (error.response) {

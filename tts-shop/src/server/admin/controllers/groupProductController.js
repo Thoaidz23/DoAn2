@@ -20,25 +20,26 @@ const getGroupProductById = (req, res) => {
   const { id } = req.params;
 
   const sql = `
-    SELECT p.*, 
-          gp.name_group_product, gp.content, gp.sale,
-          c.name_color, r1.name_ram, r2.name_rom,
-          gp.image,
-          gp.id_category_product,
-          gp.id_category_brand,
-          cb.name_category_brand,
-          cp.name_category_product,
-          pa.attribute,
-          pa.value
-    FROM tbl_product p
-    JOIN tbl_group_product gp ON p.id_group_product = gp.id_group_product
-    LEFT JOIN tbl_color c ON p.id_color = c.id_color
-    LEFT JOIN tbl_ram r1 ON p.id_ram = r1.id_ram
-    LEFT JOIN tbl_rom r2 ON p.id_rom = r2.id_rom  
-    LEFT JOIN tbl_category_brand cb ON cb.id_category_brand = gp.id_category_brand
-    LEFT JOIN tbl_category_product cp ON cp.id_category_product = gp.id_category_product
-    LEFT JOIN tbl_parameter pa ON pa.id_group_product = gp.id_group_product
-    WHERE p.id_group_product = ?
+   SELECT p.*, 
+       gp.name_group_product, gp.content, gp.sale,
+       c.name_color, r1.name_ram, r2.name_rom,
+       gp.image,
+       gp.id_category_product,
+       gp.id_category_brand,
+       cb.name_category_brand,
+       cp.name_category_product,
+       GROUP_CONCAT(pa.attribute SEPARATOR '||') AS attributes,
+       GROUP_CONCAT(pa.value SEPARATOR '||') AS value
+FROM tbl_product p
+JOIN tbl_group_product gp ON p.id_group_product = gp.id_group_product
+LEFT JOIN tbl_color c ON p.id_color = c.id_color
+LEFT JOIN tbl_ram r1 ON p.id_ram = r1.id_ram
+LEFT JOIN tbl_rom r2 ON p.id_rom = r2.id_rom  
+LEFT JOIN tbl_category_brand cb ON cb.id_category_brand = gp.id_category_brand
+LEFT JOIN tbl_category_product cp ON cp.id_category_product = gp.id_category_product
+LEFT JOIN tbl_parameter pa ON pa.id_group_product = gp.id_group_product
+WHERE p.id_group_product = ?
+GROUP BY p.id_product;
   `;
 
   connection.query(sql, [id], (err, results) => {
@@ -205,13 +206,13 @@ const addProduct = async (req, res) => {
     console.log("🆔 id_group_product mới:", id_group_product);
 
     for (const config of classifications) {
-      const { ram, rom, color, quantity, price } = config;
+      const { ram, rom, color, price } = config;
       console.log("🟡 ĐANG THÊM cấu hình:", config);
       try {
         await conn.execute(
-          `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price) 
-           VALUES (?, ?, ?, ?, ?, ?)`,
-          [id_group_product, ram, rom, color, quantity, price]
+          `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, price) 
+           VALUES (?, ?, ?, ?, ?)`,
+          [id_group_product, ram, rom, color, price]
         );
         console.log("✅ Đã thêm vào tbl_product:", { ram, rom, color });
       } catch (err) {
@@ -299,17 +300,17 @@ const updateProduct = async (req, res) => {
     }
 
     for (const config of parsedConfigurations) {
-      const { id_product, ram, rom, color, quantity, price } = config;
+      const { id_product, ram, rom, color , price } = config;
       if (id_product) {
         await conn.execute(
-          `UPDATE tbl_product SET id_ram = ?, id_rom = ?, id_color = ?, quantity = ?, price = ? WHERE id_product = ?`,
-          [ram, rom, color, quantity, price, id_product]
+          `UPDATE tbl_product SET id_ram = ?, id_rom = ?, id_color = ?, price = ? WHERE id_product = ?`,
+          [ram, rom, color, price, id_product]
         );
       } else {
         await conn.execute(
-          `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, quantity, price)
-           VALUES (?, ?, ?, ?, ?, ?)`,
-          [id, ram, rom, color, quantity, price]
+          `INSERT INTO tbl_product (id_group_product, id_ram, id_rom, id_color, price)
+           VALUES (?, ?, ?, ?, ?)`,
+          [id, ram, rom, color, price]
         );
       }
     }

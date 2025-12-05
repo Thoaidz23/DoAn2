@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Table, Badge, Card, Modal } from "react-bootstrap";
 import axios from "axios";
+import { AuthContext } from "../../customer/context/AuthContext";
 
 const DetailOrder = () => {
+   const { user } = useContext(AuthContext);
   const { code } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
@@ -208,7 +210,7 @@ const DetailOrder = () => {
 
         {/* Nút thao tác */}
         <div className="d-flex justify-content-center gap-3 mt-4 mb-4">
-          {order.status === 0 && (
+          {order.status === 0 && user.role !== 4 && (
             <Button
               variant="primary"
               onClick={async () => {
@@ -224,23 +226,23 @@ const DetailOrder = () => {
             </Button>
           )}
 
-          {order.status === 1 && (
+          {order.status === 1 && user.role === 4 && (
             <Button
-              variant="warning"
-              onClick={async () => {
-                try {
-                  await fetch(`http://localhost:5000/api/orders/${code}/shipping`, { method: "PUT" });
-                  navigate("/admin/order");
-                } catch (err) {
-                  alert("Lỗi khi cập nhật trạng thái!");
-                }
-              }}
-            >
+               variant="warning"
+               onClick={async () => {
+                 await fetch(`http://localhost:5000/api/orders/${code}/shipping`, {
+                   method: "PUT",
+                   headers: { "Content-Type": "application/json" },
+                   body: JSON.stringify({ id: user.id })
+                 });
+                 navigate("/admin/order");
+               }}
+  >           
               Xác nhận đang vận chuyển
             </Button>
           )}
 
-          {order.status === 2 && (
+          {order.status === 2 && user.role !== 4 && (
             <Button
               variant="success"
               onClick={async () => {
@@ -257,14 +259,14 @@ const DetailOrder = () => {
           )}
 
           {/* Nút gộp hoàn tiền & hủy đơn */}
-          {order.status !== 3 && order.status !== 5 && order.paystatus === 1 && (
+          {order.status !== 3 && order.status !== 5 && order.paystatus === 1 && user.role !== 4 && (
             <Button variant="danger" onClick={() => setShowCancelModal(true)}>
               Hoàn tiền & Hủy đơn
             </Button>
           )}
           
           {/* Nếu là COD thì chỉ hủy đơn */}
-          {order.status !== 3 && order.status !== 5 && order.method === 0 && (
+          {order.status !== 3 && order.status !== 5 && order.method === 0 && user.role !== 4 && order.status === 4 && (
             <Button variant="danger" onClick={() => setShowCancelModal(true)}>
               Hủy đơn hàng
             </Button>                                                                   

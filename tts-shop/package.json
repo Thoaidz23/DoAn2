@@ -40,7 +40,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
-    "recharts": "^2.15.2",
+    "recharts": "^2.15.4",
     "sass": "^1.86.0",
     "sequelize": "^6.37.7",
     "web-vitals": "^2.1.4"
